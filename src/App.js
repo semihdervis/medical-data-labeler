@@ -1,23 +1,40 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import Annotation from 'react-image-annotation';
 import './App.css';
 
 function App() {
+  const [annotations, setAnnotations] = useState([]);
+  const [annotation, setAnnotation] = useState({});
+
+  const onChange = (newAnnotation) => {
+    setAnnotation(newAnnotation);
+  };
+
+  const onSubmit = (newAnnotation) => {
+    const { geometry, data } = newAnnotation;
+
+    setAnnotations([...annotations, {
+      geometry,
+      data: {
+        ...data,
+        id: Math.random(),
+      }
+    }]);
+
+    setAnnotation({});
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Annotation
+        src={`${process.env.PUBLIC_URL}/sad.png`}
+        alt="Annotatable Image"
+        annotations={annotations}
+        type={annotation.type}
+        value={annotation}
+        onChange={onChange}
+        onSubmit={onSubmit}
+      />
     </div>
   );
 }
