@@ -1,6 +1,6 @@
 // ImageGallery.js
 import React, { useState, useEffect } from 'react';
-import { storage, ref, getDownloadURL } from '../firebase/config';
+import { storage, ref, getDownloadURL, listAll } from '../firebase/config';
 
 const ImageGallery = () => {
   const [images, setImages] = useState([]);
@@ -11,15 +11,14 @@ const ImageGallery = () => {
       const imageListRef = ref(storage, 'images/'); // 'images/' is the folder name in Firebase Storage
 
       try {
-        // Add image references as needed
-        const imageUrls = [];
-        const fileRefs = ['cat.png', 'dog.png']; // Example file names
-        for (const fileName of fileRefs) {
-          const imageRef = ref(storage, `images/${fileName}`);
-          const url = await getDownloadURL(imageRef);
-          imageUrls.push(url);
-        }
-        
+        // Use listAll to get all items in the folder
+        const res = await listAll(imageListRef);
+
+        // Fetch URLs for each image
+        const imageUrls = await Promise.all(
+          res.items.map((itemRef) => getDownloadURL(itemRef))
+        );
+
         setImages(imageUrls);
       } catch (error) {
         console.error("Error fetching images:", error);
@@ -31,9 +30,16 @@ const ImageGallery = () => {
 
   return (
     <div>
-      {images.map((url, index) => (
-        <img key={index} src={url} alt={`image-${index}`} style={{ width: '200px', height: 'auto', margin: '10px' }} />
-      ))}
+      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+        {images.map((url, index) => (
+          <img
+            key={index}
+            src={url}
+            alt={`image-${index}`}
+            style={{ width: '200px', height: 'auto', margin: '10px' }}
+          />
+        ))}
+      </div>
     </div>
   );
 };
