@@ -1,0 +1,161 @@
+.user-page {
+    display: flex;
+    justify-content: center;
+  }
+ 
+  .sidebar-box:hover .preview-sidebar{
+    opacity: 1;
+  }
+  .sidebar {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    top: 0;
+    background-color: lightcoral;
+    width: 100px;
+    z-index: 120;
+    padding-top: 10px;
+
+  }
+  
+  .sidebar h2 {
+    text-align: center;
+  }
+  
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .sidebar li {
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .sidebar li:hover {
+    background-color: #e0e0e0;
+
+  }
+  
+  .preview-sidebar {
+    position: fixed;
+    left: 100px;
+    width: 100px;
+    bottom: 0;
+    top: 0;
+    padding: 10px;
+    background-color:white;
+    border-right: 1px solid #ccc;
+    opacity: 0;
+  }
+  .preview-sidebar:hover{
+    opacity: 1;
+  }
+  
+  
+  .image-previews {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  
+  .preview-image {
+    width: 80px;
+    height: auto;
+    border-radius: 5px;
+  }
+  
+  .content-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+    padding: 10px;
+    background-color: lightgoldenrodyellow;
+    
+  }
+  
+  .content-area h2 {
+    
+  }
+  
+  .images-container {
+    display: flex;
+   
+   
+    justify-content: center;
+  }
+  
+  .patient-image {
+    width: 200px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  }
+  
+  .labels-container {
+    margin-top: 20px;
+  }
+  
+  .labels-container h3 {
+    text-align: center;
+  }
+
+  .image-container {
+    text-align: center; /* Center the image */
+    margin: 20px 0; /* Add some margin */
+  }
+  
+  .patient-image {
+    width: 400px; /* Set width for the image */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  }
+  
+  .navigation-buttons {
+    margin-top: 10px; /* Space between image and buttons */
+  }
+  
+  .navigation-buttons button {
+    margin: 0 10px; /* Space between buttons */
+    padding: 10px 20px; /* Button padding */
+    cursor: pointer; /* Pointer cursor */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    background-color: #007bff; /* Button color */
+    color: white; /* Text color */
+    transition: background-color 0.3s; /* Transition for hover */
+  }
+  
+  .navigation-buttons button:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+  }
+  
+  .navigation-buttons button:disabled {
+    background-color: #ccc; /* Disabled button color */
+    cursor: not-allowed; /* Not allowed cursor */
+  }
+  
+
+  .rightmost-sidebar{
+    position: fixed;
+
+    bottom: 0;
+    top: 0;
+    right: 0;
+    background-color: white;
+    width: 180px;
+    z-index: 120;
+    padding-top: 10px;
+
+    background-color: lightblue;
+  }
+  .rightmost-sidebar a{
+    border-radius: 10px;
+    color: white;
+    padding: 10px;
+    margin-left: 20px;
+  }
+  
