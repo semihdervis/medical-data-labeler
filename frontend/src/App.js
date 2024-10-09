@@ -7,6 +7,8 @@ function App() {
   const [selectedPerson, setSelectedPerson] = useState(null);
   const [images, setImages] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [happyOrSad, setHappyOrSad] = useState('');
+  const [maleOrFemale, setMaleOrFemale] = useState('');
 
   // Fetch the list of persons (folders)
   useEffect(() => {
@@ -47,6 +49,29 @@ function App() {
     );
   };
 
+  // Save the labels
+  const handleSave = () => {
+    const label = {
+      person: selectedPerson,
+      image: images[currentIndex],
+      happyOrSad,
+      maleOrFemale
+    };
+
+    axios.post('http://localhost:5000/api/label', label)
+      .then(response => {
+        console.log(response.data);
+        alert('Label saved successfully!');
+        // Reset selections
+        setHappyOrSad('');
+        setMaleOrFemale('');
+        handleNext(); // Automatically go to the next image
+      })
+      .catch(error => {
+        console.error('There was an error saving the label!', error);
+      });
+  };
+
   return (
     <div className="App">
       <div className="sidebar">
@@ -82,6 +107,32 @@ function App() {
                 <button onClick={handleNext}>Next</button>
               </div>
             )}
+
+            <div className="labeling">
+              <h3>Label the Image:</h3>
+
+              <div className="question">
+                <label>Is the person Happy or Sad?</label>
+                <select value={happyOrSad} onChange={(e) => setHappyOrSad(e.target.value)}>
+                  <option value="">--Select--</option>
+                  <option value="happy">Happy</option>
+                  <option value="sad">Sad</option>
+                </select>
+              </div>
+
+              <div className="question">
+                <label>Is the person Male or Female?</label>
+                <select value={maleOrFemale} onChange={(e) => setMaleOrFemale(e.target.value)}>
+                  <option value="">--Select--</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </div>
+
+              <button onClick={handleSave} disabled={!happyOrSad || !maleOrFemale}>
+                Save Label
+              </button>
+            </div>
           </>
         )}
       </div>

@@ -2,12 +2,14 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const cors = require('cors');
+const bodyParser = require('body-parser'); // <-- To parse request body
 
 const app = express();
 const port = 5000;
 
-// Enable CORS for all routes
+// Enable CORS and body parsing
 app.use(cors());
+app.use(bodyParser.json()); // <-- To handle JSON body requests
 
 // Serve images from the "dataset" folder
 app.use('/dataset', express.static(path.join(__dirname, 'dataset')));
@@ -34,6 +36,40 @@ app.get('/api/images/:person', (req, res) => {
     }
     const imageFiles = files.filter(file => file.endsWith('.jpg') || file.endsWith('.png') || file.endsWith('.jpeg'));
     res.json(imageFiles);
+  });
+});
+
+// Endpoint to save the labels as JSON
+app.post('/api/label', (req, res) => {
+  const { person, image, happyOrSad, maleOrFemale } = req.body;
+  
+  const labelData = {
+    person,
+    image,
+    happyOrSad,
+    maleOrFemale
+  };
+
+  // Path to the labels JSON file
+  const labelsFilePath = path.join(__dirname, 'labels.json');
+
+  // Read the existing labels file
+  fs.readFile(labelsFilePath, (err, data) => {
+    let labels = [];
+    if (!err && data.length > 0) {
+      labels = JSON.parse(data); // Parse the existing data if any
+    }
+
+    // Add the new label
+    labels.push(labelData);
+
+    // Write the updated labels back to the file
+    fs.writeFile(labelsFilePath, JSON.stringify(labels, null, 2), (err) => {
+      if (err) {
+        return res.status(500).json({ message: 'Unable to save the label' });
+      }
+      res.json({ message: 'Label saved successfully!' });
+    });
   });
 });
 
