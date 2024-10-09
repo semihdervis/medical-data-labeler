@@ -1,0 +1,29 @@
+.App {
+  text-align: center;
+}
+
+.image-container {
+  margin: 20px;
+}
+
+.image-container img {
+  width: 400px;
+  height: auto;
+  object-fit: cover;
+}
+
+.buttons {
+  margin: 20px;
+}
+
+button {
+  padding: 10px 20px;
+  margin: 0 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
