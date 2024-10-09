@@ -9,6 +9,8 @@ function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [happyOrSad, setHappyOrSad] = useState('');
   const [maleOrFemale, setMaleOrFemale] = useState('');
+  const [tshirtColor, setTshirtColor] = useState('');
+  const [haveGlasses, setHaveGlasses] = useState('');
 
   // Fetch the list of persons (folders)
   useEffect(() => {
@@ -55,7 +57,9 @@ function App() {
       person: selectedPerson,
       image: images[currentIndex],
       happyOrSad,
-      maleOrFemale
+      maleOrFemale,
+      tshirtColor,
+      haveGlasses
     };
 
     axios.post('http://localhost:5000/api/label', label)
@@ -65,6 +69,8 @@ function App() {
         // Reset selections
         setHappyOrSad('');
         setMaleOrFemale('');
+        setTshirtColor('');
+        setHaveGlasses('');
         handleNext(); // Automatically go to the next image
       })
       .catch(error => {
@@ -137,15 +143,30 @@ function App() {
               )}
             </div>
 
-            {/* Image Information Sidebar (right of the image) */}
+            {/* Image-Related Labeling Sidebar (right of the image) */}
             <div className="sidebar sidebar-image-info">
-              <h3>Image Information</h3>
-              <p>File Name: {images[currentIndex]}</p>
-              <p>Resolution: 1024x768</p>
-              <p>Size: 500KB</p>
-              {/* Add more image-related information here */}
+              <h3>Image-Related Labeling</h3>
 
-              <button onClick={handleSave} disabled={!happyOrSad || !maleOrFemale}>
+              <div className="question">
+                <label>What is the T-shirt color?</label>
+                <input
+                  type="text"
+                  value={tshirtColor}
+                  onChange={(e) => setTshirtColor(e.target.value)}
+                  placeholder="e.g. Red, Blue"
+                />
+              </div>
+
+              <div className="question">
+                <label>Does the person have glasses?</label>
+                <select value={haveGlasses} onChange={(e) => setHaveGlasses(e.target.value)}>
+                  <option value="">--Select--</option>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </div>
+
+              <button onClick={handleSave} disabled={!happyOrSad || !maleOrFemale || !tshirtColor || !haveGlasses}>
                 Save Label
               </button>
             </div>

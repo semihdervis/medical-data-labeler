@@ -29,7 +29,7 @@
   overflow-y: auto;
 }
 
-/* Image Information Sidebar (right of the image) */
+/* Image-Related Labeling Sidebar (right of the image) */
 .sidebar-image-info {
   background-color: #aed6f1;
   padding: 20px;
@@ -98,7 +98,8 @@ button:disabled {
   margin: 10px 0;
 }
 
-select {
+select, input[type="text"] {
   padding: 5px;
   font-size: 16px;
+  width: 100%;
 }
