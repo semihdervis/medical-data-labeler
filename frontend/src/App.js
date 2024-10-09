@@ -75,6 +75,7 @@ function App() {
   return (
     <div className="App">
       <div className="main-layout">
+        {/* Person List Sidebar (far left) */}
         <div className="sidebar sidebar-person-list">
           <h2>Persons</h2>
           <ul>
@@ -86,6 +87,7 @@ function App() {
           </ul>
         </div>
 
+        {/* Person Information Sidebar (left of the image) */}
         {selectedPerson && (
           <>
             <div className="sidebar sidebar-person-info">
@@ -93,8 +95,28 @@ function App() {
               <p>Age: 30</p>
               <p>Occupation: Engineer</p>
               {/* Add more person-related information here */}
+
+              <h3>Person-Related Labeling</h3>
+              <div className="question">
+                <label>Is the person Happy or Sad?</label>
+                <select value={happyOrSad} onChange={(e) => setHappyOrSad(e.target.value)}>
+                  <option value="">--Select--</option>
+                  <option value="happy">Happy</option>
+                  <option value="sad">Sad</option>
+                </select>
+              </div>
+
+              <div className="question">
+                <label>Is the person Male or Female?</label>
+                <select value={maleOrFemale} onChange={(e) => setMaleOrFemale(e.target.value)}>
+                  <option value="">--Select--</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </div>
             </div>
 
+            {/* Image Section (center) */}
             <div className="image-section">
               {images.length > 0 ? (
                 <div className="image-container">
@@ -113,40 +135,19 @@ function App() {
                   <button onClick={handleNext}>Next</button>
                 </div>
               )}
-
-              <div className="labeling">
-                <h3>Label the Image:</h3>
-
-                <div className="question">
-                  <label>Is the person Happy or Sad?</label>
-                  <select value={happyOrSad} onChange={(e) => setHappyOrSad(e.target.value)}>
-                    <option value="">--Select--</option>
-                    <option value="happy">Happy</option>
-                    <option value="sad">Sad</option>
-                  </select>
-                </div>
-
-                <div className="question">
-                  <label>Is the person Male or Female?</label>
-                  <select value={maleOrFemale} onChange={(e) => setMaleOrFemale(e.target.value)}>
-                    <option value="">--Select--</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                  </select>
-                </div>
-
-                <button onClick={handleSave} disabled={!happyOrSad || !maleOrFemale}>
-                  Save Label
-                </button>
-              </div>
             </div>
 
+            {/* Image Information Sidebar (right of the image) */}
             <div className="sidebar sidebar-image-info">
               <h3>Image Information</h3>
               <p>File Name: {images[currentIndex]}</p>
               <p>Resolution: 1024x768</p>
               <p>Size: 500KB</p>
               {/* Add more image-related information here */}
+
+              <button onClick={handleSave} disabled={!happyOrSad || !maleOrFemale}>
+                Save Label
+              </button>
             </div>
           </>
         )}

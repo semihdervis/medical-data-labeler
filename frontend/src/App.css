@@ -15,7 +15,7 @@
 
 /* Person List Sidebar (far left) */
 .sidebar-person-list {
-  background-color: #8de772;
+  background-color: #ddd;
   padding: 20px;
   width: 200px;
   overflow-y: auto;
@@ -23,7 +23,7 @@
 
 /* Person Information Sidebar (left of the image) */
 .sidebar-person-info {
-  background-color: #f9e79f; /* New background color */
+  background-color: #f9e79f;
   padding: 20px;
   width: 200px;
   overflow-y: auto;
@@ -31,7 +31,7 @@
 
 /* Image Information Sidebar (right of the image) */
 .sidebar-image-info {
-  background-color: #aed6f1; /* New background color */
+  background-color: #aed6f1;
   padding: 20px;
   width: 200px;
   overflow-y: auto;
@@ -92,14 +92,6 @@ button {
 button:disabled {
   cursor: not-allowed;
   opacity: 0.5;
-}
-
-.labeling {
-  margin-top: 20px;
-}
-
-.labeling h3 {
-  margin-bottom: 10px;
 }
 
 .question {
