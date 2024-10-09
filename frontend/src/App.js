@@ -74,64 +74,79 @@ function App() {
 
   return (
     <div className="App">
-      <div className="sidebar">
-        <h2>Persons</h2>
-        <ul>
-          {persons.map((person, index) => (
-            <li key={index} onClick={() => setSelectedPerson(person)}>
-              {person}
-            </li>
-          ))}
-        </ul>
-      </div>
-      
-      <div className="content">
+      <div className="main-layout">
+        <div className="sidebar sidebar-person-list">
+          <h2>Persons</h2>
+          <ul>
+            {persons.map((person, index) => (
+              <li key={index} onClick={() => setSelectedPerson(person)}>
+                {person}
+              </li>
+            ))}
+          </ul>
+        </div>
+
         {selectedPerson && (
           <>
-            <h2>{selectedPerson}'s Images</h2>
+            <div className="sidebar sidebar-person-info">
+              <h3>{selectedPerson}'s Information</h3>
+              <p>Age: 30</p>
+              <p>Occupation: Engineer</p>
+              {/* Add more person-related information here */}
+            </div>
 
-            {images.length > 0 ? (
-              <div className="image-container">
-                <img
-                  src={`http://localhost:5000/dataset/${selectedPerson}/${images[currentIndex]}`}
-                  alt={images[currentIndex]}
-                />
+            <div className="image-section">
+              {images.length > 0 ? (
+                <div className="image-container">
+                  <img
+                    src={`http://localhost:5000/dataset/${selectedPerson}/${images[currentIndex]}`}
+                    alt={images[currentIndex]}
+                  />
+                </div>
+              ) : (
+                <p>No images available for {selectedPerson}</p>
+              )}
+
+              {images.length > 0 && (
+                <div className="buttons">
+                  <button onClick={handlePrev}>Previous</button>
+                  <button onClick={handleNext}>Next</button>
+                </div>
+              )}
+
+              <div className="labeling">
+                <h3>Label the Image:</h3>
+
+                <div className="question">
+                  <label>Is the person Happy or Sad?</label>
+                  <select value={happyOrSad} onChange={(e) => setHappyOrSad(e.target.value)}>
+                    <option value="">--Select--</option>
+                    <option value="happy">Happy</option>
+                    <option value="sad">Sad</option>
+                  </select>
+                </div>
+
+                <div className="question">
+                  <label>Is the person Male or Female?</label>
+                  <select value={maleOrFemale} onChange={(e) => setMaleOrFemale(e.target.value)}>
+                    <option value="">--Select--</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                </div>
+
+                <button onClick={handleSave} disabled={!happyOrSad || !maleOrFemale}>
+                  Save Label
+                </button>
               </div>
-            ) : (
-              <p>No images available for {selectedPerson}</p>
-            )}
+            </div>
 
-            {images.length > 0 && (
-              <div className="buttons">
-                <button onClick={handlePrev}>Previous</button>
-                <button onClick={handleNext}>Next</button>
-              </div>
-            )}
-
-            <div className="labeling">
-              <h3>Label the Image:</h3>
-
-              <div className="question">
-                <label>Is the person Happy or Sad?</label>
-                <select value={happyOrSad} onChange={(e) => setHappyOrSad(e.target.value)}>
-                  <option value="">--Select--</option>
-                  <option value="happy">Happy</option>
-                  <option value="sad">Sad</option>
-                </select>
-              </div>
-
-              <div className="question">
-                <label>Is the person Male or Female?</label>
-                <select value={maleOrFemale} onChange={(e) => setMaleOrFemale(e.target.value)}>
-                  <option value="">--Select--</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                </select>
-              </div>
-
-              <button onClick={handleSave} disabled={!happyOrSad || !maleOrFemale}>
-                Save Label
-              </button>
+            <div className="sidebar sidebar-image-info">
+              <h3>Image Information</h3>
+              <p>File Name: {images[currentIndex]}</p>
+              <p>Resolution: 1024x768</p>
+              <p>Size: 500KB</p>
+              {/* Add more image-related information here */}
             </div>
           </>
         )}
