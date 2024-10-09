@@ -13,15 +13,28 @@
   height: 100vh;
 }
 
-.sidebar {
-  background-color: #f0f0f0;
+/* Person List Sidebar (far left) */
+.sidebar-person-list {
+  background-color: #8de772;
   padding: 20px;
   width: 200px;
   overflow-y: auto;
 }
 
-.sidebar-person-list {
-  background-color: #ddd;
+/* Person Information Sidebar (left of the image) */
+.sidebar-person-info {
+  background-color: #f9e79f; /* New background color */
+  padding: 20px;
+  width: 200px;
+  overflow-y: auto;
+}
+
+/* Image Information Sidebar (right of the image) */
+.sidebar-image-info {
+  background-color: #aed6f1; /* New background color */
+  padding: 20px;
+  width: 200px;
+  overflow-y: auto;
 }
 
 .sidebar h3 {
