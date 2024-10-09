@@ -3,28 +3,44 @@ import axios from 'axios';
 import './App.css';
 
 function App() {
+  const [persons, setPersons] = useState([]);
+  const [selectedPerson, setSelectedPerson] = useState(null);
   const [images, setImages] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0); // Track current image index
+  const [currentIndex, setCurrentIndex] = useState(0);
 
+  // Fetch the list of persons (folders)
   useEffect(() => {
-    // Fetch image file names from the backend
-    axios.get('http://localhost:5000/api/images')
+    axios.get('http://localhost:5000/api/persons')
       .then(response => {
-        setImages(response.data);
+        setPersons(response.data);
       })
       .catch(error => {
-        console.error('There was an error fetching the images!', error);
+        console.error('There was an error fetching the persons!', error);
       });
   }, []);
 
-  // Function to go to the next image
+  // Fetch the images of the selected person
+  useEffect(() => {
+    if (selectedPerson) {
+      axios.get(`http://localhost:5000/api/images/${selectedPerson}`)
+        .then(response => {
+          setImages(response.data);
+          setCurrentIndex(0); // Reset the index when a new person is selected
+        })
+        .catch(error => {
+          console.error('There was an error fetching the images!', error);
+        });
+    }
+  }, [selectedPerson]);
+
+  // Navigate to the next image
   const handleNext = () => {
     setCurrentIndex((prevIndex) =>
       prevIndex === images.length - 1 ? 0 : prevIndex + 1
     );
   };
 
-  // Function to go to the previous image
+  // Navigate to the previous image
   const handlePrev = () => {
     setCurrentIndex((prevIndex) =>
       prevIndex === 0 ? images.length - 1 : prevIndex - 1
@@ -33,26 +49,41 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Image Gallery</h1>
+      <div className="sidebar">
+        <h2>Persons</h2>
+        <ul>
+          {persons.map((person, index) => (
+            <li key={index} onClick={() => setSelectedPerson(person)}>
+              {person}
+            </li>
+          ))}
+        </ul>
+      </div>
+      
+      <div className="content">
+        {selectedPerson && (
+          <>
+            <h2>{selectedPerson}'s Images</h2>
 
-      {/* Display the current image */}
-      {images.length > 0 && (
-        <div className="image-container">
-          <img
-            src={`http://localhost:5000/images/${images[currentIndex]}`}
-            alt={images[currentIndex]}
-          />
-        </div>
-      )}
+            {images.length > 0 ? (
+              <div className="image-container">
+                <img
+                  src={`http://localhost:5000/dataset/${selectedPerson}/${images[currentIndex]}`}
+                  alt={images[currentIndex]}
+                />
+              </div>
+            ) : (
+              <p>No images available for {selectedPerson}</p>
+            )}
 
-      {/* Previous and Next buttons */}
-      <div className="buttons">
-        <button onClick={handlePrev} disabled={images.length === 0}>
-          Previous
-        </button>
-        <button onClick={handleNext} disabled={images.length === 0}>
-          Next
-        </button>
+            {images.length > 0 && (
+              <div className="buttons">
+                <button onClick={handlePrev}>Previous</button>
+                <button onClick={handleNext}>Next</button>
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );
