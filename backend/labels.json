@@ -1,0 +1,23 @@
+[
+  {
+    "person": "person001",
+    "image": "a.jpg",
+    "name": "cat",
+    "surname": "catogullari",
+    "age": "23",
+    "happyOrSad": "happy",
+    "maleOrFemale": "male",
+    "tshirtColor": "red",
+    "haveGlasses": "yes",
+    "wearingHat": "no",
+    "isSmiling": false,
+    "backgroundColor": "White",
+    "location": "",
+    "hairColor": "",
+    "holdingObjects": "",
+    "wearingAccessories": "",
+    "posture": "",
+    "company": "",
+    "wearingShoes": ""
+  }
+]

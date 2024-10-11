@@ -41,14 +41,7 @@ app.get('/api/images/:person', (req, res) => {
 
 // Endpoint to save the labels as JSON
 app.post('/api/label', (req, res) => {
-  const { person, image, happyOrSad, maleOrFemale } = req.body;
-  
-  const labelData = {
-    person,
-    image,
-    happyOrSad,
-    maleOrFemale
-  };
+  const labelData = req.body; // Get all label data from request body
 
   // Path to the labels JSON file
   const labelsFilePath = path.join(__dirname, 'labels.json');
