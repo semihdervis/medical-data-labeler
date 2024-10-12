@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './App.css';
-import PersonList from './PersonList';
-import PersonInfo from './PersonInfo';
-import ImageGallery from './ImageGallery';
-import ImageLabeling from './ImageLabeling';
+import PersonList from './components/PersonList';
+import PersonInfo from './components/PersonInfo';
+import ImageGallery from './components/ImageGallery';
+import ImageLabeling from './components/ImageLabeling';
 
 function App() {
   const [persons, setPersons] = useState([]);

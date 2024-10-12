@@ -1,4 +1,5 @@
-Person    ,Image ,Name ,Surname ,Age ,HappyOrSad ,MaleOrFemale ,TshirtColor ,HaveGlasses ,WearingHat ,IsSmiling ,BackgroundColor
-person002 ,c.jpg ,lol  ,lmao    , 23 ,happy      ,female       ,sdf         ,no          ,no         ,false     ,dslkjf
-person001 ,a.jpg ,lol  ,lmao    , 23 ,sad        ,male         ,er          ,yes         ,no         ,false     ,hsddhd
-person001 ,b.jpg ,kedi ,kedigil ,979 ,sad        ,male         ,kitty       ,yes         ,no         ,true      ,mavi
+Person    ,Image ,Name    ,Surname ,Age ,HappyOrSad ,MaleOrFemale ,TshirtColor ,HaveGlasses ,WearingHat ,IsSmiling ,BackgroundColor
+person002 ,c.jpg ,lol     ,lmao    , 23 ,happy      ,female       ,sdf         ,no          ,no         ,false     ,dslkjf
+person001 ,a.jpg ,lol     ,lmao    , 23 ,sad        ,male         ,er          ,yes         ,no         ,false     ,hsddhd
+person001 ,b.jpg ,kedi    ,kedigil ,979 ,sad        ,male         ,kitty       ,yes         ,no         ,true      ,mavi
+person001 ,a.jpg ,my-base ,kopke   ,  2 ,sad        ,female       ,red         ,no          ,yes        ,false     ,white
