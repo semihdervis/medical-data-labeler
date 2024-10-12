@@ -20,13 +20,6 @@ function App() {
     wearingHat: '',
     isSmiling: false,
     backgroundColor: '',
-    location: '',
-    hairColor: '',
-    holdingObjects: '',
-    wearingAccessories: '',
-    posture: '',
-    company: '',
-    wearingShoes: '',
   });
 
   // Fetch the list of persons (folders)
@@ -100,13 +93,6 @@ function App() {
           wearingHat: '',
           isSmiling: false,
           backgroundColor: '',
-          location: '',
-          hairColor: '',
-          holdingObjects: '',
-          wearingAccessories: '',
-          posture: '',
-          company: '',
-          wearingShoes: '',
         });
         handleNext(); // Automatically go to the next image
       })

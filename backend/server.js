@@ -2,14 +2,32 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const cors = require('cors');
-const bodyParser = require('body-parser'); // <-- To parse request body
+const bodyParser = require('body-parser');
+const csvWriter = require('csv-writer').createObjectCsvWriter;
+const csvParser = require('csv-parser');
 
 const app = express();
 const port = 5000;
 
-// Enable CORS and body parsing
 app.use(cors());
-app.use(bodyParser.json()); // <-- To handle JSON body requests
+app.use(bodyParser.json());
+
+// CSV file path
+const csvFilePath = path.join(__dirname, 'labels.csv');
+
+// Utility function to generate the CSV writer with dynamic headers
+function createCsvWriterWithDynamicHeaders(data, append = true) {
+  const headers = Object.keys(data).map(key => ({
+    id: key,
+    title: key.charAt(0).toUpperCase() + key.slice(1),
+  }));
+  
+  return csvWriter({
+    path: csvFilePath,
+    header: headers,
+    append: append, // If append is true, we don't write the headers again
+  });
+}
 
 // Serve images from the "dataset" folder
 app.use('/dataset', express.static(path.join(__dirname, 'dataset')));
@@ -39,31 +57,43 @@ app.get('/api/images/:person', (req, res) => {
   });
 });
 
-// Endpoint to save the labels as JSON
+// Endpoint to save the labels as CSV with dynamic headers
 app.post('/api/label', (req, res) => {
   const labelData = req.body; // Get all label data from request body
 
-  // Path to the labels JSON file
-  const labelsFilePath = path.join(__dirname, 'labels.json');
+  // Check if the CSV file already exists
+  const fileExists = fs.existsSync(csvFilePath);
+  const fileIsEmpty = fileExists ? fs.statSync(csvFilePath).size === 0 : true;
 
-  // Read the existing labels file
-  fs.readFile(labelsFilePath, (err, data) => {
-    let labels = [];
-    if (!err && data.length > 0) {
-      labels = JSON.parse(data); // Parse the existing data if any
-    }
+  // Create the CSV writer with dynamic headers based on the incoming data
+  const csv = createCsvWriterWithDynamicHeaders(labelData, append = fileExists && !fileIsEmpty);
 
-    // Add the new label
-    labels.push(labelData);
-
-    // Write the updated labels back to the file
-    fs.writeFile(labelsFilePath, JSON.stringify(labels, null, 2), (err) => {
-      if (err) {
-        return res.status(500).json({ message: 'Unable to save the label' });
-      }
+  // Write the label data to the CSV file
+  csv.writeRecords([labelData])
+    .then(() => {
       res.json({ message: 'Label saved successfully!' });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ message: 'Unable to save the label' });
     });
-  });
+});
+
+// Endpoint to get all labels from the CSV file
+app.get('/api/labels', (req, res) => {
+  const results = [];
+
+  // Check if CSV file exists before reading
+  if (fs.existsSync(csvFilePath)) {
+    fs.createReadStream(csvFilePath)
+      .pipe(csvParser())
+      .on('data', (data) => results.push(data))
+      .on('end', () => {
+        res.json(results); // Send the CSV data as JSON response
+      });
+  } else {
+    res.json([]); // If file doesn't exist, return an empty array
+  }
 });
 
 app.listen(port, () => {

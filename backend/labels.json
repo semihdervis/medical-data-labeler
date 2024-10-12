@@ -19,5 +19,26 @@
     "posture": "",
     "company": "",
     "wearingShoes": ""
+  },
+  {
+    "person": "person002",
+    "image": "c.jpg",
+    "name": "kedi",
+    "surname": "mamasi",
+    "age": "100",
+    "happyOrSad": "happy",
+    "maleOrFemale": "female",
+    "tshirtColor": "Blue",
+    "haveGlasses": "yes",
+    "wearingHat": "no",
+    "isSmiling": false,
+    "backgroundColor": "Black",
+    "location": "",
+    "hairColor": "",
+    "holdingObjects": "",
+    "wearingAccessories": "",
+    "posture": "",
+    "company": "",
+    "wearingShoes": ""
   }
 ]
