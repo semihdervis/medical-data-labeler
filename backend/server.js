@@ -3,31 +3,40 @@ const path = require('path');
 const fs = require('fs');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const csvWriter = require('csv-writer').createObjectCsvWriter;
-const csvParser = require('csv-parser');
+const mongoose = require('mongoose');
 
 const app = express();
 const port = 5000;
 
+// MongoDB URI
+const mongoURI = 'mongodb+srv://semihdervis:dbognom@cluster0.js1lg.mongodb.net/my_new_database?retryWrites=true&w=majority&appName=Cluster0';
+
+// Connect to MongoDB using Mongoose
+mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.log(err));
+
+// Define Mongoose Schema for Labels
+const labelSchema = new mongoose.Schema({
+  person: String,
+  image: String,
+  name: String,
+  surname: String,
+  age: String,
+  happyOrSad: String,
+  maleOrFemale: String,
+  tshirtColor: String,
+  haveGlasses: String,
+  wearingHat: String,
+  isSmiling: Boolean,
+  backgroundColor: String,
+}, { timestamps: true });
+
+const Label = mongoose.model('Label', labelSchema); // Mongoose model for labels
+
+// Enable CORS and body parsing
 app.use(cors());
 app.use(bodyParser.json());
-
-// CSV file path
-const csvFilePath = path.join(__dirname, 'labels.csv');
-
-// Utility function to generate the CSV writer with dynamic headers
-function createCsvWriterWithDynamicHeaders(data, append = true) {
-  const headers = Object.keys(data).map(key => ({
-    id: key,
-    title: key.charAt(0).toUpperCase() + key.slice(1),
-  }));
-  
-  return csvWriter({
-    path: csvFilePath,
-    header: headers,
-    append: append, // If append is true, we don't write the headers again
-  });
-}
 
 // Serve images from the "dataset" folder
 app.use('/dataset', express.static(path.join(__dirname, 'dataset')));
@@ -57,42 +66,30 @@ app.get('/api/images/:person', (req, res) => {
   });
 });
 
-// Endpoint to save the labels as CSV with dynamic headers
-app.post('/api/label', (req, res) => {
-  const labelData = req.body; // Get all label data from request body
+// Endpoint to save the labels to MongoDB
+app.post('/api/label', async (req, res) => {
+  try {
+    const labelData = req.body; // Get all label data from request body
 
-  // Check if the CSV file already exists
-  const fileExists = fs.existsSync(csvFilePath);
-  const fileIsEmpty = fileExists ? fs.statSync(csvFilePath).size === 0 : true;
+    // Create a new Label document and save it to the database
+    const label = new Label(labelData);
+    await label.save();
 
-  // Create the CSV writer with dynamic headers based on the incoming data
-  const csv = createCsvWriterWithDynamicHeaders(labelData, append = fileExists && !fileIsEmpty);
-
-  // Write the label data to the CSV file
-  csv.writeRecords([labelData])
-    .then(() => {
-      res.json({ message: 'Label saved successfully!' });
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).json({ message: 'Unable to save the label' });
-    });
+    res.json({ message: 'Label saved successfully!', label });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Unable to save the label' });
+  }
 });
 
-// Endpoint to get all labels from the CSV file
-app.get('/api/labels', (req, res) => {
-  const results = [];
-
-  // Check if CSV file exists before reading
-  if (fs.existsSync(csvFilePath)) {
-    fs.createReadStream(csvFilePath)
-      .pipe(csvParser())
-      .on('data', (data) => results.push(data))
-      .on('end', () => {
-        res.json(results); // Send the CSV data as JSON response
-      });
-  } else {
-    res.json([]); // If file doesn't exist, return an empty array
+// Endpoint to get all labels from MongoDB
+app.get('/api/labels', async (req, res) => {
+  try {
+    const labels = await Label.find(); // Fetch all labels from MongoDB
+    res.json(labels);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Unable to fetch labels' });
   }
 });
 
