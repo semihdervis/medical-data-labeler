@@ -68,17 +68,29 @@ app.get('/api/images/:person', (req, res) => {
 
 // Endpoint to save the labels to MongoDB
 app.post('/api/label', async (req, res) => {
+  const { person, image } = req.body; // Get person and image info from request body
+
   try {
-    const labelData = req.body; // Get all label data from request body
+    // Check if a label for this specific image and person already exists
+    const existingLabel = await Label.findOne({ person, image });
 
-    // Create a new Label document and save it to the database
-    const label = new Label(labelData);
-    await label.save();
-
-    res.json({ message: 'Label saved successfully!', label });
+    if (existingLabel) {
+      // If it exists, update the existing label with the new data
+      const updatedLabel = await Label.findOneAndUpdate(
+        { person, image },  // Match condition
+        req.body,           // Update with the entire request body
+        { new: true }       // Return the updated document
+      );
+      res.json({ message: 'Label updated successfully!', label: updatedLabel });
+    } else {
+      // If it doesn't exist, create a new label
+      const newLabel = new Label(req.body);
+      await newLabel.save();
+      res.json({ message: 'Label created successfully!', label: newLabel });
+    }
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Unable to save the label' });
+    res.status(500).json({ message: 'Unable to save or update the label' });
   }
 });
 
