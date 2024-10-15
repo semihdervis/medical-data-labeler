@@ -1,6 +1,7 @@
+// src/components/ImageDisplay.js
 import React from 'react';
 
-function ImageGallery({ images, currentIndex, handlePrev, handleNext, selectedPerson }) {
+const ImageDisplay = ({ images, currentIndex, handleNext, handlePrev, selectedPerson }) => {
   return (
     <div className="image-section">
       {images.length > 0 ? (
@@ -13,6 +14,7 @@ function ImageGallery({ images, currentIndex, handlePrev, handleNext, selectedPe
       ) : (
         <p>No images available for {selectedPerson}</p>
       )}
+
       {images.length > 0 && (
         <div className="buttons">
           <button onClick={handlePrev}>Previous</button>
@@ -21,6 +23,6 @@ function ImageGallery({ images, currentIndex, handlePrev, handleNext, selectedPe
       )}
     </div>
   );
-}
+};
 
-export default ImageGallery;
+export default ImageDisplay;

@@ -1,9 +1,11 @@
+// src/components/ImageLabelForm.js
 import React from 'react';
 
-function ImageLabeling({ labels, handleLabelChange, handleSave }) {
+const ImageLabelForm = ({ labels, handleLabelChange, handleSave }) => {
   return (
     <div className="sidebar sidebar-image-info">
       <h3>Image-Related Labeling</h3>
+
       <div className="question">
         <label>What is the T-shirt color?</label>
         <input
@@ -14,22 +16,33 @@ function ImageLabeling({ labels, handleLabelChange, handleSave }) {
           placeholder="e.g. Red, Blue"
         />
       </div>
+
       <div className="question">
         <label>Does the person have glasses?</label>
-        <select name="haveGlasses" value={labels.haveGlasses} onChange={handleLabelChange}>
+        <select
+          name="haveGlasses"
+          value={labels.haveGlasses}
+          onChange={handleLabelChange}
+        >
           <option value="">--Select--</option>
           <option value="yes">Yes</option>
           <option value="no">No</option>
         </select>
       </div>
+
       <div className="question">
         <label>Is the person wearing a hat?</label>
-        <select name="wearingHat" value={labels.wearingHat} onChange={handleLabelChange}>
+        <select
+          name="wearingHat"
+          value={labels.wearingHat}
+          onChange={handleLabelChange}
+        >
           <option value="">--Select--</option>
           <option value="yes">Yes</option>
           <option value="no">No</option>
         </select>
       </div>
+
       <div className="question">
         <label>Is the person smiling?</label>
         <input
@@ -39,6 +52,7 @@ function ImageLabeling({ labels, handleLabelChange, handleSave }) {
           onChange={handleLabelChange}
         />
       </div>
+
       <div className="question">
         <label>What is the background color?</label>
         <input
@@ -49,9 +63,10 @@ function ImageLabeling({ labels, handleLabelChange, handleSave }) {
           placeholder="e.g. White, Black"
         />
       </div>
+
       <button onClick={handleSave}>Save Label</button>
     </div>
   );
-}
+};
 
-export default ImageLabeling;
+export default ImageLabelForm;
