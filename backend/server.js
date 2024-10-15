@@ -94,16 +94,22 @@ app.post('/api/label', async (req, res) => {
   }
 });
 
-// Endpoint to get all labels from MongoDB
+// Endpoint to get the label for a specific person and image
 app.get('/api/labels', async (req, res) => {
+  const { person, image } = req.query;
   try {
-    const labels = await Label.find(); // Fetch all labels from MongoDB
-    res.json(labels);
+    const label = await Label.findOne({ person, image }); // Fetch label by person and image
+    if (label) {
+      res.json(label); // Return the label data if found
+    } else {
+      res.json(null); // Return null if no label exists
+    }
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Unable to fetch labels' });
+    res.status(500).json({ message: 'Unable to fetch label' });
   }
 });
+
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
