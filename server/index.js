@@ -7,7 +7,7 @@ dotenv.config();
 const UserModel = require('./models/Users');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3001;
 const uri = process.env.MONGODB_URI;
 
 app.use(cors());
@@ -21,6 +21,51 @@ connection.once('open', () => {
   console.log('MongoDB connection established successfully');
 });
 
+// Utility function to compare schemas
+const compareSchemas = (previousSchema, newSchema) => {
+  const fieldsToAdd = {};
+  const fieldsToRemove = {};
+
+  // Add or update fields from new schema
+  Object.keys(newSchema).forEach((field) => {
+    if (!previousSchema[field]) {
+      // New field detected
+      fieldsToAdd[field] = newSchema[field].defaultValue || null;
+    }
+  });
+
+  // Remove fields that are in the previous schema but not in the new one
+  Object.keys(previousSchema).forEach((field) => {
+    if (!newSchema[field]) {
+      // Field exists in previous schema but not in new schema
+      fieldsToRemove[field] = 1;
+    }
+  });
+
+  return { fieldsToAdd, fieldsToRemove };
+};
+
+// Function to update schema fields in the MongoDB collection
+const updateSchemaFields = async () => {
+  const currentSchema = UserModel.getDynamicUsers(); // Get the current schema
+  const newSchema = UserModel.ReReadSchema(); // Correctly read new schema from the config.json
+  const { fieldsToAdd, fieldsToRemove } = compareSchemas(currentSchema.obj, newSchema.obj); // Compare schemas using 'obj'
+
+  if (Object.keys(fieldsToAdd).length > 0) {
+    await UserModel.DynamicUsers.updateMany({}, { $set: fieldsToAdd }); // Add new fields
+  }
+  if (Object.keys(fieldsToRemove).length > 0) {
+    await UserModel.DynamicUsers.updateMany({}, { $unset: fieldsToRemove }); // Remove old fields
+  }
+};
+
+// Run schema update when the server starts
+updateSchemaFields().then(() => {
+  console.log("Documents updated successfully!");
+}).catch((error) => {
+  console.error("Error updating documents:", error);
+});
+
 // Add a user
 app.post("/add-user", async (req, res) => {
   const { name, email, age } = req.body;
@@ -29,7 +74,7 @@ app.post("/add-user", async (req, res) => {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
-  const newUser = new UserModel({ name, email, age });
+  const newUser = new UserModel.DynamicUsers({ name, email, age });
 
   try {
     await newUser.save();
@@ -43,7 +88,7 @@ app.post("/add-user", async (req, res) => {
 
 // Get all users
 app.get('/getUsers', (req, res) => {
-  UserModel.find()
+  UserModel.DynamicUsers.find()
     .then(users => res.json(users))
     .catch(err => res.status(400).json('Error: ' + err));
 });
@@ -72,17 +117,26 @@ app.post('/add-field', async (req, res) => {
       return res.status(400).send('Invalid field type');
   }
 
+  // Add the new field to all documents
   try {
-    const updateResult = await UserModel.updateMany(
-      { [fieldName]: { $exists: false } }, // Only add the field if it doesn't already exist
-      { $set: { [fieldName]: defaultValue } }
-    );
+    await updateSchemaFields(); // Update schema with the new field
+    console.log("Documents updated successfully!");
     res.send(`Added field '${fieldName}' of type '${fieldType}' to all users.`);
-    console.log(`Added field '${fieldName}' of type '${fieldType}' to all users.`, updateResult);
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error("Error updating documents:", error);
     res.status(500).send('Error adding field to users.');
   }
+});
+
+// Refresh fields manually
+app.get('/refresh-fields', async (req, res) => {
+  updateSchemaFields().then(() => {
+    console.log("Documents updated successfully!");
+    res.send('Fields updated successfully');
+  }).catch((error) => {
+    console.error("Error updating fields:", error);
+    res.status(500).send('Error updating fields');
+  });
 });
 
 // Start server

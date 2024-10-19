@@ -2,24 +2,32 @@ const mongoose = require('mongoose');
 const fs = require('fs');
 const path = require('path');
 
-const schemaPath = path.join(__dirname, 'userSchema.json');
+const schemaPath = path.join(__dirname, 'config.json');
 const schemaData = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
 
-const DynamicUserSchema = new mongoose.Schema(schemaData, { strict: false });
+let DynamicUserSchema = new mongoose.Schema(schemaData, { strict: false });
 
-const DynamicUsers = mongoose.model('users', DynamicUserSchema);
+let DynamicUsers = mongoose.models.users || mongoose.model('users', DynamicUserSchema); // Check if model already exists
 
-module.exports = DynamicUsers;
+const getDynamicUsers = () => {
+  return DynamicUserSchema;
+};
 
+const ReReadSchema = () => {
+  // Reload schema
+  DynamicUserSchema = new mongoose.Schema(JSON.parse(fs.readFileSync(schemaPath, 'utf8')), { strict: false });
+  
+  // Only create model if it doesn't already exist
+  if (mongoose.models.users) {
+    delete mongoose.models.users; // Remove the old model if it exists
+  }
+  
+  DynamicUsers = mongoose.model('users', DynamicUserSchema);
+  return DynamicUserSchema;
+};
 
-/*
-const UserSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  age: { type: Number, required: true },
-  email: { type: String, required: true },
-}, { strict: false }); // Allows for dynamic fields to be added
-
-const Users = mongoose.model('users', UserSchema);
-
-module.exports = Users;
-*/
+module.exports = {
+  DynamicUsers,
+  getDynamicUsers,
+  ReReadSchema
+};

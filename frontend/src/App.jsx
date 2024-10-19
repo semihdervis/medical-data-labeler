@@ -75,6 +75,18 @@ function App() {
     return Array.from(fieldNames); // Convert Set to Array
   };
 
+  const refresh = async () => {
+    try {
+      const response = await axios.get('http://localhost:3001/refresh-fields'); // Adjust to GET
+      console.log('User added response:', response.data); 
+      fetchUsers(); 
+    }
+    catch (error) {
+      console.error(error);
+    }
+  };
+  
+
   const fieldNames = getAllFieldNames(); // Get field names dynamically from users
 
   return (
@@ -131,6 +143,10 @@ function App() {
           </button>
           <button className="btn btn-secondary mb-3" onClick={addUser}>
             Add User
+          </button>
+
+          <button className="btn btn-secondary mb-3" onClick={refresh}>
+            Refresh Fields
           </button>
 
           <table className="table table-striped">

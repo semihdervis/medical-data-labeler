@@ -16,5 +16,11 @@
         "required": true,
         "match": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
         "description": "'email' must be a valid email format if the field exists"
-    }
+    },
+	"hakan": {
+		"type": "String",
+		"default": "empty",
+		"required": true,
+        "description": "'email' must be a valid email format if the field exists"
+	}
 }
