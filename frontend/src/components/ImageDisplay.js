@@ -1,7 +1,18 @@
 // src/components/ImageDisplay.js
-import React from 'react';
+import React, { useState } from 'react';
+import ImageModal from './ImageModal';
 
 const ImageDisplay = ({ images, currentIndex, handleNext, handlePrev, selectedPerson }) => {
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const handleImageClick = () => {
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
   return (
     <div className="image-section">
       {images.length > 0 ? (
@@ -9,6 +20,8 @@ const ImageDisplay = ({ images, currentIndex, handleNext, handlePrev, selectedPe
           <img
             src={`http://localhost:5000/dataset/${selectedPerson}/${images[currentIndex]}`}
             alt={images[currentIndex]}
+            onClick={handleImageClick} // Add click handler
+            style={{ cursor: 'pointer' }} // Change cursor to indicate clickability
           />
         </div>
       ) : (
@@ -21,6 +34,13 @@ const ImageDisplay = ({ images, currentIndex, handleNext, handlePrev, selectedPe
           <button onClick={handleNext}>Next</button>
         </div>
       )}
+
+      {/* Modal for enlarged image */}
+      <ImageModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        imageSrc={`http://localhost:5000/dataset/${selectedPerson}/${images[currentIndex]}`} // Pass current image src
+      />
     </div>
   );
 };
