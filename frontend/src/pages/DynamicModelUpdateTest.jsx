@@ -14,7 +14,7 @@ function DynamicModelUpdateTest() {
   // Fetch users from the server
   const fetchUsers = () => {
     axios
-      .get('http://localhost:3001/getUsers')
+      .get('http://localhost:3001/api/getUsers')
       .then((response) => {
         setUsers(response.data);
         console.log(response.data);
