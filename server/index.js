@@ -4,6 +4,7 @@ const cors = require('cors');
 const projectsRouter = require('./api/ProjectManagement');
 const userManagerRouter = require('./api/UserManager');
 
+
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -30,6 +31,7 @@ connection.once('open', () => {
 // Use routes
 app.use('/api', projectsRouter);
 app.use('/api', userManagerRouter);
+
 
 // Start server
 app.listen(PORT, () => {

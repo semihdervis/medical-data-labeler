@@ -4,6 +4,7 @@ import axios from 'axios';
 function ProjectsManagamentTest() {
   const [projects, setProjects] = useState([]);
   const [newProjectName, setNewProjectName] = useState('');
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchProjects();
@@ -12,9 +13,11 @@ function ProjectsManagamentTest() {
   const fetchProjects = async () => {
     try {
       const response = await axios.get('/api/projects');
-      setProjects(response.data);
+      const projectsMap = response.data.projects;
+      const projectsArray = Object.values(projectsMap); // Convert map to array
+      setProjects(projectsArray);
     } catch (error) {
-      console.error('Error fetching projects:', error);
+      setError('Error fetching projects');
     }
   };
 
@@ -24,22 +27,23 @@ function ProjectsManagamentTest() {
       setProjects([...projects, response.data]);
       setNewProjectName('');
     } catch (error) {
-      console.error('Error creating project:', error);
+      setError('Error creating project');
     }
   };
 
   const removeProject = async (id) => {
     try {
-      await axios.delete(`/api/projects/${id}`);
-      setProjects(projects.filter(project => project.id !== id));
+      await axios.delete(`/api/projects/${_id}`);
+      setProjects(projects.filter(project => project._id !== id));
     } catch (error) {
-      console.error('Error removing project:', error);
+      setError('Error removing project');
     }
   };
 
   return (
     <div>
       <h1>Projects Management</h1>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       <input
         type="text"
         value={newProjectName}
@@ -49,9 +53,9 @@ function ProjectsManagamentTest() {
       <button onClick={createProject}>Create Project</button>
       <ul>
         {projects.map(project => (
-          <li key={project.id}>
+          <li key={project._id}>
             {project.name}
-            <button onClick={() => removeProject(project.id)}>Remove</button>
+            <button onClick={() => removeProject(project._id)}>Remove</button>
           </li>
         ))}
       </ul>
