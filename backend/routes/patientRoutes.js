@@ -9,7 +9,10 @@ router.post('/', patientController.createPatient);
 router.get('/', patientController.getAllPatients);
 
 // Get a patient by ID
-router.get('/:id', patientController.getPatientById);
+//router.get('/:id', patientController.getPatientById);
+
+// Get patients by project ID
+router.get('/:projectId', patientController.getPatientsByProjectId);
 
 // Update a patient by ID
 router.put('/:id', patientController.updatePatient);

@@ -1,6 +1,7 @@
 const express = require('express');
 const connectDB = require('./config/db');
 const dotenv = require('dotenv');
+const cors = require('cors');
 
 // Import routes
 const userRoutes = require('./routes/userRoutes');
@@ -15,6 +16,9 @@ dotenv.config();
 // Initialize the app
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Enable CORS
+app.use(cors());
 
 // Connect to the database
 connectDB();

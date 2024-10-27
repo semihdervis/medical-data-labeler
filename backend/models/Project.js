@@ -9,8 +9,8 @@ const projectSchema = new mongoose.Schema({
       {
         label_id: { type: mongoose.Schema.Types.ObjectId, auto: true },
         label_question: { type: String, required: true },
-        input_type: { type: String, required: true },
-        options: [String] // Optional dropdown options
+        input_type: { type: String, required: true }, // number
+        options: [mongoose.Schema.Types.Mixed] // Optional dropdown options
       }
     ],
     image_labels: [

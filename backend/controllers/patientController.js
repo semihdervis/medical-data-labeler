@@ -36,6 +36,26 @@ const getAllPatients = async (req, res) => {
   }
 };
 
+// Get patients by project ID
+const getPatientsByProjectId = async (req, res) => {
+  try {
+    const projectId = req.params.projectId;
+
+    // Ensure project exists
+    const project = await Project.findById(projectId);
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    const patients = await Patient.find({ project_id: projectId });
+    res.status(200).json(patients);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching patients by project ID', error: error.message });
+  }
+};
+
+
+
 // Get a patient by ID
 const getPatientById = async (req, res) => {
   try {
@@ -88,6 +108,7 @@ const deletePatient = async (req, res) => {
 module.exports = {
   createPatient,
   getAllPatients,
+  getPatientsByProjectId,
   getPatientById,
   updatePatient,
   deletePatient
