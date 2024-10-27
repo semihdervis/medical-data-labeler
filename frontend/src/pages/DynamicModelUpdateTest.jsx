@@ -14,7 +14,7 @@ function DynamicModelUpdateTest() {
   // Fetch users from the server
   const fetchUsers = () => {
     axios
-      .get('http://localhost:3001/api/getUsers')
+      .get('/api/users/getUsers')
       .then((response) => {
         setUsers(response.data);
         console.log(response.data);
@@ -36,7 +36,7 @@ function DynamicModelUpdateTest() {
     console.log({ fieldName: newField, fieldType: newFieldType }); // Debugging: Check data before sending
 
     axios
-      .post('http://localhost:3001/add-field', {
+      .post('/api/users/add-field', {
         fieldName: newField,
         fieldType: newFieldType,
       })
@@ -50,7 +50,7 @@ function DynamicModelUpdateTest() {
 
   const addUser = async () => {
     try {
-      const response = await axios.post('http://localhost:3001/add-user', {
+      const response = await axios.post('/api/users/add-user', {
         name: newName,
         age: newAge,
         email: newEmail
@@ -77,7 +77,7 @@ function DynamicModelUpdateTest() {
 
   const refresh = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/refresh-fields'); // Adjust to GET
+      const response = await axios.get('/api/users/refresh-fields'); // Adjust to GET
       console.log('User added response:', response.data); 
       fetchUsers(); 
     }

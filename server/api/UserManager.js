@@ -1,11 +1,10 @@
 const express = require('express');
 const UserModel = require('../models/UserModel.js'); // Import UserModel if it exists
-const { model } = require('mongoose');
 
 const router = express.Router();
 
 const compareSchemas = (previousSchema, newSchema) => {
-    const fieldsToAdd = {};
+    const fieldsToAdd = {};t
     const fieldsToRemove = {};
 
     // Add or update fields from new schema
@@ -107,9 +106,11 @@ router.post("/add-user", async (req, res) => {
 
 // Get all users
 router.get('/getUsers', (req, res) => {
+
     UserModel.DynamicUsers.find() // extremely important to use the DynamicUsers model, not the User model
     .then(users => res.json(users))
     .catch(err => res.status(400).json('Error: ' + err));
+    
 });
 
 // Get a user by ID

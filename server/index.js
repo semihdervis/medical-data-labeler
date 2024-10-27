@@ -4,14 +4,13 @@ const cors = require('cors');
 const projectsRouter = require('./api/ProjectManagement');
 const userManagerRouter = require('./api/UserManager');
 
-
 const dotenv = require('dotenv');
 dotenv.config();
 
 const uri = `${process.env.MONGODB_URI}/test`;
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = 3001;
 
 // Middleware
 app.use(cors());
@@ -29,9 +28,8 @@ connection.once('open', () => {
 });
 
 // Use routes
-app.use('/api', projectsRouter);
-app.use('/api', userManagerRouter);
-
+app.use('/api/projects', projectsRouter); // Separate base path for projects
+app.use('/api/users', userManagerRouter);  // Separate base path for users
 
 // Start server
 app.listen(PORT, () => {

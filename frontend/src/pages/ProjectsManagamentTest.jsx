@@ -1,29 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './ProjectsManagementTest.css'; // Import the CSS file
 
-function ProjectsManagamentTest() {
-  const [projects, setProjects] = useState([]);
+const ProjectsManagementTest = () => {
+  const [projects, setProjects] = useState([]); // Ensure initial state is an array
   const [newProjectName, setNewProjectName] = useState('');
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await axios.get('/api/projects/get');
+        console.log('Fetched projects:', response.data); // Debugging line
+        if (Array.isArray(response.data)) {
+          setProjects(response.data); // Ensure response data is an array
+        } else {
+          setError('Unexpected response format');
+        }
+      } catch (error) {
+        console.error('Error fetching projects:', error); // Debugging line
+        setError('Error fetching projects');
+      }
+    };
+
     fetchProjects();
   }, []);
 
-  const fetchProjects = async () => {
+  const addProject = async () => {
     try {
-      const response = await axios.get('/api/projects');
-      const projectsMap = response.data.projects;
-      const projectsArray = Object.values(projectsMap); // Convert map to array
-      setProjects(projectsArray);
-    } catch (error) {
-      setError('Error fetching projects');
-    }
-  };
-
-  const createProject = async () => {
-    try {
-      const response = await axios.post('/api/projects', { name: newProjectName });
+      const response = await axios.post('/api/projects/add', { name: newProjectName });
       setProjects([...projects, response.data]);
       setNewProjectName('');
     } catch (error) {
@@ -33,7 +38,7 @@ function ProjectsManagamentTest() {
 
   const removeProject = async (id) => {
     try {
-      await axios.delete(`/api/projects/${_id}`);
+      await axios.delete(`/api/projects/${id}`);
       setProjects(projects.filter(project => project._id !== id));
     } catch (error) {
       setError('Error removing project');
@@ -41,16 +46,16 @@ function ProjectsManagamentTest() {
   };
 
   return (
-    <div>
+    <div className="container">
       <h1>Projects Management</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p className="error">{error}</p>}
       <input
         type="text"
         value={newProjectName}
         onChange={(e) => setNewProjectName(e.target.value)}
-        placeholder="New Project Name"
+        placeholder="Enter project name"
       />
-      <button onClick={createProject}>Create Project</button>
+      <button onClick={addProject}>Add Project</button>
       <ul>
         {projects.map(project => (
           <li key={project._id}>
@@ -61,6 +66,6 @@ function ProjectsManagamentTest() {
       </ul>
     </div>
   );
-}
+};
 
-export default ProjectsManagamentTest;
+export default ProjectsManagementTest;
