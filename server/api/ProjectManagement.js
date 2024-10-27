@@ -58,10 +58,10 @@ router.delete('/:id', async (req, res) => {
 });
 
 // Sync projects from folders
-router.post('/sync', async (req, res) => {
+/* router.get('/sync', async (req, res) => {
   try {
     const folders = fs.readdirSync(projectsDir);
-    const syncedProjects = [];
+    const syncedProjects = Project.find();
 
     for (const folder of folders) {
       const configPath = path.join(projectsDir, folder, 'config.json');
@@ -70,15 +70,57 @@ router.post('/sync', async (req, res) => {
         let project = await Project.findById(folder);
 
         if (!project) {
+          console.log('Creating project:', config); // Debugging line
           project = new Project({ _id: folder, name: config.name });
           await project.save();
           syncedProjects.push(project);
+          res.json(project);
+        }
+        else {
+          console.log('Project already exists:', project); // Debugging line
         }
       }
     }
 
-    res.json({ message: 'Projects synced', projects: syncedProjects });
+    res.json(syncedProjects);
   } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});*/
+
+
+router.get('/sync', async (req, res) => {
+  try {
+    const projects = await Project.find();
+    console.log('Fetched projects:', projects); // Debugging line
+
+    const folders = fs.readdirSync(projectsDir);
+
+    for (const folder of folders) {
+      const configPath = path.join(projectsDir, folder, 'config.json');
+      if (fs.existsSync(configPath)) {
+        try {
+          const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+          let project = await Project.findById(folder);
+
+          if (!project) {
+            console.log('Creating project:', config); // Debugging line
+            project = new Project({ _id: folder, name: config.name });
+            await project.save();
+            projects.push(project);
+          } else {
+            console.log('Project already exists:', project); // Debugging line
+          }
+        } catch (jsonError) {
+          console.error(`Error parsing JSON for ${configPath}:`, jsonError); // Log JSON parsing error
+        }
+      }
+    }
+
+    res.json(projects); // Ensure response is an array of projects
+
+  } catch (err) {
+    console.error('Error syncing projects:', err); // Debugging line
     res.status(500).json({ message: err.message });
   }
 });

@@ -45,6 +45,22 @@ const ProjectsManagementTest = () => {
     }
   };
 
+  const syncProjects = async () => {
+    try {
+      console.log('Syncing projects...'); // Debugging line
+      const response = await axios.get('/api/projects/sync');
+      console.log('Synced projects:', response.data); // Debugging line
+      if (Array.isArray(response.data)) {
+        setProjects(response.data); // Ensure response data is an array
+      } else {
+        setError('Unexpected response format');
+      }
+    } catch (error) {
+      console.error('Error syncing projects:', error.response ? error.response.data : error.message); // Log full error
+      setError('Error syncing projects');
+    }
+  };
+
   return (
     <div className="container">
       <h1>Projects Management</h1>
@@ -56,6 +72,7 @@ const ProjectsManagementTest = () => {
         placeholder="Enter project name"
       />
       <button onClick={addProject}>Add Project</button>
+      <button onClick={syncProjects}>Sync Projects</button> {/* Sync button */}
       <ul>
         {projects.map(project => (
           <li key={project._id}>
