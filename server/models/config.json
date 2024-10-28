@@ -14,15 +14,7 @@
     "email": {
         "type": "String",
         "required": true,
-        "match": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+        "match": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
         "description": "'email' must be a valid email format if the field exists"
-    },
-    "oguz": {
-        "type": "String",
-        "required": true,
-        "description": "ada",
-        "default": "ada"
     }
-	
-	
 }

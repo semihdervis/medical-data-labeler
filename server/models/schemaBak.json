@@ -1,6 +1,0 @@
-{
-    "name": { "type": "String", "required": true },
-    "age": { "type": "Number", "required": true },
-    "email": { "type": "String", "required": true, "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$" },
-    "w": { "type": "String", "required": true }
-}

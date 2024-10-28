@@ -40,7 +40,7 @@ const updateSchemaFields = async () => {
 };
 
 // Refresh fields manually
-router.get('/refresh-fields', async (req, res) => {
+router.get('/refresh-fields', async (req, res) => { // localhost:5000/api/UserManager/refresh-fields
     try {
         await updateSchemaFields();
         console.log("Documents updated successfully!");
@@ -50,6 +50,8 @@ router.get('/refresh-fields', async (req, res) => {
         res.status(500).send('Error updating fields');
     }
 });
+
+
 
 router.post('/add-field', async (req, res) => {
     const { fieldName, fieldType } = req.body;
