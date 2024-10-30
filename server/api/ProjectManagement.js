@@ -69,6 +69,16 @@ router.get('/getPatients/:id', async (req, res) => {
 }
 );
 
+router.get('/getPatients', async (req, res) => {
+  try {
+    const patients = await Patient.find({ projectId: req.params.id });
+    res.json(patients);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+);
+
 
 router.get('/sync', async (req, res) => {
   try {

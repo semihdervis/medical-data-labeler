@@ -29,7 +29,7 @@ const ImageManager = () => {
             // Fetch patients for the selected project
             const fetchPatients = async () => {
                 try {
-                    const response = await axios.get(`/api/patients/${selectedProject}`);
+                    const response = await axios.get(`/api/projects/getPatients/${selectedProject}`);
                     setPatients(response.data);
                 } catch (error) {
                     console.error('Error fetching patients:', error);
@@ -70,11 +70,9 @@ const ImageManager = () => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-
+            console.log('Image uploaded successfully:', response.data);
             // Fetch the updated list of images for the selected patient
             fetchImages(selectedPatient);
-
-            console.log('Image uploaded successfully:', response.data);
         } catch (error) {
             console.error('Error uploading image:', error);
         }

@@ -22,10 +22,13 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+// Route to upload an image
 router.post('/upload', upload.single('image'), async (req, res) => {
   try {
     const { name, uploader, projectId, patientId } = req.body;
     const { filename, path: filepath } = req.file;
+
+    console.log('Uploading image:', { name, uploader, projectId, patientId, filename, filepath });
 
     // Create a new image entry in the database
     const newImage = new ImageModel({ name, filepath, uploader, projectId, patientId });
@@ -40,26 +43,23 @@ router.post('/upload', upload.single('image'), async (req, res) => {
     newImage.filepath = newFilepath;
     await newImage.save();
 
-    res.send('Image uploaded successfully');
+    res.status(201).json(newImage);
   } catch (error) {
     console.error('Error uploading image:', error);
-    res.status(500).send('Error uploading image');
+    res.status(500).json({ message: error.message });
   }
 });
 
-// Retrieve images for a specific person within a project
-router.get('/images/:projectId/:patientId', (req, res) => {
-  const { projectId, patientId } = req.params;
-  const personDirectory = path.join(__dirname, '../projects', projectId, patientId);
-  console.log('Scanning directory:', personDirectory);
-
-  fs.readdir(personDirectory, (err, files) => {
-    if (err) {
-      return res.status(500).json({ message: `Unable to scan files for ${patientId}` });
-    }
-    const imageFiles = files.filter(file => file.endsWith('.jpg') || file.endsWith('.png') || file.endsWith('.jpeg'));
-    res.json(imageFiles);
-  });
+// Error handling middleware for multer
+router.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    console.error('Multer error:', err);
+    return res.status(400).json({ message: err.message });
+  } else if (err) {
+    console.error('Error:', err);
+    return res.status(500).json({ message: err.message });
+  }
+  next();
 });
 
 module.exports = router;
