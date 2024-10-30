@@ -1,42 +1,30 @@
+// App.js
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Home from './pages/Home';
 import DynamicModelUpdateTest from './pages/DynamicModelUpdateTest';
 import ProjectsManagamentTest from './pages/ProjectsManagamentTest';
-import './App.css'
+import Admin from './pages/AdminPage';
+import './App.css';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 function App() {
-  const navStyle = {
-    display: 'flex',
-    justifyContent: 'space-around',
-    padding: '1rem',
-    backgroundColor: '#f8f9fa',
-    borderBottom: '1px solid #dee2e6'
-  };
-
-  const linkStyle = {
-    textDecoration: 'none',
-    color: '#007bff',
-    padding: '0.5rem 1rem',
-    borderRadius: '4px',
-    transition: 'background-color 0.3s'
-  };
-
-  const linkHoverStyle = {
-    backgroundColor: '#e2e6ea'
-  };
-
   return (
     <Router>
-      <nav style={navStyle}>
-        <Link to="/" style={linkStyle} onMouseEnter={(e) => e.target.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.target.style.backgroundColor = ''}>Home</Link>
-        <Link to="/dynamic" style={linkStyle} onMouseEnter={(e) => e.target.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.target.style.backgroundColor = ''}>DynamicModelUpdateTest</Link>
-        <Link to="/projects" style={linkStyle} onMouseEnter={(e) => e.target.style.backgroundColor = linkHoverStyle.backgroundColor} onMouseLeave={(e) => e.target.style.backgroundColor = ''}>ProjectsManagamentTest</Link>
+      <nav className="nav-style">
+        <Link to="/" className="link-style">Home</Link>
+        <Link to="/dynamic" className="link-style">DynamicModelUpdateTest</Link>
+        <Link to="/projects" className="link-style">ProjectsManagamentTest</Link>
+        <Link to="/admin" className="link-style">Shrimp'sPlayground</Link>
       </nav>
       
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/dynamic" element={<DynamicModelUpdateTest />} />
         <Route path="/projects" element={<ProjectsManagamentTest />} />
+        <Route path="/admin" element={<Admin />} />
+
       </Routes>
     </Router>
   );
