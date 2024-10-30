@@ -16,7 +16,7 @@ const PORT = 3001;
 
 const isRemote = true;
 
-const uri = "mongodb+srv://keser46h3:2iq9irswNTXGGmjx@cluster0.x3ihy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const uri = isRemote ? remote_uri : 'mongodb://localhost:27017/test';
 
 // Middleware
 app.use(cors());

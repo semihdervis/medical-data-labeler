@@ -24,11 +24,16 @@ const patientSchema = new mongoose.Schema({
     medicalHistory: {
         type: [String],
         default: []
+    },
+    projectId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Project',
+        required: true
     }
 }, {
     timestamps: true
 });
 
-const Patient = mongoose.model('patients', patientSchema);
+const Patient = mongoose.model('Patient', patientSchema);
 
 module.exports = Patient;

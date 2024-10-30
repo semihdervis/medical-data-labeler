@@ -1,72 +1,38 @@
-const mongoose = require('mongoose');
-
-// Define the Patient model
 const Patient = require('../models/PatientModel');
 
-// Function to add a new patient
-async function addPatient(patientData) {
-    const patient = new Patient(patientData);
-    try {
-        await patient.save();
-        return patient;
-    } catch (error) {
-        throw new Error('Error adding patient: ' + error.message);
-    }
-}
+const Project = require('../models/Project');
 
-// Function to get all patients
-async function getAllPatients() {
-    try {
-        const patients = await Patient.find();
-        return patients;
-    } catch (error) {
-        throw new Error('Error fetching patients: ' + error.message);
-    }
-}
+const addPatient = async (patientData) => {
+  const projectExists = await Project.findById(patientData.projectId);
 
-// Function to get a patient by ID
-async function getPatientById(patientId) {
-    try {
-        const patient = await Patient.findById(patientId);
-        if (!patient) {
-            throw new Error('Patient not found');
-        }
-        return patient;
-    } catch (error) {
-        throw new Error('Error fetching patient: ' + error.message);
-    }
-}
+  if (!projectExists) {
+    throw new Error('Project not found');
+  }
 
-// Function to update a patient by ID
-async function updatePatient(patientId, updateData) {
-    try {
-        const patient = await Patient.findByIdAndUpdate(patientId, updateData, { new: true });
-        if (!patient) {
-            throw new Error('Patient not found');
-        }
-        return patient;
-    } catch (error) {
-        throw new Error('Error updating patient: ' + error.message);
-    }
-}
+  const patient = new Patient(patientData);
+  return await patient.save();
+};
 
-// Function to delete a patient by ID
-async function deletePatient(patientId) {
-    try {
-        const patient = await Patient.findByIdAndDelete(patientId);
-        if (!patient) {
-            throw new Error('Patient not found');
-        }
-        return patient;
-    } catch (error) {
-        throw new Error('Error deleting patient: ' + error.message);
-    }
-}
+const getAllPatients = async (projectId) => {
+  return await Patient.find({ projectId });
+};
+
+const getPatientById = async (id) => {
+  return await Patient.findById(id);
+};
+
+const updatePatient = async (id, patientData) => {
+  return await Patient.findByIdAndUpdate(id, patientData, { new: true });
+};
+
+const deletePatient = async (id) => {
+  return await Patient.findByIdAndDelete(id);
+};
 
 module.exports = {
-    addPatient,
-    getAllPatients,
-    getPatientById,
-    updatePatient,
-    deletePatient
+  addPatient,
+  getAllPatients,
+  getPatientById,
+  updatePatient,
+  deletePatient
 };

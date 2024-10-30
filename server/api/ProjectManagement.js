@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const Project = require('../models/Project');
 const fs = require('fs');
 const path = require('path');
+const Project = require('../models/Project');
+const Patient = require('../models/PatientModel');
 
 // Directory where project folders are stored
 const projectsDir = path.join(__dirname, '../projects');
@@ -49,7 +50,7 @@ router.delete('/:id', async (req, res) => {
 
     // Remove project folder
     const projectDir = path.join(projectsDir, req.params.id);
-    fs.rmdirSync(projectDir, { recursive: true });
+    fs.rmSync(projectDir, { recursive: true });
 
     res.json({ message: 'Project deleted' });
   } catch (err) {
@@ -57,36 +58,16 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// Sync projects from folders
-/* router.get('/sync', async (req, res) => {
+
+router.get('/getPatients/:id', async (req, res) => {
   try {
-    const folders = fs.readdirSync(projectsDir);
-    const syncedProjects = Project.find();
-
-    for (const folder of folders) {
-      const configPath = path.join(projectsDir, folder, 'config.json');
-      if (fs.existsSync(configPath)) {
-        const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
-        let project = await Project.findById(folder);
-
-        if (!project) {
-          console.log('Creating project:', config); // Debugging line
-          project = new Project({ _id: folder, name: config.name });
-          await project.save();
-          syncedProjects.push(project);
-          res.json(project);
-        }
-        else {
-          console.log('Project already exists:', project); // Debugging line
-        }
-      }
-    }
-
-    res.json(syncedProjects);
+    const patients = await Patient.find({ projectId: req.params.id });
+    res.json(patients);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-});*/
+}
+);
 
 
 router.get('/sync', async (req, res) => {
@@ -94,25 +75,44 @@ router.get('/sync', async (req, res) => {
     const projects = await Project.find();
     console.log('Fetched projects:', projects); // Debugging line
 
-    const folders = fs.readdirSync(projectsDir);
+    // Create directories for projects and patients based on the database entries
+    for (const project of projects) {
+      const projectDir = path.join(projectsDir, project._id.toString());
+      if (!fs.existsSync(projectDir)) {
+        fs.mkdirSync(projectDir, { recursive: true });
+        console.log(`Created project directory: ${projectDir}`);
+      }
 
-    for (const folder of folders) {
-      const configPath = path.join(projectsDir, folder, 'config.json');
-      if (fs.existsSync(configPath)) {
-        try {
-          const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
-          let project = await Project.findById(folder);
+      const patients = await Patient.find({ projectId: project._id });
+      for (const patient of patients) {
+        const patientDir = path.join(projectDir, patient._id.toString());
+        if (!fs.existsSync(patientDir)) {
+          fs.mkdirSync(patientDir, { recursive: true });
+          console.log(`Created patient directory: ${patientDir}`);
+        }
+      }
+    }
 
-          if (!project) {
-            console.log('Creating project:', config); // Debugging line
-            project = new Project({ _id: folder, name: config.name });
-            await project.save();
-            projects.push(project);
-          } else {
-            console.log('Project already exists:', project); // Debugging line
+    // Delete directories that are not present in the database
+    const projectFolders = fs.readdirSync(projectsDir);
+    for (const folder of projectFolders) {
+      const projectDir = path.join(projectsDir, folder);
+      const projectExists = projects.some(project => project._id.toString() === folder);
+
+      if (!projectExists) {
+        fs.rmSync(projectDir, { recursive: true });
+        console.log(`Deleted project directory: ${projectDir}`);
+      } else {
+        const patients = await Patient.find({ projectId: folder });
+        const patientFolders = fs.readdirSync(projectDir);
+        for (const patientFolder of patientFolders) {
+          const patientDir = path.join(projectDir, patientFolder);
+          const patientExists = patients.some(patient => patient._id.toString() === patientFolder);
+
+          if (!patientExists) {
+            fs.rmSync(patientDir, { recursive: true });
+            console.log(`Deleted patient directory: ${patientDir}`);
           }
-        } catch (jsonError) {
-          console.error(`Error parsing JSON for ${configPath}:`, jsonError); // Log JSON parsing error
         }
       }
     }
@@ -120,7 +120,6 @@ router.get('/sync', async (req, res) => {
     res.json(projects); // Ensure response is an array of projects
 
   } catch (err) {
-    console.error('Error syncing projects:', err); // Debugging line
     res.status(500).json({ message: err.message });
   }
 });

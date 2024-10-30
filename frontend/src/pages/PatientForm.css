@@ -1,51 +1,28 @@
 /* PatientForm.css */
-form {
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
-    flex-direction: column;
-    gap: 15px; /* Space between form elements */
-    background-color: #fff; /* White background for the form */
-    border-radius: 8px; /* Rounded corners */
-    padding: 20px; /* Padding inside the form */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    max-width: 400px; /* Max width for the form */
-    margin: auto; /* Center the form */
-}
-
-h3 {
-    margin-bottom: 15px; /* Space below the heading */
-    color: #333; /* Darker color for the heading */
-    text-align: center; /* Center the heading text */
-}
-
-label {
-    font-weight: bold; /* Bold labels for better readability */
-}
-
-input[type="text"],
-input[type="number"],
-input[type="file"] {
-    padding: 10px; /* Padding inside input fields */
-    border: 1px solid #ccc; /* Light border */
-    border-radius: 4px; /* Rounded corners for input fields */
-    transition: border-color 0.3s; /* Smooth transition for border color */
-}
-
-input[type="text"]:focus,
-input[type="number"]:focus {
-    border-color: #082544; /* Change border color on focus */
-    outline: none; /* Remove default outline */
-}
-
-button[type="submit"] {
-    background-color: #17356d; /* Green background for submit button */
-    color: white; /* White text color */
-    border: none; /* Remove border */
-    border-radius: 5px; /* Rounded corners */
-    padding: 10px; /* Padding for the button */
-    cursor: pointer; /* Pointer cursor on hover */
-    transition: background-color 0.3s; /* Smooth transition for background color */
-}
-
-button[type="submit"]:hover {
-    background-color: #218838; /* Darker green on hover */
-}
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    position: relative;
+  }
+  
+  .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+  }

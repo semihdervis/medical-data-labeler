@@ -2,57 +2,77 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './PatientForm.css';
 
-const PatientForm = ({ onAddPatient }) => {
+const PatientForm = ({ projectId, onPatientAdded, onClose }) => {
     const [name, setName] = useState('');
     const [age, setAge] = useState('');
     const [gender, setGender] = useState('');
-    const [contactNumber, setContactNumber] = useState('');
-    const [address, setAddress] = useState('');
-    const [medicalHistory, setMedicalHistory] = useState('');
+    const [error, setError] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const patientData = {
+        const newPatient = {
             name,
             age,
             gender,
-            contactNumber,
-            address,
-            medicalHistory: medicalHistory.split(',').map(item => item.trim()), // Convert to array
+            projectId,
         };
 
+        console.log('Submitting new patient:', newPatient); // Debugging line
+
         try {
-            const response = await axios.post('/api/patients', patientData); // Update the URL as needed
-            onAddPatient(response.data); // Notify parent component about the new patient
-            // Clear form fields after successful submission
-            setName('');
-            setAge('');
-            setGender('');
-            setContactNumber('');
-            setAddress('');
-            setMedicalHistory('');
+            const response = await axios.post('/api/patients', newPatient);
+            console.log('Patient added successfully:', response.data); // Debugging line
+            onPatientAdded(response.data);
+            onClose();
         } catch (error) {
-            console.error('Error adding patient:', error);
+            console.error('Failed to add patient:', error.response ? error.response.data : error.message); // Debugging line
+            setError('Failed to add patient');
         }
     };
 
     return (
-        <form className="patient-form" onSubmit={handleSubmit}>
-            <h2>Add New Patient</h2>
-            <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required />
-            <input type="number" placeholder="Age" value={age} onChange={(e) => setAge(e.target.value)} required />
-            <select value={gender} onChange={(e) => setGender(e.target.value)} required>
-                <option value="" disabled>Select Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-            </select>
-            <input type="text" placeholder="Contact Number" value={contactNumber} onChange={(e) => setContactNumber(e.target.value)} />
-            <input type="text" placeholder="Address" value={address} onChange={(e) => setAddress(e.target.value)} />
-            <input type="text" placeholder="Medical History (comma-separated)" value={medicalHistory} onChange={(e) => setMedicalHistory(e.target.value)} />
-            <button type="submit">Add Patient</button>
-        </form>
+        <div className="modal">
+            <div className="modal-content">
+                <span className="close" onClick={onClose}>&times;</span>
+                <h2>Add Patient</h2>
+                {error && <p className="error">{error}</p>}
+                <form onSubmit={handleSubmit}>
+                    <div>
+                        <label>Name:</label>
+                        <input
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label>Age:</label>
+                        <input
+                            type="number"
+                            value={age}
+                            onChange={(e) => setAge(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label>Gender:</label>
+                        <select
+                            value={gender}
+                            onChange={(e) => setGender(e.target.value)}
+                            required
+                        >
+                            <option value="">Select gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <button type="submit">Add Patient</button>
+                </form>
+            </div>
+        </div>
     );
 };
 

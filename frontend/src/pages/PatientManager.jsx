@@ -5,64 +5,88 @@ import './PatientManager.css'; // Import the CSS file for styling
 
 const PatientManager = () => {
     const [patients, setPatients] = useState([]);
+    const [projects, setProjects] = useState([]);
+    const [selectedProject, setSelectedProject] = useState('');
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null); // New state for success message
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    useEffect(() => {
+        fetchProjects();
+    }, []);
+
+    useEffect(() => {
+        if (selectedProject) {
+            fetchPatients();
+        }
+    }, [selectedProject]);
+
+
+
+    const fetchProjects = async () => {
+        try {
+            const response = await axios.get('/api/projects/get');
+            setProjects(response.data);
+        } catch (err) {
+            setError('Failed to fetch projects');
+        }
+    };
+
     const fetchPatients = async () => {
         try {
-            const response = await axios.get('/api/patients');
+            const response = await axios.get(`/api/projects/getPatients/${selectedProject}`);
             setPatients(response.data);
         } catch (err) {
             setError('Failed to fetch patients');
+            console.error('Error fetching patients:', err);
         }
     };
 
     const handlePatientAdded = (newPatient) => {
         setPatients((prev) => [...prev, newPatient]);
         setSuccessMessage('Patient added successfully!'); // Set success message
-        setIsModalOpen(false); // Close the modal after adding
-        
-        // Clear the success message after 3 seconds
-        setTimeout(() => {
-            setSuccessMessage(null);
-        }, 3000);
     };
 
-    const handleDeletePatient = async (id) => {
-        try {
-            await axios.delete(`/api/patients/${id}`);
-            setPatients((prev) => prev.filter((patient) => patient._id !== id));
-        } catch (error) {
-            setError('Failed to delete patient');
-        }
+    const handleProjectChange = (e) => {
+        setSelectedProject(e.target.value);
+        setPatients([]); // Reset patients when project changes
     };
-
-    useEffect(() => {
-        fetchPatients();
-    }, []);
 
     return (
-        <div className="patient-manager">
-            <h2>Patients</h2>
-            <button onClick={() => setIsModalOpen(true)}>Add Patient</button>
-            {error && <p className="error">{error}</p>}
-            {successMessage && <p className="success">{successMessage}</p>} {/* Success message display */}
-            <ul>
-                {patients.map((patient) => (
-                    <li key={patient._id}>
-                        {patient.name} - {patient.age} years old
-                        <button onClick={() => handleDeletePatient(patient._id)}>Delete</button>
-                    </li>
-                ))}
-            </ul>
-            {isModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <PatientForm onPatientAdded={handlePatientAdded} />
-                        <button className="close-button" onClick={() => setIsModalOpen(false)}>Close</button>
-                    </div>
-                </div>
+        <div>
+            <h1>Patient Manager</h1>
+            <div>
+                <label>Select Project:</label>
+                <select value={selectedProject} onChange={handleProjectChange}>
+                    <option value="">Select a project</option>
+                    {projects.map((project) => (
+                        <option key={project._id} value={project._id}>
+                            {project.name}
+                        </option>
+                    ))}
+                </select>
+            </div>
+            {selectedProject && (
+                <>
+                    <button onClick={() => {
+                        console.log('Opening modal');
+                        setIsModalOpen(true);
+                    }}>Add Patient</button>
+                    {isModalOpen && (
+                        <PatientForm
+                            projectId={selectedProject}
+                            onPatientAdded={handlePatientAdded}
+                            onClose={() => setIsModalOpen(false)}
+                        />
+                    )}
+                    {successMessage && <p className="success">{successMessage}</p>}
+                    {error && <p className="error">{error}</p>}
+                    <ul>
+                        {patients.map((patient) => (
+                            <li key={patient._id}>{patient.name}</li>
+                        ))}
+                    </ul>
+                </>
             )}
         </div>
     );
