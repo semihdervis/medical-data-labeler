@@ -59,6 +59,7 @@ const ImageManager = () => {
         e.preventDefault();
     
         const formData = new FormData();
+        formData.append('name', image.name);
         formData.append('uploader', uploader);
         formData.append('projectId', selectedProject);
         formData.append('patientId', selectedPatient);
