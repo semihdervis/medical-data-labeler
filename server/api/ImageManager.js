@@ -9,6 +9,15 @@ const ImageModel = require('../models/ImageModel');
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const { projectId, patientId } = req.body;
+
+    // Debugging statements
+    console.log('projectId:', projectId);
+    console.log('patientId:', patientId);
+
+    if (!projectId || !patientId) {
+      return cb(new Error('Project ID and Patient ID are required'));
+    }
+
     const uploadDir = path.join(__dirname, '../projects', projectId, patientId);
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
