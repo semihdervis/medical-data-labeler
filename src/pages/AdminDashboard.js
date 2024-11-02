@@ -1,7 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
 
 function AdminDashboard() {
+  const navigate = useNavigate();
   const projects = [
     { id: 'P001', name: 'Respiratory Health Project', description: 'Project focused on respiratory disease analysis.' },
     { id: 'P002', name: 'Cardiovascular Health Study', description: 'Study on cardiovascular health conditions.' },
@@ -16,7 +18,7 @@ function AdminDashboard() {
   };
 
   const handleEditProject = (id) => {
-    alert(`Editing project ${id}`);
+    navigate(`/admin-project-page`);
   };
 
   return (

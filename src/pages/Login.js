@@ -14,10 +14,14 @@ function Login() {
       setError('Please enter both email and password.');
       return;
     }
-
-    // Clear error and navigate to a general dashboard
+  
+    // Clear error and navigate to the appropriate dashboard
     setError('');
-    navigate('/dashboard');
+    if (email === 'admin') {
+      navigate('/admin-dashboard');
+    } else {
+      navigate('/dashboard');
+    }
   };
 
   return (
