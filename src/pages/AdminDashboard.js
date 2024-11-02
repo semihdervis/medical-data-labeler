@@ -4,6 +4,7 @@ import './AdminDashboard.css';
 
 function AdminDashboard() {
   const navigate = useNavigate();
+  
   const projects = [
     { id: 'P001', name: 'Respiratory Health Project', description: 'Project focused on respiratory disease analysis.' },
     { id: 'P002', name: 'Cardiovascular Health Study', description: 'Study on cardiovascular health conditions.' },
@@ -21,8 +22,13 @@ function AdminDashboard() {
     navigate(`/admin-project-page`);
   };
 
+  const handleLogout = () => {
+    navigate('/');
+  };
+
   return (
     <div className="admin-dashboard">
+      <button className="logout-button" onClick={handleLogout}>Log Out</button>
       <h2>Admin Dashboard</h2>
       <p>All Projects</p>
       <div className="project-grid">
