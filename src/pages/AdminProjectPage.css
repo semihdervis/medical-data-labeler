@@ -1,122 +1,104 @@
 /* AdminProjectPage.css */
 
-.admin-project-page {
-    padding: 20px;
-    max-width: 800px;
-    margin: 0 auto;
-    background-color: #f8f9fa;
-    border-radius: 8px;
+* {
+    box-sizing: border-box;
   }
   
-  .admin-project-page h2 {
-    color: #3f51b5;
-    text-align: center;
+  body {
+    font-family: Arial, sans-serif;
+  }
+  
+  .admin-project-page {
+    display: flex;
+    height: 100vh;
+    background-color: #f4f6f8;
+  }
+  
+  /* Sidebar */
+  .sidebar {
+    width: 250px;
+    background-color: #3f51b5;
+    color: #fff;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    position: sticky;
+    top: 0;
+  }
+  
+  .sidebar h2 {
+    font-size: 1.5rem;
     margin-bottom: 20px;
   }
   
+  .sidebar button {
+    background: none;
+    color: #fff;
+    border: none;
+    padding: 10px 0;
+    width: 100%;
+    text-align: left;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .sidebar button:hover, .sidebar button.active {
+    background-color: #303f9f;
+  }
+  
+  /* Main Content */
+  .main-content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
   .section {
-    margin-bottom: 30px;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
   }
   
   .section h3 {
-    color: #333;
+    color: #3f51b5;
     margin-bottom: 10px;
   }
   
-  textarea {
+  textarea, input[type="text"], input[type="email"], select {
     width: 100%;
-    padding: 10px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  .label-input {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  
-  .label-input input {
-    flex: 1;
     padding: 8px;
     font-size: 1rem;
-    border-radius: 5px;
+    margin-bottom: 10px;
     border: 1px solid #ccc;
-    margin-right: 10px;
-  }
-  
-  .label-input button {
-    background-color: #ff5722;
-    color: white;
-    border: none;
-    padding: 8px 12px;
     border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .label-input button:hover {
-    background-color: #e64a19;
-  }
-  
-  .patient-section {
-    margin-top: 10px;
-    padding: 10px;
-    background-color: #ffffff;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-  }
-  
-  .patient-section p {
-    font-weight: bold;
-    color: #3f51b5;
-  }
-  
-  .images-section {
-    margin-top: 10px;
-  }
-  
-  .images-section div {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  
-  .images-section button {
-    background-color: #d32f2f;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 5px;
-  }
-  
-  .images-section button:hover {
-    background-color: #c62828;
   }
   
   button {
     background-color: #3f51b5;
-    color: white;
+    color: #fff;
+    padding: 10px 15px;
     border: none;
-    padding: 10px;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 10px;
-    display: block;
+    transition: background-color 0.3s ease;
   }
   
   button:hover {
     background-color: #303f9f;
   }
   
-  input[type="email"] {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    font-size: 1rem;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+  .label-input {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
   }
   

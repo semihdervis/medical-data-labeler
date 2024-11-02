@@ -1,0 +1,173 @@
+/* AdminProjectPage.css */
+
+* {
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+  }
+  
+  .admin-project-page {
+    display: flex;
+    height: 100vh;
+    background-color: #f4f6f8;
+  }
+  
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #3f51b5;
+  color: #fff;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  position: sticky;
+  top: 0;
+}
+
+.sidebar h2 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+.sidebar button {
+  background-color: #5c6bc0;
+  color: #fff;
+  border: none;
+  padding: 12px 15px;
+  width: 100%;
+  text-align: left;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.sidebar button:hover {
+  background-color: #7986cb;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.sidebar button.active {
+  background-color: #0f1b65;
+  color: #ffffff;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+  
+  /* Main Content */
+  .main-content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .section {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  .section h3 {
+    color: #3f51b5;
+    margin-bottom: 10px;
+  }
+  
+  textarea, input[type="text"], input[type="email"], select {
+    width: 100%;
+    padding: 8px;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  button {
+    background-color: #3f51b5;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #303f9f;
+  }
+  
+  .label-input {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  /* AssignDoctor Section */
+.assign-doctor-input {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.assign-doctor-input input {
+  flex: 1;
+  padding: 8px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.assign-doctor-input button {
+  background-color: #3f51b5;
+  color: #fff;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.assign-doctor-input button:hover {
+  background-color: #303f9f;
+}
+
+.assigned-doctors-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.doctor-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #c4b0a7;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 5px;
+}
+
+.remove-button {
+  background-color: #e57373;
+  color: #fff;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.remove-button:hover {
+  background-color: #d32f2f;
+}
