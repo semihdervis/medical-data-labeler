@@ -55,14 +55,13 @@
   }
   
   .view-button {
-    padding: 10px 15px;
+    flex: 1;
+    padding: 10px 0;
     font-size: 0.9rem;
     color: #fff;
-    background-color: #3f51b5;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    align-self: flex-start;
     transition: background-color 0.3s ease;
   }
   

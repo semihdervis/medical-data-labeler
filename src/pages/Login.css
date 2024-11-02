@@ -35,12 +35,18 @@
     border: 1px solid #ccc;
   }
   
-  .login-select {
-    background-color: #f9f9f9;
-  }
-  
-  .login-button {
+/* Add this to the parent container of the login button */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+/* Existing styles for the login button */
+.login-button {
     width: 100%;
+    max-width: 300px; /* Optional: Set a max-width to control the button size */
     padding: 12px;
     font-size: 1rem;
     color: #ffffff;
@@ -49,11 +55,11 @@
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-  }
-  
-  .login-button:hover {
+}
+
+.login-button:hover {
     background-color: #1565c0;
-  }
+}
   
   .login-error {
     color: #d32f2f;

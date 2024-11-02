@@ -7,8 +7,6 @@ function DoctorDashboard() {
     { id: 'P002', name: 'Cardiovascular Health Study', description: 'Study on cardiovascular health conditions.' },
     { id: 'P003', name: 'Neurological Study Project', description: 'Research on neurological health and disorders.' },
     { id: 'P004', name: 'Oncology Research Project', description: 'Analysis of cancer and related diseases.' },
-    { id: 'P009', name: 'Infectious Disease Control Study', description: 'Study on controlling infectious diseases.' },
-    { id: 'P010', name: 'Nutrition and Wellness Program', description: 'Program promoting nutrition and overall wellness.' },
   ];
 
   return (

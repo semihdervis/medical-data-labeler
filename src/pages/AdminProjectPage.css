@@ -1,0 +1,122 @@
+/* AdminProjectPage.css */
+
+.admin-project-page {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+  }
+  
+  .admin-project-page h2 {
+    color: #3f51b5;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .section {
+    margin-bottom: 30px;
+  }
+  
+  .section h3 {
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .label-input {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .label-input input {
+    flex: 1;
+    padding: 8px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+  }
+  
+  .label-input button {
+    background-color: #ff5722;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .label-input button:hover {
+    background-color: #e64a19;
+  }
+  
+  .patient-section {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+  }
+  
+  .patient-section p {
+    font-weight: bold;
+    color: #3f51b5;
+  }
+  
+  .images-section {
+    margin-top: 10px;
+  }
+  
+  .images-section div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .images-section button {
+    background-color: #d32f2f;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 5px;
+  }
+  
+  .images-section button:hover {
+    background-color: #c62828;
+  }
+  
+  button {
+    background-color: #3f51b5;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    display: block;
+  }
+  
+  button:hover {
+    background-color: #303f9f;
+  }
+  
+  input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
