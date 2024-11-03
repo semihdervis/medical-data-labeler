@@ -15,7 +15,7 @@ function AdminDashboard() {
   ];
 
   const handleViewProject = (id) => {
-    alert(`Viewing project ${id}`);
+    navigate(`/labeling-interface`);
   };
 
   const handleEditProject = (id) => {

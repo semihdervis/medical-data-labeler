@@ -16,6 +16,10 @@ function DoctorDashboard() {
     navigate('/');
   };
 
+  const handleViewProject = (id) => {
+    navigate(`/labeling-interface`);
+  };
+
   return (
     <div className="doctor-dashboard">
       <button className="logout-button" onClick={handleLogout}>Log Out</button>
@@ -26,7 +30,7 @@ function DoctorDashboard() {
           <div key={project.id} className="project-card">
             <h3>{project.name}</h3>
             <p>{project.description}</p>
-            <button className="view-button">View Project</button>
+            <button className="view-button" onClick={() => handleViewProject(project.id)}>View Project</button>
           </div>
         ))}
       </div>
