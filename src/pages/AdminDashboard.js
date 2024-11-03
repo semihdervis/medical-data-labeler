@@ -28,8 +28,10 @@ function AdminDashboard() {
 
   return (
     <div className="admin-dashboard">
+      <div className= "top-bar">
       <button className="logout-button" onClick={handleLogout}>Log Out</button>
-      <h2>Admin Dashboard</h2>
+      <h1>Admin Dashboard</h1>
+      </div>
       <p>All Projects</p>
       <div className="project-grid">
         {projects.map((project) => (

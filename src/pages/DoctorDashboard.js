@@ -22,8 +22,10 @@ function DoctorDashboard() {
 
   return (
     <div className="doctor-dashboard">
+      <div className= "top-bar">
       <button className="logout-button" onClick={handleLogout}>Log Out</button>
-      <h2>Doctor Dashboard</h2>
+      <h1>Doctor Dashboard</h1>
+      </div>
       <p>Assigned Projects</p>
       <div className="project-grid">
         {projects.map((project) => (

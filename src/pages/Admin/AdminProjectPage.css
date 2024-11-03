@@ -13,9 +13,33 @@
     height: 100vh;
     background-color: #f4f6f8;
   }
-  
+
+.project-page-top-bar{
+  display: flex;
+  align-items: center;
+  height: 60px;
+  background-color: #3f51b5;
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.project-page-top-bar button{
+  border: none;
+  height: 45px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+}
+ 
 /* Sidebar */
 .sidebar {
+  margin-top: 40px;
   width: 250px;
   background-color: #3f51b5;
   color: #fff;

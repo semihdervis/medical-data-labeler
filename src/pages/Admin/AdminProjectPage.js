@@ -17,7 +17,12 @@ function AdminProjectPage() {
   const [imageLabels, setImageLabels] = useState([{ name: "Is infection visible?", type: "dropdown", options: ["Yes", "No"] }]);
   const [patients, setPatients] = useState([{ id: "Patient001", images: ["img1.jpg", "img2.jpg"] }]);
   const [assignedDoctors, setAssignedDoctors] = useState([]);
-  
+  const [activeButton, setActiveButton] = React.useState("description");
+
+
+  const handleLogout = () => {
+    navigate('/');
+  };
   // Assume we have a single project loaded in the editor for simplicity
   const [currentProject, setCurrentProject] = useState({
     id: 'P001',
@@ -35,6 +40,19 @@ function AdminProjectPage() {
       <Sidebar setActiveSection={setActiveSection} />
 
       <div className="main-content">
+        <div className='project-page-top-bar'>
+        
+        <button 
+        onClick={() => navigate('/admin-dashboard')}
+        className={activeButton === "dashboard-button" ? "active" : ""}
+      >
+        &#60; Go to Dashboard
+      </button>
+
+      <button className="logout-button" onClick={handleLogout}>Log Out</button>
+
+
+        </div>
         {activeSection === "description" && (
           <ProjectDescription
             projectDescription={projectDescription}

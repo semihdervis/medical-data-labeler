@@ -22,7 +22,6 @@
   
   /* Dashboard and Save buttons */
   .dashboard-button, .save-button {
-    position: absolute;
     top: 20px;
     padding: 10px 15px;
     font-size: 0.9rem;
