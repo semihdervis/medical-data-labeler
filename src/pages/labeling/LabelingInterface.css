@@ -1,0 +1,143 @@
+/* LabelingInterface.css */
+
+.labeling-interface {
+    display: grid;
+    grid-template-columns: 220px 300px 1fr 300px;
+    gap: 15px;
+    padding: 20px;
+    background-color: #f0f2f5;
+    min-height: 100vh;
+  }
+  
+  /* Sidebar for Patient List */
+  .patient-list-sidebar {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  .patient-list-sidebar h3 {
+    font-size: 1.2rem;
+    color: #3f51b5;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  
+  .patient-list-sidebar ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+.patient-list-sidebar li {
+    padding: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    text-align: center;
+    background-color: #e0e0e0; /* Darker background color */
+}
+
+.patient-list-sidebar li:hover {
+    background-color: #bdbdbd; /* Darker hover background color */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+  
+  /* Sidebar for Patient Info */
+  .patient-info-sidebar {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  .patient-info-sidebar h3 {
+    font-size: 1.2rem;
+    color: #3f51b5;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  
+  .patient-info-sidebar p {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 10px;
+  }
+  
+  /* Main Image Display */
+  .image-display {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  
+  .image-display img {
+    max-width: 90%;
+    max-height: 60vh;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+  
+  .image-display button {
+    background-color: #3f51b5;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 0.9rem;
+  }
+  
+  .image-display button:hover {
+    background-color: #303f9f;
+  }
+  
+  /* Sidebar for Image Labels */
+  .image-labels-sidebar {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  .image-labels-sidebar h3 {
+    font-size: 1.2rem;
+    color: #3f51b5;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  
+  .image-labels-sidebar label {
+    display: block;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
+  .image-labels-sidebar select,
+  .image-labels-sidebar input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    transition: border-color 0.2s;
+  }
+  
+  .image-labels-sidebar select:focus,
+  .image-labels-sidebar input[type="text"]:focus {
+    border-color: #3f51b5;
+    outline: none;
+  }
+  

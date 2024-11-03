@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import DoctorDashboard from './pages/DoctorDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminProjectPage from './pages/Admin/AdminProjectPage';
+import LabelingInterface from './pages/labeling/LabelingInterface';
 
 function App() {
   return (
@@ -14,6 +15,8 @@ function App() {
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/dashboard" element={<DoctorDashboard />} />
         <Route path="/admin-project-page" element={<AdminProjectPage />} />
+        <Route path="/admin-project-page" element={<AdminProjectPage />} />
+        <Route path="/labeling-interface" element={<LabelingInterface />} />
       </Routes>
     </Router>
   );
