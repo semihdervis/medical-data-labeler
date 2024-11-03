@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 const projectsRouter = require('./api/ProjectManagement');
 const userManagerRouter = require('./api/UserManager');
 const imageManagerRouter = require('./api/ImageManager');
@@ -21,6 +22,9 @@ const uri = isRemote ? remote_uri : 'mongodb://localhost:27017/test';
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from the "projects" directory
+app.use('/projects', express.static(path.join(__dirname, 'projects')));
 
 // Connect to MongoDB
 mongoose.connect(uri, {});

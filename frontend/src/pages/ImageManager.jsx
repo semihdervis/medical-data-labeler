@@ -9,7 +9,7 @@ const ImageManager = () => {
     const [patients, setPatients] = useState([]);
     const [selectedPatient, setSelectedPatient] = useState('');
     const [uploadedImages, setUploadedImages] = useState([]);
-
+    const backendUrl = 'http://localhost:3001';
     useEffect(() => {
         // Fetch projects
         const fetchProjects = async () => {
@@ -57,14 +57,14 @@ const ImageManager = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+
         const formData = new FormData();
         formData.append('name', image.name);
         formData.append('uploader', uploader);
         formData.append('projectId', selectedProject);
         formData.append('patientId', selectedPatient);
         formData.append('image', image); // Append the image last
-    
+
         try {
             const response = await axios.post('/api/images/upload', formData, {
                 headers: {
@@ -78,6 +78,7 @@ const ImageManager = () => {
             console.error('Error uploading image:', error);
         }
     };
+
     const fetchImages = async (patientId) => {
         try {
             const response = await axios.get(`/api/images/${selectedProject}/${patientId}`);
@@ -135,11 +136,13 @@ const ImageManager = () => {
                     <h2>Uploaded Images</h2>
                     <ul>
                         {uploadedImages.map((image) => (
-                            <li key={image}>
-                                <img src={`/projects/${selectedProject}/${selectedPatient}/${image}`} alt="Uploaded" width="100" />
+                            <li key={image._id}>
+                                <img src={`${backendUrl}/${image.filepath}`} alt={image.name} width="100" />
+                                <p>{image.name}</p>
                             </li>
                         ))}
                     </ul>
+
                 </>
             )}
         </div>
