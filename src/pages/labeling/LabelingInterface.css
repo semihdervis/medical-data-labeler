@@ -2,7 +2,7 @@
 
 .labeling-interface {
     display: grid;
-    grid-template-columns: 220px 300px 1fr 300px;
+    grid-template-columns: 180px 250px 1.5fr 250px; /* Make sidebars narrower, increase center */
     gap: 15px;
     padding: 20px;
     background-color: #f0f2f5;
@@ -30,20 +30,20 @@
     padding: 0;
   }
   
-.patient-list-sidebar li {
+  .patient-list-sidebar li {
     padding: 12px;
     margin-bottom: 8px;
     cursor: pointer;
     border-radius: 8px;
     transition: background-color 0.3s, box-shadow 0.3s;
     text-align: center;
-    background-color: #e0e0e0; /* Darker background color */
-}
-
-.patient-list-sidebar li:hover {
-    background-color: #bdbdbd; /* Darker hover background color */
+    background-color: #e0e0e0;
+  }
+  
+  .patient-list-sidebar li:hover {
+    background-color: #bdbdbd;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
+  }
   
   /* Sidebar for Patient Info */
   .patient-info-sidebar {
@@ -81,8 +81,8 @@
   }
   
   .image-display img {
-    max-width: 90%;
-    max-height: 60vh;
+    max-width: 100%; /* Utilize more space */
+    max-height: 80vh; /* Increase height for larger images */
     border-radius: 8px;
     margin-bottom: 15px;
   }
@@ -141,9 +141,8 @@
     outline: none;
   }
   
-  /* LabelingInterface.css */
-
-.patient-info-sidebar label {
+  /* Patient Info Labels */
+  .patient-info-sidebar label {
     display: flex;
     flex-direction: column;
     margin-bottom: 15px;
