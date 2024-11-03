@@ -2,6 +2,7 @@ const express = require('express');
 const connectDB = require('./config/db');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const path = require('path');
 
 // Import routes
 const userRoutes = require('./routes/userRoutes');
@@ -26,11 +27,14 @@ connectDB();
 // Middleware to parse JSON
 app.use(express.json());
 
+// Serve static files
+app.use('/projects', express.static(path.join(__dirname, 'projects')));
+
 // Routes
 app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
-app.use('/api/patients', patientRoutes);
-app.use('/api/assignments', assignmentRoutes);
+app.use('/api/projects', patientRoutes);
+app.use('/api/projects', assignmentRoutes);
 app.use('/api/labels', labelHistoryRoutes);
 
 // Start the server

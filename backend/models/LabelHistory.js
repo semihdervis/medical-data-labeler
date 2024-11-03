@@ -8,7 +8,8 @@ const labelHistorySchema = new mongoose.Schema({
   label_type: { type: String, enum: ['person', 'image'], required: true },
   labels: [
     {
-      label_id: { type: String, required: true },
+      label_id: { type: String, required: true }, // person_labels._id or image_labels._id
+      response_type: { type: String, required: true },
       response: { type: String, required: true }
     }
   ],

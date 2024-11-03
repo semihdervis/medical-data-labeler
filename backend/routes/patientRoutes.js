@@ -2,22 +2,19 @@ const express = require('express');
 const router = express.Router();
 const patientController = require('../controllers/patientController');
 
-// Create a new patient
-router.post('/', patientController.createPatient);
+// Route to create a new patient within a specific project, with image uploads
+router.post('/:projectId/patients', patientController.createPatient);
 
-// Get all patients
-router.get('/', patientController.getAllPatients);
+// Route to get a specific patient by ID within a project
+router.get('/:projectId/patients/:patientId', patientController.getPatientById);
 
-// Get a patient by ID
-//router.get('/:id', patientController.getPatientById);
+// Route to get all patients within a specific project
+router.get('/:projectId/patients', patientController.getPatientsFromProjectId);
 
-// Get patients by project ID
-router.get('/:projectId', patientController.getPatientsByProjectId);
+// Route to update a patient by ID within a project, with image uploads
+router.put('/:projectId/patients/:patientId', patientController.updatePatientById);
 
-// Update a patient by ID
-router.put('/:id', patientController.updatePatient);
-
-// Delete a patient by ID
-router.delete('/:id', patientController.deletePatient);
+// Route to delete a patient by ID within a project
+router.delete('/:projectId/patients/:patientId', patientController.deletePatientById);
 
 module.exports = router;

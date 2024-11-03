@@ -1,20 +1,21 @@
 const express = require('express');
-const router = express.Router();
 const assignmentController = require('../controllers/assignmentController');
 
-// Create a new assignment
-router.post('/', assignmentController.createAssignment);
+const router = express.Router();
 
-// Get all assignments
-router.get('/', assignmentController.getAllAssignments);
+// Route to create a new assignment within a specific project
+router.post('/:projectId/assignments', assignmentController.createAssignment);
 
-// Get a specific assignment by ID
-router.get('/:id', assignmentController.getAssignmentById);
+// Route to delete an assignment by ID within a specific project
+router.delete('/:projectId/assignments/:assignmentId', assignmentController.deleteAssignment);
 
-// Update the status of an assignment
-router.put('/:id/status', assignmentController.updateAssignmentStatus);
+// Route to get all assignments within a specific project
+router.get('/:projectId/assignments', assignmentController.getAssignmentsFromProjectId);
 
-// Delete an assignment
-router.delete('/:id', assignmentController.deleteAssignment);
+// Route to join a project using an invite code
+router.post('/assignments/join', assignmentController.joinProjectWithInviteCode);
+
+// Route to approve an assignment by ID
+router.patch('/assignments/:assignmentId/approve', assignmentController.approveAssignment);
 
 module.exports = router;

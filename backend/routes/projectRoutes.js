@@ -12,7 +12,7 @@ router.get('/', projectController.getAllProjects);
 router.get('/:id', projectController.getProjectById);
 
 // Update a project by ID
-router.put('/:id', projectController.updateProject);
+router.put('/:id', projectController.updateProjectById);
 
 // Delete a project by ID
 router.delete('/:id', projectController.deleteProject);

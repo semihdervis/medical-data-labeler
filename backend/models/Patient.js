@@ -5,14 +5,13 @@ const patientSchema = new mongoose.Schema({
   metadata: {
     age: Number,
     gender: String,
-    medical_history: [String]
+    medical_history: [String] // May change the data type
   },
-  project_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Project', required: true },
+  project_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Project', required: true }, // Shows which project this patient belongs to
   images: [
     {
-      image_id: { type: mongoose.Schema.Types.ObjectId, auto: true },
       image_url: { type: String, required: true },
-      description: { type: String }
+      description: { type: String } 
     }
   ],
   created_at: { type: Date, default: Date.now }
