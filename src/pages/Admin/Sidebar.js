@@ -14,11 +14,11 @@ function Sidebar({ setActiveSection }) {
     <aside className="sidebar">
       <button 
         onClick={() => navigate('/admin-dashboard')}
-        className="dashboard-button"
+        className={activeButton === "dashboard-button" ? "active" : ""}
       >
-        Go to Dashboard
+        Go to
       </button>
-      
+    
       <h2>Project Settings</h2>
       <button
         onClick={() => handleButtonClick("description")}
