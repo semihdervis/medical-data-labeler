@@ -33,25 +33,8 @@
     transition: background-color 0.3s;
   }
   
-  /* Go to Dashboard button on top left */
-  .dashboard-button {
-    left: 20px;
-    background-color: #3f51b5;
-  }
-  
-  .dashboard-button:hover {
-    background-color: #303f9f;
-  }
-  
-  /* Save button on top right */
-  .save-button {
-    right: 20px;
-    background-color: #4caf50;
-  }
-  
-  .save-button:hover {
-    background-color: #388e3c;
-  }
+
+
   
   /* Next Image button at the bottom */
   .next-image-button {
