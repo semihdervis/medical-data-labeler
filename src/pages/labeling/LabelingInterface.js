@@ -6,8 +6,15 @@ import ImageDisplay from './ImageDisplay';
 import ImageLabelsSidebar from './ImageLabelsSidebar';
 
 function LabelingInterface() {
-  const [selectedPatient, setSelectedPatient] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedPatient, setSelectedPatient] = useState({
+    name: 'John Doe',
+    age: 45,
+    gender: 'Male',
+    healthCondition: 'Hypertensive',
+    overallCondition: 'Signs of Inflammation',
+    images: ['/behcet-hastaligi4.png', 'img2.jpg']
+  });
+  const [selectedImage, setSelectedImage] = useState(selectedPatient.images[0]);
 
   const handleSelectPatient = (patient) => {
     setSelectedPatient(patient);

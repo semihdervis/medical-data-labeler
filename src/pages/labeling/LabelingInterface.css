@@ -141,3 +141,32 @@
     outline: none;
   }
   
+  /* LabelingInterface.css */
+
+.patient-info-sidebar label {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
+  .patient-info-sidebar input[type="text"],
+  .patient-info-sidebar input[type="number"],
+  .patient-info-sidebar select {
+    width: 100%;
+    padding: 8px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-top: 5px;
+    transition: border-color 0.2s;
+  }
+  
+  .patient-info-sidebar input[type="text"]:focus,
+  .patient-info-sidebar input[type="number"]:focus,
+  .patient-info-sidebar select:focus {
+    border-color: #3f51b5;
+    outline: none;
+  }
+  
