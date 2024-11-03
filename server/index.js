@@ -1,46 +1,47 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const path = require('path');
-const projectsRouter = require('./api/ProjectManagement');
-const userManagerRouter = require('./api/UserManager');
-const imageManagerRouter = require('./api/ImageManager');
-const patientManagerRouter = require('./api/PatientManager');
-
 const dotenv = require('dotenv');
+
+// Load environment variables from .env file
 dotenv.config();
 
-const remote_uri = `${process.env.MONGODB_URI}/test`;
-
 const app = express();
-const PORT = 3001;
-
-const isRemote = true;
-
-const uri = isRemote ? remote_uri : 'mongodb://localhost:27017/test';
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// Serve static files from the "projects" directory
-app.use('/projects', express.static(path.join(__dirname, 'projects')));
+// Routes
+const patientRoutes = require('./routes/patientRoutes');
+const projectRoutes = require('./routes/projectRoutes');
+const imageRoutes = require('./routes/imageRoutes');
+const userRoutes = require('./routes/userRoutes');
+const authRoutes = require('./routes/authRoutes');
 
-// Connect to MongoDB
-mongoose.connect(uri, {});
+app.use('/api/patients', patientRoutes);
+app.use('/api/projects', projectRoutes);
+app.use('/api/images', imageRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/auth', authRoutes);
+
+// Error handling middleware
+const errorHandler = require('./middlewares/errorHandler');
+app.use(errorHandler);
+
+const PORT = process.env.PORT || 3001;
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/test';
+
+mongoose.connect(MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 const connection = mongoose.connection;
 connection.once('open', () => {
-  console.log('MongoDB connected: ', uri);
+  console.log('MongoDB connected:', MONGODB_URI);
 });
 
-// Use routes
-app.use('/api/projects', projectsRouter);
-app.use('/api/users', userManagerRouter);
-app.use('/api/images', imageManagerRouter);
-app.use('/api/patients', patientManagerRouter);
-
-// Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

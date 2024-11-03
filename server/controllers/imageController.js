@@ -1,53 +1,14 @@
-const express = require('express');
-const router = express.Router();
-const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const ImageModel = require('../models/ImageModel');
 
-// Set up multer for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const { projectId, patientId } = req.body;
-
-    // Ensure projectId and patientId are provided
-    if (!projectId || !patientId) {
-      return cb(new Error('Project ID and Patient ID are required'));
-    }
-
-    // Define the upload directory based on project and patient IDs
-    const uploadDir = path.join(__dirname, '../projects', projectId, patientId);
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  },
-});
-
-const upload = multer({ storage });
-
-// Route to get images by projectId and patientId
-router.get('/:projectId/:patientId', async (req, res) => {
-  try {
-    const { projectId, patientId } = req.params;
-    const images = await ImageModel.find({ projectId, patientId });
-    res.json(images);
-  } catch (error) {
-    console.error('Error fetching images:', error);
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// Route to upload an image
-router.post('/upload', upload.single('image'), async (req, res) => {
+// Controller methods
+exports.uploadImage = async (req, res) => {
   try {
     const { name, uploader, projectId, patientId } = req.body;
     const { filename, path: tempFilepath } = req.file;
 
-    console.log('Received image upload:', { name, uploader, projectId, patientId, filename, tempFilepath });
+    console.log('Uploading image:', { name, uploader, projectId, patientId, filename, tempFilepath });
 
     // Check if the required fields are present
     if (!name || !uploader || !projectId || !patientId || !filename) {
@@ -75,6 +36,15 @@ router.post('/upload', upload.single('image'), async (req, res) => {
     console.error('Error uploading image:', error);
     res.status(500).json({ message: 'Error uploading image', error: error.message });
   }
-});
+};
 
-module.exports = router;
+exports.getImagesByProjectAndPatient = async (req, res) => {
+  try {
+    const { projectId, patientId } = req.params;
+    const images = await ImageModel.find({ projectId, patientId });
+    res.json(images);
+  } catch (error) {
+    console.error('Error fetching images:', error);
+    res.status(500).json({ message: error.message });
+  }
+};

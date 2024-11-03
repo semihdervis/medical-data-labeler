@@ -4,6 +4,7 @@ import axios from 'axios';
 const ImageManager = () => {
     const [image, setImage] = useState(null);
     const [uploader, setUploader] = useState('');
+    const [description, setDescription] = useState(''); // New state for description
     const [projects, setProjects] = useState([]);
     const [selectedProject, setSelectedProject] = useState('');
     const [patients, setPatients] = useState([]);
@@ -61,6 +62,7 @@ const ImageManager = () => {
         const formData = new FormData();
         formData.append('name', image.name);
         formData.append('uploader', uploader);
+        formData.append('description', description); // Append description
         formData.append('projectId', selectedProject);
         formData.append('patientId', selectedPatient);
         formData.append('image', image); // Append the image last
@@ -126,6 +128,15 @@ const ImageManager = () => {
                     />
                 </div>
                 <div>
+                    <label>Description:</label> {/* New input field for description */}
+                    <input
+                        type="text"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        required
+                    />
+                </div>
+                <div>
                     <label>Image:</label>
                     <input type="file" onChange={handleImageChange} required />
                 </div>
@@ -139,6 +150,7 @@ const ImageManager = () => {
                             <li key={image._id}>
                                 <img src={`${backendUrl}/${image.filepath}`} alt={image.name} width="100" />
                                 <p>{image.name}</p>
+                                <p>{image.description}</p> {/* Display image description */}
                             </li>
                         ))}
                     </ul>

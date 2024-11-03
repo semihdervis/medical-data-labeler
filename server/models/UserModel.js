@@ -1,26 +1,50 @@
 const mongoose = require('mongoose');
-const fs = require('fs');
-const path = require('path');
+const bcrypt = require('bcryptjs');
 
-// print schema path
-const schemaPath = path.join(__dirname, 'config.json');
+const UserSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    username: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    isAdmin: {
+        type: Boolean,
+        default: false
+    }
+});
 
-const schemaData = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
+// Hash the password before saving the user
+UserSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) {
+        return next();
+    }
+    try {
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
+        next();
+    } catch (err) {
+        next(err);
+    }
+});
 
-let DynamicUserSchema = new mongoose.Schema(schemaData, { strict: false });
-let DynamicUsers = mongoose.models.users || mongoose.model('users', DynamicUserSchema);
-
-
-const getDynamicUsers = () => DynamicUserSchema;
-const ReReadSchema = () => {
-  DynamicUserSchema = new mongoose.Schema(JSON.parse(fs.readFileSync(schemaPath, 'utf8')), { strict: false });
-  
-  if (mongoose.models.users) {
-    delete mongoose.models.users;
-  }
-  
-  DynamicUsers = mongoose.model('users', DynamicUserSchema);
-  return DynamicUserSchema;
+// Method to compare password
+UserSchema.methods.comparePassword = function (candidatePassword) {
+    return bcrypt.compare(candidatePassword, this.password);
 };
 
-module.exports = { DynamicUsers, getDynamicUsers, ReReadSchema };
+const User = mongoose.model('User', UserSchema);
+
+module.exports = User;
