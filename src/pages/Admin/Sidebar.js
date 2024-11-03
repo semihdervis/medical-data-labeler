@@ -50,6 +50,12 @@ function Sidebar({ setActiveSection }) {
       >
         Assign Project
       </button>
+      <button
+        onClick={() => handleButtonClick("removeCurrentProject")}
+        className={activeButton === "removeCurrentProject" ? "active" : ""}
+      >
+        Remove Project
+      </button>
     </aside>
   );
 }
