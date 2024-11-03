@@ -4,10 +4,10 @@ const userController = require('../controllers/userController');
 const authenticate = require('../middlewares/authenticate');
 const checkAdmin = require('../middlewares/checkAdmin');
 
-// Get all users
-router.get('/', authenticate, userController.getAllUsers);
+// Get all users (Admin only)
+router.get('/', authenticate, checkAdmin, userController.getAllUsers);
 
-// Get user by ID
+// Get user by ID (Authenticated users)
 router.get('/:id', authenticate, userController.getUserById);
 
 // Create a new user (Admin only)
