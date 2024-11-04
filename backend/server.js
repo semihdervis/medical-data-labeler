@@ -10,6 +10,7 @@ const projectRoutes = require('./routes/projectRoutes');
 const patientRoutes = require('./routes/patientRoutes');
 const assignmentRoutes = require('./routes/assignmentRoutes');
 const labelHistoryRoutes = require('./routes/labelHistoryRoutes');
+const authMiddleware = require('./middleware/authMiddleware');
 
 // Load environment variables
 dotenv.config();
@@ -28,7 +29,7 @@ connectDB();
 app.use(express.json());
 
 // Serve static files
-app.use('/projects', express.static(path.join(__dirname, 'projects')));
+app.use('/projects', authMiddleware ,express.static(path.join(__dirname, 'projects')));
 
 // Routes
 app.use('/api/users', userRoutes);
