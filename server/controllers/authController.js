@@ -3,15 +3,15 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/UserModel');
 
 exports.register = async (req, res) => {
-    const { name, username, email, password, isAdmin } = req.body;
+    const { email, password } = req.body;
 
     try {
-        const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+        const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(400).json({ message: 'Email or username already in use' });
+            return res.status(400).json({ message: 'Email already in use' });
         }
 
-        const user = new User({ name, username, email, password, isAdmin });
+        const user = new User({ email, password });
         await user.save();
 
         const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
