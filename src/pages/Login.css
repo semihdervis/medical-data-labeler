@@ -67,3 +67,20 @@
     margin-bottom: 10px;
   }
   
+  .register-button{
+    margin-top: 10px;
+    background-color: #4caf50;
+    color: white;
+    width: 100%;
+    max-width: 300px; /* Optional: Set a max-width to control the button size */
+    padding: 12px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .register-button:hover {
+    background-color: #388e3c;
+  }

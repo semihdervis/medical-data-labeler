@@ -58,6 +58,9 @@ function Login() {
         
         {error && <p className="login-error">{error}</p>}
         <button onClick={handleLogin} className="login-button">Login</button>
+        <button onClick={() => navigate('/register')} className="register-button">
+          Sign Up
+        </button>
       </div>
     </div>
   );
