@@ -32,7 +32,7 @@ function DoctorDashboard() {
           <div key={project.id} className="project-card">
             <h3>{project.name}</h3>
             <p>{project.description}</p>
-            <button className="view-button" onClick={() => handleViewProject(project.id)}>View Project</button>
+            <button className="dview-button" onClick={() => handleViewProject(project.id)}>View Project</button>
           </div>
         ))}
       </div>

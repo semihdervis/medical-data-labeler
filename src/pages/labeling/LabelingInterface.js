@@ -51,12 +51,16 @@ function LabelingInterface() {
         <button className="sidebar-toggle-button" > 
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
         </button>
+        <div>
+
         <button className="dashboard-button" onClick={() => navigate('/dashboard')}>
           Go to Dashboard
         </button>
         <button className="save-button" onClick={handleSave}>
           Save
         </button>
+        </div>
+        
       </div>
       
      <PatientListSidebar onSelectPatient={handleSelectPatient} />

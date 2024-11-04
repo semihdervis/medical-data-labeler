@@ -1,7 +1,7 @@
 /* LabelingInterface.css */
 
 .labeling-interface {
-  margin-top: 40px;
+  margin-top: 50px;
     display: grid;
     grid-template-columns: 180px 250px 1.5fr 250px; /* Make sidebars narrower, increase center */
     gap: 15px;
@@ -15,10 +15,11 @@
     justify-content: space-between;
     align-items: center;
     height: 60px;
-    background-color: #3f51b5;
-    color: white;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     position: fixed;
-    top: 0;
+    top: 0px;
     left: 0;
     right: 0;
     width: 100%;
@@ -28,8 +29,8 @@
 
 
   .sidebar-toggle-button {
-    background: none;
-    margin-left: 20px;
+    background-color: #3f51b5;
+    margin-left: 30px;
     border: none;
     cursor: pointer;
     padding: 5px;
@@ -59,7 +60,8 @@
     /* Save button on top right */
     .save-button {
       margin-right: 20px;
-      background-color: #4caf50;
+      margin-left: 10px;
+      background-color:#303f9f;
     }
     
     .save-button:hover {
