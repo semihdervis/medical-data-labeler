@@ -3,7 +3,7 @@
 .admin-dashboard {
   position: relative; /* Enable absolute positioning for child elements */
   text-align: center;
-  margin-top: 40px;
+  margin-top: 50px;
   padding: 20px;
   background-color: #f4f6f8;
   min-height: 100vh;
@@ -14,25 +14,31 @@
   justify-content:center;
   align-items: center;
   height: 60px;
-  background-color: #3f51b5;
-  color: white;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
+  background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0px;
+    left: 0;
+    right: 20px; /* Changed from 50px to 15px */
+    margin-top: 10px;
+    margin-left: 20px;
+    margin-bottom: 0;
+    width: calc(100% - 40px);
   z-index: 1000;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .top-bar h1{
   font-size:x-large;
   margin: 0;
-  color: white;
+  color:#3f51b5;
 }
 
 /* Log Out Button */
 .logout-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: #e57373;
   color: white;
   border: none;
@@ -43,7 +49,9 @@
   cursor: pointer;
   transition: background-color 0.3s;
 }
-
+.logout-button img{
+  margin-right: 3px;
+}
 .logout-button:hover {
   background-color: #d32f2f;
 }

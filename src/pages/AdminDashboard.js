@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
+import logoutIcon from './icons/logout.png';
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -29,7 +30,9 @@ function AdminDashboard() {
   return (
     <div className="admin-dashboard">
       <div className= "top-bar">
-      <button className="logout-button" onClick={handleLogout}>Log Out</button>
+      <button className="logout-button" onClick={handleLogout}>
+      <img src={logoutIcon} alt="Log out" style={{ width: '20px', height: '20px' }} />
+        Log Out</button>
       <h1>Admin Dashboard</h1>
       </div>
       <p>All Projects</p>

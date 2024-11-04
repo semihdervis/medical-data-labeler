@@ -37,7 +37,9 @@ body{
     z-index: 1000;
   }
 
- 
+ .container{
+  display: flex;
+ }
 
   .sidebar-toggle-button {
     background-color: #3f51b5;
@@ -60,6 +62,10 @@ body{
   
   /* Go to Dashboard button on top left */
   .dashboard-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
     right: 100px;
     background-color: #3f51b5;
   }
@@ -73,6 +79,13 @@ body{
       margin-right: 30px;
       margin-left: 10px;
       background-color:#303f9f;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .dashboard-button img, .save-button img{
+      margin-right: 3px;
     }
     
     .save-button:hover {
@@ -92,6 +105,7 @@ body{
     height: 100vh;
     transition: transform 0.3s ease;
     margin-right: 10px;
+    overflow: visible;
   }
   .labeling-interface.sidebar-open .patient-list-sidebar {
     transform: translateX(220px); /* Slide sidebar into view */
@@ -247,5 +261,52 @@ body{
   .patient-info-sidebar select:focus {
     border-color: #3f51b5;
     outline: none;
+  }
+  
+  .search-sort-container {
+    display: flex;
+    align-items: center; /* Center items vertically */
+    margin-bottom: 10px; /* Space between search/sort and patient list */
+  }
+  .sortbutton{
+    padding: 0;
+    margin-left: 5px;
+    background-color: white;
+    transition: transform 0.2s;
+  }
+  .sortbutton:hover{
+    transform:scale(1.1);
+    background-color: white;
+  }
+  .sort-container {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .sort-options {
+    position: absolute;
+    top: 100%; /* Position below the sort button */
+    left: 0;
+    display: block;
+    background-color: white;
+    border-radius: 4px;
+    padding: 10px;
+    z-index: 100; /* Ensure it's above other elements */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .sort-options button {
+    display: block;
+    margin: 5px 0;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    background-color:#3f51b5;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .sort-options button:hover {
+    background-color:#303f9f /* Darker shade on hover */
   }
   

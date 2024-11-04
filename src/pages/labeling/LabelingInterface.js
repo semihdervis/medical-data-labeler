@@ -5,6 +5,8 @@ import PatientListSidebar from './PatientListSidebar';
 import PatientInfoSidebar from './PatientInfoSidebar';
 import ImageDisplay from './ImageDisplay';
 import ImageLabelsSidebar from './ImageLabelsSidebar';
+import backArrow from '../icons/back_arrow.png';
+import saveIcon from '../icons/save.png';
 
 function LabelingInterface() {
   const navigate = useNavigate();
@@ -51,8 +53,12 @@ function LabelingInterface() {
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
         </button>
         <div className='container'>
-          <button className="dashboard-button" onClick={() => navigate('/dashboard')}>Go to Dashboard</button>
-          <button className="save-button" onClick={handleSave}>Save</button>
+          <button className="dashboard-button" onClick={() => navigate('/dashboard')}>
+          <img src={backArrow} alt="Back Arrow" style={{ width: '20px', height: '20px' }} />
+             Back to Dashboard</button>
+          <button className="save-button" onClick={handleSave}>
+          <img src={saveIcon} alt="Save" style={{ width: '20px', height: '20px' }} />
+            Save</button>
         </div>
       </div>
       
