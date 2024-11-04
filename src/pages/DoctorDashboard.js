@@ -1,48 +1,41 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import './DoctorDashboard.css';
 
 function DoctorDashboard() {
   const navigate = useNavigate();
-  const [projects, setProjects] = useState([]);
-  const [error, setError] = useState(null);
+  
+  const projects = [
+    { id: 'P001', name: 'Respiratory Health Project', description: 'Project focused on respiratory disease analysis.' },
+    { id: 'P002', name: 'Cardiovascular Health Study', description: 'Study on cardiovascular health conditions.' },
+    { id: 'P003', name: 'Neurological Study Project', description: 'Research on neurological health and disorders.' },
+    { id: 'P004', name: 'Oncology Research Project', description: 'Analysis of cancer and related diseases.' },
+  ];
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const response = await axios.get('/api/projects/get');
-        setProjects(response.data);
-      } catch (error) {
-        setError('Failed to fetch projects');
-        console.error('Error fetching projects:', error);
-      }
-    };
-
-    fetchProjects();
-  }, []);
+  const handleLogout = () => {
+    navigate('/');
+  };
 
   const handleViewProject = (id) => {
-    navigate(`/labeling-interface/${id}`);
+    navigate(`/labeling-interface`);
   };
 
   return (
     <div className="doctor-dashboard">
-      <div className="top-bar">
-        <button className="logout-button" onClick={() => navigate('/')}>Log Out</button>
-        <h1>Doctor Dashboard</h1>
+      <div className= "top-bar">
+      <button className="logout-button" onClick={handleLogout}>Log Out</button>
+      <h1>Doctor Dashboard</h1>
       </div>
       <p>Assigned Projects</p>
       <div className="project-grid">
         {projects.map((project) => (
-          <div key={project._id} className="project-card">
+          <div key={project.id} className="project-card">
             <h3>{project.name}</h3>
             <p>{project.description}</p>
-            <button className="view-button" onClick={() => handleViewProject(project._id)}>View Project</button>
+            <button className="view-button" onClick={() => handleViewProject(project.id)}>View Project</button>
           </div>
         ))}
       </div>
-      {error && <p className="error">{error}</p>}
     </div>
   );
 }

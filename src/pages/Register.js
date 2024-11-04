@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+//import axios from 'axios';
 import './Register.css';
 
 function Register() {
@@ -35,7 +35,7 @@ function Register() {
     setError('');
 
     try {
-      await axios.post('http://localhost:3001/api/auth/register', { email, password });
+      // await axios.post('http://localhost:3001/api/auth/register', { email, password });
       alert('Registration successful! Please log in.');
       navigate('/'); // Go back to login page after successful registration
     } catch (error) {
