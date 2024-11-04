@@ -40,7 +40,6 @@ function LabelingInterface() {
     setSelectedImage(selectedPatient.images[nextIndex]);
   };
 
-  //not connected yet
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -48,22 +47,17 @@ function LabelingInterface() {
   return (
     <div className={`labeling-interface ${isSidebarOpen ? 'sidebar-open' : ''}`}>
       <div className='label-top-bar'>
-        <button className="sidebar-toggle-button" > 
+        <button className="sidebar-toggle-button" onClick={toggleSidebar}> 
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
         </button>
-        <div>
-
-        <button className="dashboard-button" onClick={() => navigate('/dashboard')}>
-          Go to Dashboard
-        </button>
-        <button className="save-button" onClick={handleSave}>
-          Save
-        </button>
+        <div className='container'>
+          <button className="dashboard-button" onClick={() => navigate('/dashboard')}>Go to Dashboard</button>
+          <button className="save-button" onClick={handleSave}>Save</button>
         </div>
-        
       </div>
       
-     <PatientListSidebar onSelectPatient={handleSelectPatient} />
+      
+      <PatientListSidebar isOpen={isSidebarOpen} onSelectPatient={handleSelectPatient} />
       <PatientInfoSidebar patient={selectedPatient} />
       <ImageDisplay image={selectedImage} onNextImage={handleNextImage} />
       <ImageLabelsSidebar />
