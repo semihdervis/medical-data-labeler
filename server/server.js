@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const helpers = require('./utils/helpers');
 
 // Load environment variables from .env file
 dotenv.config();
@@ -37,8 +38,20 @@ mongoose.connect(MONGODB_URI, {});
 const connection = mongoose.connection;
 connection.once('open', () => {
   console.log('MongoDB connected:', MONGODB_URI);
+  console.log("\n");
+  const random = helpers.generateRandomString(10);
+  console.log("admin account: " + random);
 });
+
+// serve projects folder
+app.use('/projects', express.static('projects'));
+
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  
 });
+ 
+
+
+// generate random string
