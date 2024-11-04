@@ -1,13 +1,21 @@
-const path = require('path');
+const path = require('path'); // Import the path module
 const fs = require('fs');
 const Project = require('../models/ProjectModel');
-const Patient = require('../models/PatientModel');
+const User = require('../models/UserModel');
 
-const projectsDir = path.join(__dirname, '../projects');
+const projectsDir = path.join(__dirname, '../projects'); // Define the projects directory
 
 exports.getAllProjects = async (req, res) => {
   try {
-    const projects = await Project.find({ assignedDoctor: req.userId });
+    let projects;
+    if (req.userRole === 'admin') {
+      // If the user is an admin, fetch all projects
+      projects = await Project.find();
+    } else {
+      // If the user is a doctor, fetch only the projects assigned to them
+      const user = await User.findById(req.userId).populate('projects');
+      projects = user.projects;
+    }
     res.status(200).json(projects);
   } catch (error) {
     res.status(500).json({ message: error.message });

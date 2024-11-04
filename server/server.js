@@ -33,7 +33,10 @@ const errorHandler = require('./middlewares/errorHandler');
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/test';
+const REMOTE_URI = process.env.MONGODB_URI;
+
+const isRemote = false;
+const MONGODB_URI = isRemote ? REMOTE_URI : 'mongodb://localhost:27017/medical-labeler';
 
 mongoose.connect(MONGODB_URI, {});
 
