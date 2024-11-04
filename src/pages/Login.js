@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './Login.css';
 
 function Login() {
@@ -8,19 +9,29 @@ function Login() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     // Basic validation to ensure email and password are not empty
     if (!email || !password) {
       setError('Please enter both email and password.');
       return;
     }
-  
-    // Clear error and navigate to the appropriate dashboard
-    setError('');
-    if (email === 'admin') {
-      navigate('/admin-dashboard');
-    } else {
-      navigate('/dashboard');
+
+    try {
+      const response = await axios.post('http://localhost:3001/api/auth/login', { email, password });
+      const { token, isAdmin } = response.data;
+
+      // Store the token in local storage or a cookie
+      localStorage.setItem('token', token);
+
+      // Clear error and navigate to the appropriate dashboard
+      setError('');
+      if (isAdmin) {
+        navigate('/admin-dashboard');
+      } else {
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      setError('Invalid email or password');
     }
   };
 
@@ -44,9 +55,8 @@ function Login() {
           onChange={(e) => setPassword(e.target.value)}
           className="login-input"
         />
-
+        
         {error && <p className="login-error">{error}</p>}
-
         <button onClick={handleLogin} className="login-button">Login</button>
       </div>
     </div>
