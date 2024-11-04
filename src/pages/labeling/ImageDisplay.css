@@ -51,4 +51,28 @@
   .next-image-button:hover {
     background-color: #303f9f;
   }
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.7); /* Dark overlay */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    max-width: 95vw; /* Increase width for larger view */
+    max-height: 95vh; /* Increase height for larger view */
+    overflow: hidden; /* Ensure no overflow */
+  }
+  
+  .modal-content img {
+    width: 100%; /* Image takes full width of the modal content */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 10px;
+  }
   
