@@ -19,7 +19,7 @@ body {
   justify-content: space-between;
   align-items: center;
   height: 60px;
-  background-color: #ffffff;
+  background-color: #3f51b5;
     border-radius: 10px;
     box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.1);
     position: fixed;
@@ -126,8 +126,8 @@ textarea, input[type="text"], input[type="email"], select {
 }
 
 button {
-  background-color: #3f51b5;
-  color: #fff;
+  background-color: #ffffff;
+  color: #3f51b5;
   padding: 10px 15px;
   border: none;
   border-radius: 5px;
