@@ -6,7 +6,7 @@ function ProjectDescription({ projectName, setProjectName, projectDescription, s
       <h3>Project Details</h3>
       <div className="project-name">
         <label htmlFor="projectName">Project Name:</label>
-        <input
+        <textarea
           type="text"
           id="projectName"
           value={projectName}
