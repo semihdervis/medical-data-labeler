@@ -18,6 +18,7 @@ const authenticate = async (req, res, next) => {
 
         req.userId = user._id;
         req.userRole = user.isAdmin ? 'admin' : 'doctor'; // Set the user's role
+        req.userProjects = user.projects; // Set the user's projects
         next();
     } catch (error) {
         res.status(401).json({ message: 'Please authenticate.' });
