@@ -243,3 +243,34 @@ border-radius: 5px;
 .remove-icons:hover{
   background-color: #9a0007;
 }
+
+
+.import-patients {
+  display: none;
+}
+
+.import-patients-label {
+  display: inline-block;
+  padding: 9px 15px;
+  border-radius: 5px;
+  background-color:#303f9f;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+  margin-left: 20px;
+
+}
+.import-patients-label img{
+  padding-top: 3px;
+  margin-left: 5px;
+}
+
+.import-patients-label:hover {
+  background-color:#0f1b65;
+}
+
+.import-patients-label:active {
+  background-color:#3f51b5;
+}
