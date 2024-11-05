@@ -1,4 +1,5 @@
 import React from 'react';
+import removeIcon from '../icons/remove.png';
 
 function Patients({ patients, setPatients }) {
   const handleAddPatient = () => {
@@ -10,16 +11,21 @@ function Patients({ patients, setPatients }) {
       <h3>Patients</h3>
       {patients.map((patient, index) => (
         <div key={patient.id} className="patient-entry">
-          <p>{patient.id}</p>
-          <button onClick={() => {
-            const newPatients = patients.filter((_, i) => i !== index);
-            setPatients(newPatients);
-          }}>
-            Remove Patient
-          </button>
+          <p className="patient-id">{patient.id}</p>
+          <button
+            className="remove-icons"
+            onClick={() => {
+              const newPatients = patients.filter((_, i) => i !== index);
+              setPatients(newPatients);
+            }}
+          >
+            <img src={removeIcon} alt="Remove" style={{ width: '20px', height: '20px' }} />
+            </button>
         </div>
       ))}
-      <button onClick={handleAddPatient}>Add Patient</button>
+      <button className="in-page-buttons" onClick={handleAddPatient}>
+        Add Patient
+      </button>
     </section>
   );
 }

@@ -9,7 +9,7 @@ function RemoveCurrentProject({ currentProject, onRemove }) {
     <section className="section">
       <h3>Remove Current Project</h3>
       <p>Are you sure you want to remove the project <strong>{currentProject.name}</strong>?</p>
-      <button onClick={handleConfirmRemove} className="confirm-remove-button">
+      <button className='remove-button' onClick={handleConfirmRemove}>
         Confirm Remove
       </button>
     </section>

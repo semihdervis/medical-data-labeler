@@ -25,13 +25,13 @@ body {
     position: fixed;
     top: 0px;
     left: 0;
-    right: 20px; /* Changed from 50px to 15px */
+    right: 5px; 
     margin-top: 10px;
     margin-left: 5px;
     margin-bottom: 0;
     padding-left: 15px;
     padding-right: 15px;
-    width: calc(100% - 40px);
+    width: calc(100% - 10px);
   z-index: 1000;
 }
 .project-page-top-bar button{
@@ -41,6 +41,23 @@ font-size: 0.9rem;
 font-weight: bold;
 border-radius: 5px;
 cursor: pointer;
+}
+.in-page-buttons{
+  background-color:#303f9f;
+  color: white;
+  margin-bottom: 5px;
+}
+
+.in-page-buttons:hover{
+  background-color:#0f1b65;
+}
+
+.remove-button {
+  background-color: #d32f2f;
+  color: white;
+}
+.remove-button:hover {
+  background-color: #9a0007;
 }
 
 /* Sidebar */
@@ -111,6 +128,18 @@ box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
   max-width: 600px;
 }
 
+.patient-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px; /* space between the name and button */
+  margin-bottom: 10px;
+}
+
+.patient-id {
+  margin: 0;
+}
+
 .section h3 {
   color: #3f51b5;
   margin-bottom: 10px;
@@ -137,12 +166,12 @@ button {
 
 button:hover {
   background-color: #303f9f;
+  color: white;
 }
 
 .label-input {
   display: flex;
   gap: 10px;
-  align-items: center;
   margin-bottom: 10px;
 }
 
@@ -151,6 +180,7 @@ button:hover {
 display: flex;
 gap: 10px;
 margin-bottom: 20px;
+align-items: center;
 }
 
 .assign-doctor-input input {
@@ -190,16 +220,21 @@ margin-bottom: 8px;
 border-radius: 5px;
 }
 
-.remove-button {
-background-color: #e57373;
-color: #fff;
-padding: 5px 10px;
-border: none;
-border-radius: 5px;
-cursor: pointer;
-transition: background-color 0.3s ease;
+.logout-button{
+  display: flex;
+  justify-items: center;
+  align-items: center;
 }
 
-.remove-button:hover {
-background-color: #d32f2f;
+
+.remove-icons{
+  padding: 5px;
+  background-color: #d32f2f;
+  cursor: pointer;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.remove-icons:hover{
+  background-color: #9a0007;
 }

@@ -1,8 +1,13 @@
 import React from 'react';
+import removeIcon from '../icons/remove.png';
 
 function PersonLabels({ personLabels, setPersonLabels }) {
   const handleAddPersonLabel = () => {
     setPersonLabels([...personLabels, { name: "", type: "text" }]);
+  };
+
+  const handleRemovePersonLabel = (indexToRemove) => {
+    setPersonLabels(personLabels.filter((_, index) => index !== indexToRemove));
   };
 
   return (
@@ -33,9 +38,15 @@ function PersonLabels({ personLabels, setPersonLabels }) {
             <option value="dropdown">Dropdown</option>
             <option value="slider">Slider</option>
           </select>
+          <button
+            className="remove-icons"
+            onClick={() => handleRemovePersonLabel(index)}
+          >
+            <img src={removeIcon} alt="Remove" style={{ width: '20px', height: '20px' }} />
+      </button>
         </div>
       ))}
-      <button onClick={handleAddPersonLabel}>Add Person Label</button>
+      <button className='in-page-buttons' onClick={handleAddPersonLabel}>Add Person Label</button>
     </section>
   );
 }

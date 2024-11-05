@@ -8,6 +8,8 @@ import ImageLabels from './ImageLabels';
 import Patients from './Patients';
 import AssignDoctor from './AssignDoctor';
 import RemoveCurrentProject from './RemoveCurrentProject';
+import logoutIcon from '../icons/logout_dark.png';
+
 
 function AdminProjectPage() {
   const navigate = useNavigate();
@@ -49,7 +51,9 @@ function AdminProjectPage() {
         &#60; Go to Dashboard
       </button>
 
-      <button className="logout-button" onClick={handleLogout}>Log Out</button>
+      <button className="logout-button" onClick={handleLogout}>
+      <img src={logoutIcon} alt="Log out" style={{ width: '20px', height: '20px' }} />
+        Log Out</button>
 
 
         </div>

@@ -25,7 +25,7 @@ function AssignDoctor({ assignedDoctors = [], setAssignedDoctors }) { // Default
           placeholder="Enter doctor's email"
           onChange={(e) => setDoctorEmail(e.target.value)}
         />
-        <button onClick={handleAddDoctor}>Add Doctor</button>
+        <button className='in-page-buttons' onClick={handleAddDoctor}>Add Doctor</button>
       </div>
 
       {/* List of assigned doctors */}
@@ -33,7 +33,7 @@ function AssignDoctor({ assignedDoctors = [], setAssignedDoctors }) { // Default
         {assignedDoctors.map((email, index) => (
           <li key={index} className="doctor-entry">
             <span>{email}</span>
-            <button onClick={() => handleRemoveDoctor(email)} className="remove-button">
+            <button className='remove-button' onClick={() => handleRemoveDoctor(email)}>
               Remove
             </button>
           </li>
