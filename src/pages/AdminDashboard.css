@@ -152,3 +152,33 @@
 .edit-button:hover {
   background-color: #e64a19;
 }
+
+/* Styles for Add Project Card */
+.add-project-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f4ff;
+  border: 2px dashed #3f51b5;
+  color: #3f51b5;
+  cursor: pointer;
+}
+
+.add-project-card:hover {
+  background-color: #e0e7ff;
+  transform: translateY(-5px);
+}
+
+.add-project-icon {
+  font-size: 5rem;
+  font-weight: bold;
+  color: #3f51b5;
+  margin-bottom: 10px;
+}
+
+.add-project-card p {
+  font-size: 1rem;
+  color: #3f51b5;
+  font-weight: bold;
+}

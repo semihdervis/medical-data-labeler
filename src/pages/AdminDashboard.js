@@ -30,6 +30,11 @@ function AdminDashboard() {
     navigate(`/admin-project-page`);
   };
 
+  const handleAddProject = () => {
+    // Navigate to or open project creation interface
+    navigate(`/admin-project-page`);
+  };
+
   const handleLogout = () => {
     navigate('/');
   };
@@ -52,6 +57,11 @@ function AdminDashboard() {
       </div>
       <p>All Projects</p>
       <div className="project-grid">
+        {/* Add Project Card */}
+        <div className="project-card add-project-card" onClick={handleAddProject}>
+          <div className="add-project-icon">+</div>
+          <p>Create New Project</p>
+        </div>
         {filteredProjects.map((project) => (
           <div key={project.id} className="project-card">
             <h3>{project.name}</h3>
