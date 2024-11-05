@@ -15,18 +15,24 @@ body {
 }
 
 .project-page-top-bar{
-display: flex;
-align-items: center;
-height: 60px;
-background-color: #3f51b5;
-color: white;
-position: fixed;
-top: 0;
-left: 0;
-right: 0;
-width: 100%;
-z-index: 1000;
-box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
+  background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0px;
+    left: 0;
+    right: 20px; /* Changed from 50px to 15px */
+    margin-top: 10px;
+    margin-left: 5px;
+    margin-bottom: 0;
+    padding-left: 15px;
+    padding-right: 15px;
+    width: calc(100% - 40px);
+  z-index: 1000;
 }
 .project-page-top-bar button{
 border: none;
@@ -39,7 +45,9 @@ cursor: pointer;
 
 /* Sidebar */
 .sidebar {
-margin-top: 40px;
+margin-top: 75px;
+margin-left: 5px;
+border-radius: 10px;
 width: 250px;
 background-color: #3f51b5;
 color: #fff;
