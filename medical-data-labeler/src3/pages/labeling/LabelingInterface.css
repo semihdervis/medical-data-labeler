@@ -1,0 +1,228 @@
+/* LabelingInterface.css */
+
+.labeling-interface {
+  margin-top: 40px;
+    display: grid;
+    grid-template-columns: 180px 250px 1.5fr 250px; /* Make sidebars narrower, increase center */
+    gap: 15px;
+    padding: 20px;
+    background-color: #f0f2f5;
+    min-height: 100vh;
+  }
+
+  .label-top-bar{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+    background-color: #3f51b5;
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+
+  .sidebar-toggle-button {
+    background: none;
+    margin-left: 20px;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    transition: transform 0.2s; /* Optional: Add transition effect */
+  }
+  
+  .sidebar-toggle-button:hover {
+    transform: scale(1.1); /* Optional: Scale up on hover for effect */
+  }
+  
+  .sidebar-toggle-button svg {
+    fill: #ffffff; /* Change color of the icon */
+    width: 24px; /* Adjust icon size */
+    height: 24px;
+  }
+  
+  /* Go to Dashboard button on top left */
+  .dashboard-button {
+    right: 100px;
+    background-color: #3f51b5;
+  }
+  
+  .dashboard-button:hover {
+    background-color: #303f9f;
+  }
+  
+    /* Save button on top right */
+    .save-button {
+      margin-right: 20px;
+      background-color: #4caf50;
+    }
+    
+    .save-button:hover {
+      background-color: #388e3c;
+    }
+
+  /* Sidebar for Patient List */
+  .patient-list-sidebar {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  .patient-list-sidebar h3 {
+    font-size: 1.2rem;
+    color: #3f51b5;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  
+  .patient-list-sidebar ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .patient-list-sidebar li {
+    padding: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    text-align: center;
+    background-color: #e0e0e0;
+  }
+  
+  .patient-list-sidebar li:hover {
+    background-color: #bdbdbd;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Sidebar for Patient Info */
+  .patient-info-sidebar {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  .patient-info-sidebar h3 {
+    font-size: 1.2rem;
+    color: #3f51b5;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  
+  .patient-info-sidebar p {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 10px;
+  }
+  
+  /* Main Image Display */
+  .image-display {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  
+  .image-display img {
+    max-width: 100%; /* Utilize more space */
+    max-height: 80vh; /* Increase height for larger images */
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+  
+  .image-display button {
+    background-color: #3f51b5;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 0.9rem;
+  }
+  
+  .image-display button:hover {
+    background-color: #303f9f;
+  }
+  
+  /* Sidebar for Image Labels */
+  .image-labels-sidebar {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  .image-labels-sidebar h3 {
+    font-size: 1.2rem;
+    color: #3f51b5;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  
+  .image-labels-sidebar label {
+    display: block;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
+  .image-labels-sidebar select,
+  .image-labels-sidebar input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    transition: border-color 0.2s;
+  }
+  
+  .image-labels-sidebar select:focus,
+  .image-labels-sidebar input[type="text"]:focus {
+    border-color: #3f51b5;
+    outline: none;
+  }
+  
+  /* Patient Info Labels */
+  .patient-info-sidebar label {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
+  .patient-info-sidebar input[type="text"],
+  .patient-info-sidebar input[type="number"],
+  .patient-info-sidebar select {
+    width: 100%;
+    padding: 8px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-top: 5px;
+    transition: border-color 0.2s;
+  }
+  
+  .patient-info-sidebar input[type="text"]:focus,
+  .patient-info-sidebar input[type="number"]:focus,
+  .patient-info-sidebar select:focus {
+    border-color: #3f51b5;
+    outline: none;
+  }
+  
