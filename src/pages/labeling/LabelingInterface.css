@@ -1,11 +1,17 @@
 /* LabelingInterface.css */
-body{
+
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden; /* Prevent scrolling */
   background-color: #f0f2f5;
+
 }
+
 .labeling-interface {
   margin-top: 60px;
     display: flex;
-    grid-template-columns: 180px 250px 1.5fr 250px; /* Make sidebars narrower, increase center */
+    flex-direction: column;
     gap: 15px;
     padding: 20px;
     background-color: #f0f2f5;
@@ -17,6 +23,13 @@ body{
   .labeling-interface.sidebar-open {
     margin-left: 215px;/* Shift entire interface to the right */
   }
+
+  .patient-list-sidebar,
+.patient-info-sidebar,
+.image-labels-sidebar {
+    max-height: calc(100vh - 90px); /* Full height minus the top bar */
+    overflow-y: auto; /* Enable scrolling if content overflows */
+}
 
   .label-top-bar{
     display: flex;
@@ -145,6 +158,7 @@ body{
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     padding: 20px;
     overflow-y: auto;
+    width: 300px;
   }
   
   .patient-info-sidebar h3 {
@@ -171,6 +185,7 @@ body{
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    max-height: calc(100vh - 90px);
     overflow: hidden;
   }
   
@@ -203,6 +218,8 @@ body{
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     padding: 20px;
     overflow-y: auto;
+    position: relative;
+    width: 320px;
   }
   
   .image-labels-sidebar h3 {

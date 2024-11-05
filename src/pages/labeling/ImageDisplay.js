@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import './ImageDisplay.css';
+import previousIcon from '../icons/previous.png';
+import nextIcon from '../icons/next.png';
 
-function ImageDisplay({ image, onNextImage }) {
+function ImageDisplay({ image, onNextImage, onPreviousImage }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const displayImage = image || '/logo192.png';
 
@@ -16,9 +18,14 @@ function ImageDisplay({ image, onNextImage }) {
   return (
     <div className="image-display">
       <img src={displayImage} alt="Patient Medical" onClick={handleImageClick} />
-      <button onClick={onNextImage} className="next-image-button">
-        Next Image
-      </button>
+      <div className="image-navigation">
+        <button onClick={onPreviousImage} className="nav-button">
+        <img src={previousIcon} alt="Previous" style={{ width: '20px', height: '20px' }} />
+        </button>
+        <button onClick={onNextImage} className="nav-button">
+        <img src={nextIcon} alt="Next" style={{ width: '20px', height: '20px' }} />
+        </button>
+      </div>
 
       {isModalOpen && (
         <div className="modal-overlay" onClick={closeModal}>

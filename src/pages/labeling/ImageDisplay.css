@@ -33,24 +33,23 @@
     transition: background-color 0.3s;
   }
   
-
-
-  
-  /* Next Image button at the bottom */
-  .next-image-button {
-    background-color: #3f51b5;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 15px;
-    transition: background-color 0.3s;
+  .image-navigation{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    margin-top: 20px;
   }
-  
-  .next-image-button:hover {
-    background-color: #303f9f;
-  }
+.image-navigation button{
+  padding: 0;
+  background-color: #ffffff;
+  transition: transfrom 0.3s;
+}
+.image-navigation button:hover{
+  background-color: #ffffff;
+  transform: scale(1.1);
+}
+ 
   .modal-overlay {
     position: fixed;
     top: 0;

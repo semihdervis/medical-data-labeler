@@ -42,6 +42,12 @@ function LabelingInterface() {
     setSelectedImage(selectedPatient.images[nextIndex]);
   };
 
+  const handlePreviousImage = () => {
+    const currentIndex = selectedPatient.images.indexOf(selectedImage);
+    const previousIndex = (currentIndex - 1 + selectedPatient.images.length) % selectedPatient.images.length;
+    setSelectedImage(selectedPatient.images[previousIndex]);
+  };
+
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -65,8 +71,11 @@ function LabelingInterface() {
       
       <PatientListSidebar isOpen={isSidebarOpen} onSelectPatient={handleSelectPatient} />
       <PatientInfoSidebar patient={selectedPatient} />
-      <ImageDisplay image={selectedImage} onNextImage={handleNextImage} />
-      <ImageLabelsSidebar />
+      <ImageDisplay 
+  image={selectedImage} 
+  onNextImage={handleNextImage} 
+  onPreviousImage={handlePreviousImage} 
+/>      <ImageLabelsSidebar />
     </div>
   );
 }
