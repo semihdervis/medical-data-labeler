@@ -88,3 +88,55 @@ exports.getPatientsByProjectId = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+exports.assignDoctor = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const { doctorEmail } = req.body;
+
+    const project = await Project.findById(projectId);
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    const doctor = await User.findOne({ email: doctorEmail });
+    if (!doctor) {
+      return res.status(404).json({ message: 'Doctor not found' });
+    }
+
+    if (!project.assignedDoctors.includes(doctor._id)) {
+      project.assignedDoctors.push(doctor._id);
+      await project.save();
+    }
+
+    res.status(200).json(project);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.removeDoctor = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const { doctorEmail } = req.body;
+
+    const project = await Project.findById(projectId);
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    const doctor = await User.findOne({ email: doctorEmail });
+    if (!doctor) {
+      return res.status(404).json({ message: 'Doctor not found' });
+    }
+
+    project.assignedDoctors = project.assignedDoctors.filter(
+      (doctorId) => doctorId.toString() !== doctor._id.toString()
+    );
+    await project.save();
+
+    res.status(200).json(project);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

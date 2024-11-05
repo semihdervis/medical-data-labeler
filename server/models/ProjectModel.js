@@ -7,9 +7,11 @@ const projectSchema = new mongoose.Schema({
   },
   description: {
     type: String,
+    default: '',
   },
   creationDate: {
     type: Date,
+    default: Date.now,
   },
 });
 

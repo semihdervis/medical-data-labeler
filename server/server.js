@@ -73,13 +73,13 @@ connection.once('open', async () => {
 
 const createOrUpdateAdminAccount = async (password) => {
   try {
-    const adminEmail = 'admin@example.com'; // Define the admin email
-
+    const adminEmail = 'admin'; // Define the admin email
+    
     let admin = await User.findOne({ email: adminEmail });
     if (admin) {
       // Update the password if the admin account already exists
       admin.password = password;
-      await admin.save(); 
+      await admin.save();
       console.log('Admin account updated with new password.');
     } else {
       // Create a new admin account if it doesn't exist
@@ -92,7 +92,7 @@ const createOrUpdateAdminAccount = async (password) => {
       console.log('Admin account created.');
     }
   } catch (error) {
-    console.error('Error creating/updating admin account:', error);
+    console.error('Error creating/updating admin account: ', error);
   }
 };
 
