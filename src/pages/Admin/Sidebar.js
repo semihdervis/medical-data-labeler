@@ -19,7 +19,7 @@ function Sidebar({ setActiveSection }) {
         onClick={() => handleButtonClick("description")}
         className={activeButton === "description" ? "active" : ""}
       >
-        Project Description
+        Project Details
       </button>
       <button
         onClick={() => handleButtonClick("personLabels")}

@@ -20,7 +20,7 @@ function AdminProjectPage() {
   const [patients, setPatients] = useState([{ id: "Patient001", images: ["img1.jpg", "img2.jpg"] }]);
   const [assignedDoctors, setAssignedDoctors] = useState([]);
   const [activeButton, setActiveButton] = React.useState("description");
-
+  const [projectName, setProjectName] = useState("Respiratory Health Project");
 
   const handleLogout = () => {
     navigate('/');
@@ -59,6 +59,8 @@ function AdminProjectPage() {
         </div>
         {activeSection === "description" && (
           <ProjectDescription
+          projectName={projectName}
+          setProjectName={setProjectName}
             projectDescription={projectDescription}
             setProjectDescription={setProjectDescription}
           />
