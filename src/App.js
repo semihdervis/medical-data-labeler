@@ -1,11 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Login from './pages/Login';
 import DoctorDashboard from './pages/DoctorDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminProjectPage from './pages/Admin/AdminProjectPage';
 import LabelingInterface from './pages/labeling/LabelingInterface';
-import Register from './pages/Register';
+import { Login, Register } from './pages/Auth';
+
 
 function App() {
   return (

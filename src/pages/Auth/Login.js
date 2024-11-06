@@ -1,6 +1,7 @@
+// Login.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Login.css';
+import './AuthStyles.css';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -9,47 +10,38 @@ function Login() {
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    // Basic validation to ensure email and password are not empty
     if (!email || !password) {
       setError('Please enter both email and password.');
       return;
     }
-  
-    // Clear error and navigate to the appropriate dashboard
     setError('');
-    if (email === 'admin') {
-      navigate('/admin-dashboard');
-    } else {
-      navigate('/dashboard');
-    }
+    navigate(email === 'admin' ? '/admin-dashboard' : '/dashboard');
   };
 
   return (
-    <div className="login-container">
-      <div className="login-card">
+    <div className="auth-container">
+      <div className="auth-card">
         <h1>Login to Medical Labeling App</h1>
-        
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="login-input"
+          className="auth-input"
         />
-        
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="login-input"
+          className="auth-input"
         />
-
-        {error && <p className="login-error">{error}</p>}
-
-        <button onClick={handleLogin} className="login-button">Login</button>
-        <button onClick={() => navigate('/register')} className="register-button">
-          Sign Up
+        {error && <p className="auth-error">{error}</p>}
+        <button onClick={handleLogin} className="auth-button">Login</button>
+        
+        {/* Switch to Register button */}
+        <button onClick={() => navigate('/register')} className="auth-toggle-button">
+          Don't have an account? Register
         </button>
       </div>
     </div>

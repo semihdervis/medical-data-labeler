@@ -1,7 +1,7 @@
+// Register.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-//import axios from 'axios';
-import './Register.css';
+import './AuthStyles.css';
 
 function Register() {
   const [email, setEmail] = useState('');
@@ -12,20 +12,14 @@ function Register() {
   const navigate = useNavigate();
 
   const handleRegister = async () => {
-    // Check if fields are filled
     if (!email || !password || !confirmPassword) {
       setError('Please fill in all fields.');
       return;
     }
-
-    // Validate email format
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setError('Please enter a valid email address.');
       return;
     }
-
-    // Check if passwords match
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
       return;
@@ -33,12 +27,10 @@ function Register() {
 
     setLoading(true);
     setError('');
-
     try {
-      // await axios.post('http://localhost:3001/api/auth/register', { email, password });
       alert('Registration successful! Please log in.');
-      navigate('/'); // Go back to login page after successful registration
-    } catch (error) {
+      navigate('/');
+    } catch {
       setError('Registration failed. Please try again.');
     } finally {
       setLoading(false);
@@ -46,37 +38,38 @@ function Register() {
   };
 
   return (
-    <div className="register-container">
-      <div className="register-card">
+    <div className="auth-container">
+      <div className="auth-card">
         <h1>Register</h1>
-
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="register-input"
+          className="auth-input"
         />
-
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="register-input"
+          className="auth-input"
         />
-
         <input
           type="password"
           placeholder="Confirm Password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          className="register-input"
+          className="auth-input"
         />
-
-        {error && <p className="register-error">{error}</p>}
-        <button onClick={handleRegister} className="register-button" disabled={loading}>
+        {error && <p className="auth-error">{error}</p>}
+        <button onClick={handleRegister} className="auth-button" disabled={loading}>
           {loading ? 'Registering...' : 'Register'}
+        </button>
+        
+        {/* Switch to Login button */}
+        <button onClick={() => navigate('/')} className="auth-toggle-button">
+          Already have an account? Login
         </button>
       </div>
     </div>
