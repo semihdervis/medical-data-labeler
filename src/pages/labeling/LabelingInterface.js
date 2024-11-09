@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './LabelingInterface.css';
 import PatientListSidebar from './PatientListSidebar';
 import PatientInfoSidebar from './PatientInfoSidebar';
@@ -16,24 +16,42 @@ function LabelingInterface() {
     alert("Changes saved!");
   };
 
-  const [patients, setPatients] = useState([
+  const patients = [
     {
+      id: 'Patient001',
       name: 'John Doe',
       age: 45,
       gender: 'Male',
       healthCondition: 'Hypertensive',
       overallCondition: 'Signs of Inflammation',
-      images: ['/behcet-hastaligi4.png', 'img2.jpg']
+      images: ['/behcet-hastaligi4.png', 'behcet_img3.jpg']
+    },
+    {
+      id: 'Patient002',
+      name: 'Jane Smith',
+      age: 34,
+      gender: 'Female',
+      healthCondition: 'Healthy',
+      overallCondition: 'Good',
+      images: ['/behcet_img.jpg', 'behcet_img2.png']
     },
     // Add more patients here
-  ]);
+  ];
 
+  // Set the first patient as the default selected patient
   const [selectedPatient, setSelectedPatient] = useState(patients[0]);
-  const [selectedImage, setSelectedImage] = useState(selectedPatient.images[0]);
+  const [selectedImage, setSelectedImage] = useState(patients[0].images[0]);
+
+  // Ensure selectedImage is set when selectedPatient changes
+  useEffect(() => {
+    // If the selectedPatient has images, set the first image
+    if (selectedPatient.images && selectedPatient.images.length > 0) {
+      setSelectedImage(selectedPatient.images[0]);
+    }
+  }, [selectedPatient]);
 
   const handleSelectPatient = (patient) => {
     setSelectedPatient(patient);
-    setSelectedImage(patient.images[0]);
   };
 
   const handleNextImage = () => {
@@ -68,14 +86,22 @@ function LabelingInterface() {
         </div>
       </div>
       
+      <PatientListSidebar 
+        isOpen={isSidebarOpen} 
+        onSelectPatient={handleSelectPatient} 
+        patients={patients} // Pass the patients data to the PatientListSidebar
+      />
       
-      <PatientListSidebar isOpen={isSidebarOpen} onSelectPatient={handleSelectPatient} />
+      {/* Pass the selected patient to PatientInfoSidebar */}
       <PatientInfoSidebar patient={selectedPatient} />
+
+      {/* Pass the selected image to ImageDisplay */}
       <ImageDisplay 
-  image={selectedImage} 
-  onNextImage={handleNextImage} 
-  onPreviousImage={handlePreviousImage} 
-/>      <ImageLabelsSidebar />
+        image={selectedImage} 
+        onNextImage={handleNextImage} 
+        onPreviousImage={handlePreviousImage} 
+      />
+      <ImageLabelsSidebar />
     </div>
   );
 }

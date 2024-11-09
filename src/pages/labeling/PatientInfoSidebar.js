@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function PatientInfoSidebar({ patient }) {
   const [personLabels, setPersonLabels] = useState({
@@ -8,6 +8,19 @@ function PatientInfoSidebar({ patient }) {
     healthCondition: patient?.healthCondition || "Select",
     overallCondition: patient?.overallCondition || "No Issues"
   });
+
+  // Update state when patient prop changes
+  useEffect(() => {
+    if (patient) {
+      setPersonLabels({
+        name: patient.name || "",
+        age: patient.age || "",
+        gender: patient.gender || "Select",
+        healthCondition: patient.healthCondition || "Select",
+        overallCondition: patient.overallCondition || "No Issues"
+      });
+    }
+  }, [patient]);  // Re-run the effect whenever the 'patient' prop changes
 
   const handleLabelChange = (label, value) => {
     setPersonLabels({ ...personLabels, [label]: value });
