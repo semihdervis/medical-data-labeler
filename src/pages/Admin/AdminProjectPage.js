@@ -8,6 +8,7 @@ import ImageLabels from './ImageLabels';
 import Patients from './Patients';
 import AssignDoctor from './AssignDoctor';
 import RemoveCurrentProject from './RemoveCurrentProject';
+import ExportProject from './ExportProject';
 import logoutIcon from '../icons/logout_dark.png';
 
 
@@ -34,7 +35,15 @@ function AdminProjectPage() {
   const handleRemoveProject = (projectId) => {
     // Logic to remove the project goes here (e.g., API call)
     console.log(`Project ${projectId} removed`);
-    navigate('/admin-dashboard'); // Redirect to dashboard after removal
+    navigate('/admin-dashboard');
+  };
+
+  const handleExport = () => {
+    const projectData = {
+      ...currentProject,
+      exportDate: new Date().toISOString()
+    };
+    return projectData;
   };
 
   return (
@@ -79,6 +88,9 @@ function AdminProjectPage() {
         )}
         {activeSection === "removeCurrentProject" && (
           <RemoveCurrentProject currentProject={currentProject} onRemove={handleRemoveProject} />
+        )}
+        {activeSection === "exportProject" && (
+          <ExportProject currentProject={currentProject} onExport={handleExport} />
         )}
       </div>
     </div>
