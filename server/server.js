@@ -24,12 +24,14 @@ const projectRoutes = require('./routes/projectRoutes');
 const imageRoutes = require('./routes/imageRoutes');
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRoutes');
+const labelRoutes = require('./routes/labelRoutes'); // Import label routes
 
 app.use('/api/patients', patientRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/images', imageRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/labels', labelRoutes); // Use label routes
 
 // Authorization middleware for static files
 const authorize = (req, res, next) => {
@@ -74,7 +76,7 @@ connection.once('open', async () => {
 const createOrUpdateAdminAccount = async (password) => {
   try {
     const adminEmail = 'admin'; // Define the admin email
-    
+
     let admin = await User.findOne({ email: adminEmail });
     if (admin) {
       // Update the password if the admin account already exists
@@ -92,7 +94,7 @@ const createOrUpdateAdminAccount = async (password) => {
       console.log('Admin account created.');
     }
   } catch (error) {
-    console.error('Error creating/updating admin account: ', error);
+    console.error('Error creating/updating admin account:', error);
   }
 };
 

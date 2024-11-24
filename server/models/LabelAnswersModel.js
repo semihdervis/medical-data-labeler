@@ -14,4 +14,4 @@ const labelAnswerSchema = new mongoose.Schema({
   ] 
 });
 
-module.exports = mongoose.model('labelAnswers', imageSchema);
+module.exports = mongoose.model('labelAnswers', labelAnswerSchema);

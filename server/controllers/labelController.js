@@ -1,5 +1,5 @@
 const LabelSchema = require('../models/LabelSchemaModel')
-const LabelAnswer = require('../models/LabelModel')
+const LabelAnswer = require('../models/LabelAnswersModel')
 
 // Create a new label schema
 exports.createLabelSchema = async (req, res) => {
