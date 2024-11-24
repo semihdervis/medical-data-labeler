@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-//import axios from 'axios';
+import axios from 'axios';
 import './Register.css';
 
 function Register() {
@@ -40,6 +40,7 @@ function Register() {
       navigate('/'); // Go back to login page after successful registration
     } catch (error) {
       setError('Registration failed. Please try again.');
+      console.log(error);
     } finally {
       setLoading(false);
     }

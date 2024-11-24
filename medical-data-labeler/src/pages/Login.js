@@ -1,71 +1,75 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import './Login.css';
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import './Login.css'
 
-function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
+function Login () {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const navigate = useNavigate()
 
   const handleLogin = async () => {
     // Basic validation to ensure email and password are not empty
     if (!email || !password) {
-      setError('Please enter both email and password.');
-      return;
+      setError('Please enter both email and password.')
+      return
     }
 
     try {
-      const response = await axios.post('/api/auth/login', { email, password });
-      const { token, isAdmin } = response.data;
+      const response = await axios.post('/api/auth/login', { email, password })
+      const { token, isAdmin } = response.data
 
       // Store the token in local storage or a cookie
-      localStorage.setItem('token', token);
+      localStorage.setItem('token', token)
 
       // Clear error and navigate to the appropriate dashboard
-      setError('');
+      setError('')
       if (isAdmin) {
-        navigate('/admin-dashboard');
+        navigate('/admin-dashboard')
       } else {
-        navigate('/dashboard');
+        navigate('/dashboard')
       }
     } catch (error) {
-      setError('Invalid email or password');
+      setError('Invalid email or password')
     }
-  };
-
+  }
 
   return (
-    <div className="login-container">
-      <div className="login-card">
+    <div className='login-container'>
+      <div className='login-card'>
         <h1>Login to Medical Labeling App</h1>
-        
+
         <input
-          type="email"
-          placeholder="Email"
+          type='email'
+          placeholder='Email'
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="login-input"
+          onChange={e => setEmail(e.target.value)}
+          className='login-input'
         />
-        
+
         <input
-          type="password"
-          placeholder="Password"
+          type='password'
+          placeholder='Password'
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="login-input"
+          onChange={e => setPassword(e.target.value)}
+          className='login-input'
         />
 
-        {error && <p className="login-error">{error}</p>}
+        {error && <p className='login-error'>{error}</p>}
 
-        <button onClick={handleLogin} className="login-button">Login</button>
-        <button onClick={() => navigate('/register')} className="register-button">
+        <button onClick={handleLogin} className='login-button'>
+          Login
+        </button>
+        <button
+          onClick={() => navigate('/register')}
+          className='register-button'
+        >
           Sign Up
         </button>
       </div>
     </div>
-  );
+  )
 }
 
-export default Login;
+export default Login
