@@ -55,7 +55,7 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 3001;
 const REMOTE_URI = process.env.MONGODB_URI;
 
-const isRemote = false;
+const isRemote = true;
 
 const MONGODB_URI = isRemote ? REMOTE_URI : 'mongodb://localhost:27017/medical-labeler';
 

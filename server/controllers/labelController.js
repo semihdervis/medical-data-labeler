@@ -22,6 +22,22 @@ exports.getAllLabelSchemas = async (req, res) => {
   }
 }
 
+
+// Get a label schema by project ID
+exports.getLabelSchemaByProjectId = async (req, res) => {
+  try {
+    const labelSchema = await LabelSchema.findOne({ projectId: req.params.id })
+    if (!labelSchema) {
+      return res.status(404).json({ message: 'Label schema not found' })
+    }
+    res.status(200).json(labelSchema)
+  }
+  catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+}
+
+
 // Get a label schema by ID
 exports.getLabelSchemaById = async (req, res) => {
   try {

@@ -4,6 +4,7 @@ const patientController = require('../controllers/patientController');
 
 // Routes for patient management
 router.post('/', patientController.addPatient);
+router.get('/namelist', patientController.getPatientsList);
 router.get('/', patientController.getAllPatients);
 router.get('/:id', patientController.getPatientById);
 router.put('/:id', patientController.updatePatient);

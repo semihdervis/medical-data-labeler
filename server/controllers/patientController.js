@@ -52,6 +52,20 @@ exports.addPatient = async (req, res) => {
   }
 };
 
+// get a list of patients only consisting of their names and ids
+
+
+// Get list of patient names
+exports.getPatientsList = async (req, res) => {
+  try {
+    const patients = await Patient.find({}, 'name'); // Only select the 'name' field
+    res.status(200).json(patients);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 exports.getAllPatients = async (req, res) => {
   try {
     const { projectId } = req.query;
@@ -100,6 +114,8 @@ exports.updatePatient = async (req, res) => {
   }
 };
 
+// Function to delete a patient and their folder
+// Example request: DELETE /patients/123
 exports.deletePatient = async (req, res) => {
   try {
     const { id } = req.params;

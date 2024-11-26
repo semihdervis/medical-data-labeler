@@ -1,35 +1,16 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const labelSchema = new mongoose.Schema({
-  projectId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Project', // Assuming 'Project' is the owner model
-    required: true
-  },
-  type: {
-    // image schema or patient schema
-    type: String,
-    required: true
-  },
-  labelData: [
-    {
-      labelQuestion: {
-        type: String,
-        required: true
-      },
-      labelType: {
-        // string, int, float, dropdown etc.
-        type: String,
-        required: true
-      },
-      labelOptions: {
-        // for dropdowns the selectibles and etc.
-        type: [String]
-      }
-    }
-  ]
-})
+const LabelDataSchema = new Schema({
+  labelQuestion: { type: String, required: true },
+  labelType: { type: String, required: true },
+  labelOptions: { type: Array, default: [] }
+}, { _id: false }); // Disable _id for subdocuments
 
-const LabelSchema = mongoose.model('LabelSchema', labelSchema)
+const LabelSchema = new Schema({
+  projectId: { type: Schema.Types.ObjectId, required: true },
+  type: { type: String, required: true },
+  labelData: [LabelDataSchema]
+});
 
-module.exports = LabelSchema
+module.exports = mongoose.model('LabelSchema', LabelSchema);
