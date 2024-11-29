@@ -1,9 +1,21 @@
 const LabelSchema = require('../models/LabelSchemaModel')
 const LabelAnswer = require('../models/LabelAnswersModel')
+const Project = require('../models/ProjectModel')
+const Image = require('../models/ImageModel'); // Assuming you have an Image model
+const Patient = require('../models/PatientModel'); // Assuming you have a Patient model
+
 
 // Create a new label schema
 exports.createLabelSchema = async (req, res) => {
   try {
+    const { projectId } = req.body
+
+    // Check if the project exists
+    const project = await Project.findById(projectId)
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' })
+    }
+
     const labelSchema = new LabelSchema(req.body)
     await labelSchema.save()
     res.status(201).json(labelSchema)
@@ -85,12 +97,30 @@ exports.deleteLabelSchema = async (req, res) => {
 // Create a new label answer
 exports.createLabelAnswer = async (req, res) => {
   try {
-    const { schemaId, answers } = req.body
+    const { schemaId, ownerId, answers } = req.body
 
     // Fetch the label schema
     const labelSchema = await LabelSchema.findById(schemaId)
     if (!labelSchema) {
       return res.status(404).json({ message: 'Label schema not found' })
+    }
+
+    // Fetch the owner document (either image or patient)S
+    labelProjId = labelSchema.projectId;
+    
+    let ownerDocument = await Image.findById(ownerId);
+    if (!ownerDocument) {
+      ownerDocument = await Patient.findById(ownerId);
+    }
+    if (!ownerDocument) {
+      return res.status(404).json({ message: 'Owner document not found' });
+    }
+
+    // Check if the project ID matches
+    const projId = ownerDocument.projectId;
+    console.log(projId + " " + labelProjId);
+    if (projId.toString() !== labelProjId) {
+      return res.status(400).json({ message: 'Project ID does not match' });
     }
 
     // Validate the label answer

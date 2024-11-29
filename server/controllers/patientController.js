@@ -67,49 +67,42 @@ exports.getPatientsList = async (req, res) => {
 
 
 exports.getAllPatients = async (req, res) => {
+  const { id } = req.params; // Access the project ID from the URL parameters
   try {
-    const { projectId } = req.query;
-
-    if (!projectId || !mongoose.Types.ObjectId.isValid(projectId)) {
-      return res.status(400).json({ message: 'Valid Project ID is required' });
-    }
-
-    const patients = await Patient.find({ projectId });
-    res.json(patients);
+    const patients = await Patient.find({ projectId: id });
+    res.status(200).json(patients);
   } catch (error) {
-    console.error('Error fetching patients:', error);
     res.status(500).json({ message: error.message });
   }
 };
 
 exports.getPatientById = async (req, res) => {
+  const { id, patientId } = req.params; // Access the project ID and patient ID from the URL parameters
   try {
-    const { id } = req.params;
-    const patient = await Patient.findById(id);
-
+    const patient = await Patient.findOne({ _id: patientId, projectId: id }); // Search by both projectId and patientId
     if (!patient) {
       return res.status(404).json({ message: 'Patient not found' });
     }
-
-    res.json(patient);
+    res.status(200).json(patient);
   } catch (error) {
-    console.error('Error fetching patient:', error);
     res.status(500).json({ message: error.message });
   }
 };
 
 exports.updatePatient = async (req, res) => {
+  const { id, patientId } = req.params; // Access the project ID and patient ID from the URL parameters
+  const updateData = req.body; // Extract update data from the request body
   try {
-    const { id } = req.params;
-    const updatedPatient = await Patient.findByIdAndUpdate(id, req.body, { new: true });
-
+    const updatedPatient = await Patient.findOneAndUpdate(
+      { _id: patientId, projectId: id },
+      updateData,
+      { new: true }
+    );
     if (!updatedPatient) {
       return res.status(404).json({ message: 'Patient not found' });
     }
-
-    res.json(updatedPatient);
+    res.status(200).json(updatedPatient);
   } catch (error) {
-    console.error('Error updating patient:', error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -118,9 +111,8 @@ exports.updatePatient = async (req, res) => {
 // Example request: DELETE /patients/123
 exports.deletePatient = async (req, res) => {
   try {
-    const { id } = req.params;
-    const deletedPatient = await Patient.findByIdAndDelete(id);
-
+    const { id, patientId } = req.params; // Access the project ID and patient ID from the URL parameters
+    const deletedPatient = await Patient.findOneAndDelete({ _id: patientId, projectId: id });
     if (!deletedPatient) {
       return res.status(404).json({ message: 'Patient not found' });
     }
