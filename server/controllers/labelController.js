@@ -94,20 +94,17 @@ exports.deleteLabelSchema = async (req, res) => {
   }
 }
 
-// Create a new label answer
 exports.createLabelAnswer = async (req, res) => {
   try {
-    const { schemaId, ownerId, answers } = req.body
+    const { schemaId, ownerId, answers } = req.body;
 
     // Fetch the label schema
-    const labelSchema = await LabelSchema.findById(schemaId)
+    const labelSchema = await LabelSchema.findById(schemaId);
     if (!labelSchema) {
-      return res.status(404).json({ message: 'Label schema not found' })
+      return res.status(404).json({ message: 'Label schema not found' });
     }
 
-    // Fetch the owner document (either image or patient)S
-    labelProjId = labelSchema.projectId;
-    
+    // Fetch the owner document (either image or patient)
     let ownerDocument = await Image.findById(ownerId);
     if (!ownerDocument) {
       ownerDocument = await Patient.findById(ownerId);
@@ -118,29 +115,27 @@ exports.createLabelAnswer = async (req, res) => {
 
     // Check if the project ID matches
     const projId = ownerDocument.projectId;
-    console.log(projId + " " + labelProjId);
-    if (projId.toString() !== labelProjId) {
+    const labelProjId = labelSchema.projectId;
+    if (projId.toString() !== labelProjId.toString()) {
       return res.status(400).json({ message: 'Project ID does not match' });
     }
 
     // Validate the label answer
-    const schemaFields = labelSchema.labelData.map(field => field.labelQuestion)
-    const answerFields = answers.map(answer => answer.field)
+    const schemaFields = labelSchema.labelData.map(field => field.labelQuestion);
+    const answerFields = answers.map(answer => answer.field);
 
-    const isValid = answerFields.every(field => schemaFields.includes(field))
+    const isValid = answerFields.every(field => schemaFields.includes(field));
     if (!isValid) {
-      return res
-        .status(400)
-        .json({ message: 'Label answer does not match the label schema' })
+      return res.status(400).json({ message: 'Label answer does not match the label schema' });
     }
 
-    const labelAnswer = new LabelAnswer(req.body)
-    await labelAnswer.save()
-    res.status(201).json(labelAnswer)
+    const labelAnswer = new LabelAnswer({ ownerId, labelData: answers });
+    await labelAnswer.save();
+    res.status(201).json(labelAnswer);
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    res.status(500).json({ message: error.message });
   }
-}
+};
 
 // Get all label answers
 exports.getAllLabelAnswers = async (req, res) => {
