@@ -13,7 +13,7 @@ const App = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/admin" element={<AdminDashboard />} />
       <Route path="/doctor" element={<DoctorDashboard />} />
-      <Route path="/labeling-interface" element={<LabelingInterface />} />
+      <Route path="/label" element={<LabelingInterface />} />
     </Routes>
   );
 };

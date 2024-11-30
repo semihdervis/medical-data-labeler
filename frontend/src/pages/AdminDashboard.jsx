@@ -20,7 +20,7 @@ function AdminDashboard() {
     project.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleViewProject = (id) => navigate(`/labeling-interface`);
+  const handleViewProject = (id) => navigate(`/label`);
   const handleEditProject = (id) => navigate(`/admin-project-page`);
   const handleAddProject = () => navigate(`/admin-project-page`);
   const handleLogout = () => navigate('/');

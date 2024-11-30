@@ -172,7 +172,7 @@ function LabelingInterface() {
     <div className="flex">
       <button
         className="flex items-center justify-center mr-[10px] bg-[#3f51b5] hover:bg-[#303f9f] text-white font-bold py-2 px-4 rounded"
-        onClick={() => navigate('/dashboard')}
+        onClick={() => navigate('/doctor')}
       >
         <img src={backArrow} alt="Back Arrow" className="w-[20px] h-[20px] mr-[3px]" />
         Back to Dashboard

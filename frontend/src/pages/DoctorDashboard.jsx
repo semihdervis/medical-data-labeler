@@ -19,7 +19,7 @@ function DoctorDashboard() {
   );
 
   const handleLogout = () => navigate('/');
-  const handleViewProject = (id) => navigate(`/labeling-interface`);
+  const handleViewProject = (id) => navigate(`/label`);
 
   return (
     <div className="relative text-center px-5 bg-gray-100 min-h-screen mt-10">
