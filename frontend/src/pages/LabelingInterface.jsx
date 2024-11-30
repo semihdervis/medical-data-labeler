@@ -151,7 +151,7 @@ function LabelingInterface() {
 
   return (
 <div
-  className={`mt-[60px] flex flex-col gap-[15px] p-[20px] bg-[#f0f2f5] min-h-screen transition-all duration-300 ease-in-out ${
+  className={`mt-[60px] flex gap-[15px] p-[20px] bg-[#f0f2f5] min-h-screen transition-all duration-300 ease-in-out ${
     isSidebarOpen ? 'ml-[215px]' : ''
   } flex-row`}
 >
