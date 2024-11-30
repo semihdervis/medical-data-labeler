@@ -2,12 +2,11 @@ import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import "./LabelingInterface.css";
 import PatientInfoSidebar from "./PatientInfoSidebar";
-import ImageLabelsSidebar from "./ImageLabelsSidebar";
 import backArrow from "../icons/back_arrow.png";
 import saveIcon from "../icons/save.png";
 import sorticon from "../icons/sort_icon.png";
-import previousIcon from '../icons/previous.png';
-import nextIcon from '../icons/next.png';
+import previousIcon from "../icons/previous.png";
+import nextIcon from "../icons/next.png";
 
 function LabelingInterface() {
   const navigate = useNavigate();
@@ -73,7 +72,9 @@ function LabelingInterface() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  {/* PatientListSidebar functions */}
+  {
+    /* PatientListSidebar functions */
+  }
 
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("asc"); // Default sort order
@@ -96,12 +97,16 @@ function LabelingInterface() {
     handleSelectPatient(patient);
   };
 
-  {/* End PatientListSidebar functions */}
+  {
+    /* End PatientListSidebar functions */
+  }
 
-  {/* ImageDisplay functions */}
+  {
+    /* ImageDisplay functions */
+  }
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const displayImage = selectedImage || '/logo192.png';
+  const displayImage = selectedImage || "/logo192.png";
 
   const handleImageClick = () => {
     setIsModalOpen(true);
@@ -111,7 +116,9 @@ function LabelingInterface() {
     setIsModalOpen(false);
   };
 
-  {/* End ImageDisplay functions */}
+  {
+    /* End ImageDisplay functions */
+  }
 
   return (
     <div
@@ -205,28 +212,62 @@ function LabelingInterface() {
 
       {/* Image Display */}
       <div className="image-display">
-      <img src={displayImage} alt="Patient Medical" onClick={handleImageClick} />
-      <div className="image-navigation">
-        <button onClick={handlePreviousImage} className="nav-button">
-        <img src={previousIcon} alt="Previous" style={{ width: '20px', height: '20px' }} />
-        </button>
-        <button onClick={handleNextImage} className="nav-button">
-        <img src={nextIcon} alt="Next" style={{ width: '20px', height: '20px' }} />
-        </button>
-      </div>
-
-      {isModalOpen && (
-        <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-content">
-            <img src={displayImage} alt="Enlarged View" />
-          </div>
+        <img
+          src={displayImage}
+          alt="Patient Medical"
+          onClick={handleImageClick}
+        />
+        <div className="image-navigation">
+          <button onClick={handlePreviousImage} className="nav-button">
+            <img
+              src={previousIcon}
+              alt="Previous"
+              style={{ width: "20px", height: "20px" }}
+            />
+          </button>
+          <button onClick={handleNextImage} className="nav-button">
+            <img
+              src={nextIcon}
+              alt="Next"
+              style={{ width: "20px", height: "20px" }}
+            />
+          </button>
         </div>
-      )}
-    </div>
+
+        {isModalOpen && (
+          <div className="modal-overlay" onClick={closeModal}>
+            <div className="modal-content">
+              <img src={displayImage} alt="Enlarged View" />
+            </div>
+          </div>
+        )}
+      </div>
       {/* End Image Display */}
 
-      <ImageLabelsSidebar />
-
+      {/* Image Labels Sidebar */}
+      <div className="image-labels-sidebar">
+        <h3>Image Labels</h3>
+        <label>
+          Is infection visible?
+          <select>
+            <option>Yes</option>
+            <option>No</option>
+          </select>
+        </label>
+        <label>
+          Severity of Condition
+          <select>
+            <option>Mild</option>
+            <option>Moderate</option>
+            <option>Severe</option>
+          </select>
+        </label>
+        <label>
+          Presence of Anomalies
+          <input type="text" placeholder="Describe anomalies" />
+        </label>
+      </div>
+      {/* End Image Labels Sidebar */}
     </div>
   );
 }
