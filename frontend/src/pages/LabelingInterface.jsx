@@ -356,7 +356,7 @@ function LabelingInterface() {
 
     <label className="block mb-5 text-sm text-gray-700">
       Is infection visible?
-      <select className="w-full p-2 text-base border border-gray-300 rounded-md focus:border-[#3f51b5] outline-none">
+      <select className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-[#3f51b5] outline-none">
         <option>Yes</option>
         <option>No</option>
       </select>
@@ -364,7 +364,7 @@ function LabelingInterface() {
 
     <label className="block mb-5 text-sm text-gray-700">
       Severity of Condition
-      <select className="w-full p-2 text-base border border-gray-300 rounded-md focus:border-[#3f51b5] outline-none">
+      <select className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-[#3f51b5] outline-none">
         <option>Mild</option>
         <option>Moderate</option>
         <option>Severe</option>
@@ -376,7 +376,7 @@ function LabelingInterface() {
       <input
         type="text"
         placeholder="Describe anomalies"
-        className="w-full p-2 text-base border border-gray-300 rounded-md focus:border-[#3f51b5] outline-none"
+        className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-[#3f51b5] outline-none"
       />
     </label>
   </div>
