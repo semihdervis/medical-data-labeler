@@ -1,35 +1,35 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Register() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleRegister = async () => {
     if (!email || !password || !confirmPassword) {
-      setError('Please fill in all fields.');
+      setError("Please fill in all fields.");
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError('Please enter a valid email address.');
+      setError("Please enter a valid email address.");
       return;
     }
     if (password !== confirmPassword) {
-      setError('Passwords do not match.');
+      setError("Passwords do not match.");
       return;
     }
 
     setLoading(true);
-    setError('');
+    setError("");
     try {
-      alert('Registration successful! Please log in.');
-      navigate('/');
+      alert("Registration successful! Please log in.");
+      navigate("/");
     } catch {
-      setError('Registration failed. Please try again.');
+      setError("Registration failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -64,14 +64,16 @@ function Register() {
         <button
           onClick={handleRegister}
           className={`w-full max-w-xs px-4 py-3 text-white bg-blue-600 rounded ${
-            loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-500 transition'
+            loading
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:bg-blue-500 transition"
           }`}
           disabled={loading}
         >
-          {loading ? 'Registering...' : 'Register'}
+          {loading ? "Registering..." : "Register"}
         </button>
         <button
-          onClick={() => navigate('/')}
+          onClick={() => navigate("/")}
           className="w-full max-w-xs mt-4 text-sm text-blue-700 underline hover:text-blue-500"
         >
           Already have an account? Login

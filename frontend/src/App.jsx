@@ -5,6 +5,7 @@ import Register from "./pages/Register";
 import AdminDashboard from "./pages/AdminDashboard";
 import DoctorDashboard from "./pages/DoctorDashboard";
 import LabelingInterface from "./pages/LabelingInterface";
+import AdminProjectPage from "./pages/Admin/AdminProjectPage";
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
       <Route path="/admin" element={<AdminDashboard />} />
       <Route path="/doctor" element={<DoctorDashboard />} />
       <Route path="/label" element={<LabelingInterface />} />
+      <Route path="/edit" element={<AdminProjectPage />} />
     </Routes>
   );
 };

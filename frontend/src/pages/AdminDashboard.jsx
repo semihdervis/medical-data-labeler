@@ -1,29 +1,54 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import logoutIcon from './icons/logout.png';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import logoutIcon from "./icons/logout.png";
 
 function AdminDashboard() {
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   const projects = [
-    { id: 'P001', name: 'Respiratory Health Project', description: 'Project focused on respiratory disease analysis.' },
-    { id: 'P002', name: 'Cardiovascular Health Study', description: 'Study on cardiovascular health conditions.' },
-    { id: 'P003', name: 'Neurological Study Project', description: 'Research on neurological health and disorders.' },
-    { id: 'P004', name: 'Oncology Research Project', description: 'Analysis of cancer and related diseases.' },
-    { id: 'P009', name: 'Infectious Disease Control Study', description: 'Study on controlling infectious diseases.' },
-    { id: 'P010', name: 'Nutrition and Wellness Program', description: 'Program promoting nutrition and overall wellness.' },
+    {
+      id: "P001",
+      name: "Respiratory Health Project",
+      description: "Project focused on respiratory disease analysis.",
+    },
+    {
+      id: "P002",
+      name: "Cardiovascular Health Study",
+      description: "Study on cardiovascular health conditions.",
+    },
+    {
+      id: "P003",
+      name: "Neurological Study Project",
+      description: "Research on neurological health and disorders.",
+    },
+    {
+      id: "P004",
+      name: "Oncology Research Project",
+      description: "Analysis of cancer and related diseases.",
+    },
+    {
+      id: "P009",
+      name: "Infectious Disease Control Study",
+      description: "Study on controlling infectious diseases.",
+    },
+    {
+      id: "P010",
+      name: "Nutrition and Wellness Program",
+      description: "Program promoting nutrition and overall wellness.",
+    },
   ];
 
-  const filteredProjects = projects.filter((project) =>
-    project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.description.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredProjects = projects.filter(
+    (project) =>
+      project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleViewProject = (id) => navigate(`/label`);
-  const handleEditProject = (id) => navigate(`/admin-project-page`);
-  const handleAddProject = () => navigate(`/admin-project-page`);
-  const handleLogout = () => navigate('/');
+  const handleEditProject = (id) => navigate(`/edit`);
+  const handleAddProject = () => navigate(`/edit`);
+  const handleLogout = () => navigate("/");
 
   return (
     <div className="relative text-center mt-12 p-5 bg-gray-100 min-h-screen">
@@ -44,7 +69,9 @@ function AdminDashboard() {
           Log Out
         </button>
       </div>
-      <p className="mt-20 mb-5 text-lg font-medium text-gray-700">All Projects</p>
+      <p className="mt-20 mb-5 text-lg font-medium text-gray-700">
+        All Projects
+      </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
         {/* Add Project Card */}
         <div
@@ -59,7 +86,9 @@ function AdminDashboard() {
             key={project.id}
             className="flex flex-col justify-between bg-white p-5 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition"
           >
-            <h3 className="text-lg text-blue-700 font-bold mb-2">{project.name}</h3>
+            <h3 className="text-lg text-blue-700 font-bold mb-2">
+              {project.name}
+            </h3>
             <p className="text-sm text-gray-600 mb-4">{project.description}</p>
             <div className="flex space-x-2">
               <button
