@@ -53,13 +53,13 @@ function AdminDashboard() {
   return (
     <div className="relative text-center mt-12 p-5 bg-gray-100 min-h-screen">
       <div className="fixed top-2 left-2 right-2 bg-white rounded-lg shadow-md flex items-center justify-between px-4 py-3 z-50">
-        <h1 className="text-xl text-blue-700 font-bold">Admin Dashboard</h1>
+        <h1 className="text-xl text-primary font-bold">Admin Dashboard</h1>
         <input
           type="text"
           placeholder="Search Projects..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-80 h-10 px-4 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-80 h-10 px-4 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary"
         />
         <button
           onClick={handleLogout}
@@ -75,7 +75,7 @@ function AdminDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
         {/* Add Project Card */}
         <div
-          className="flex flex-col items-center justify-center bg-blue-50 border-2 border-dashed border-blue-500 text-blue-500 cursor-pointer hover:bg-blue-100 p-6 rounded-lg"
+          className="flex flex-col items-center justify-center bg-blue-50 border-2 border-dashed border-primary text-primary cursor-pointer hover:bg-blue-100 p-6 rounded-lg"
           onClick={handleAddProject}
         >
           <div className="text-5xl font-bold mb-2">+</div>
@@ -86,14 +86,14 @@ function AdminDashboard() {
             key={project.id}
             className="flex flex-col justify-between bg-white p-5 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition"
           >
-            <h3 className="text-lg text-blue-700 font-bold mb-2">
+            <h3 className="text-lg text-primary font-bold mb-2">
               {project.name}
             </h3>
             <p className="text-sm text-gray-600 mb-4">{project.description}</p>
             <div className="flex space-x-2">
               <button
                 onClick={() => handleViewProject(project.id)}
-                className="flex-1 bg-blue-500 hover:bg-blue-700 text-white py-2 rounded-md transition"
+                className="flex-1 bg-primary hover:bg-secondary text-white py-2 rounded-md transition"
               >
                 View Project
               </button>

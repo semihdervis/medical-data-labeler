@@ -41,7 +41,7 @@ function DoctorDashboard() {
   return (
     <div className="relative text-center px-5 bg-gray-100 min-h-screen mt-10">
       <div className="fixed top-2 left-2 right-2 bg-white rounded-lg shadow-md flex items-center justify-between px-4 py-3 z-50">
-        <h1 className="text-xl text-blue-700 px-4 py-2 rounded-lg font-bold">
+        <h1 className="text-xl text-primary px-4 py-2 rounded-lg font-bold">
           Doctor Dashboard
         </h1>
         <input
@@ -68,13 +68,13 @@ function DoctorDashboard() {
             key={project.id}
             className="flex flex-col justify-between bg-white p-5 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition"
           >
-            <h3 className="text-lg text-blue-700 font-bold mb-2">
+            <h3 className="text-lg text-primary font-bold mb-2">
               {project.name}
             </h3>
             <p className="text-sm text-gray-600 mb-4">{project.description}</p>
             <button
               onClick={() => handleViewProject(project.id)}
-              className="w-full bg-blue-700 hover:bg-blue-900 text-white py-2 rounded-md transition"
+              className="w-full bg-primary hover:bg-secondary text-white py-2 rounded-md transition"
             >
               View Project
             </button>

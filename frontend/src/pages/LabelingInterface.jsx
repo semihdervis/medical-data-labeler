@@ -158,7 +158,7 @@ function LabelingInterface() {
       {/* Top Bar */}
       <div className="flex justify-between items-center h-[60px] bg-white rounded-[10px] shadow-[4px_4px_12px_rgba(0,0,0,0.1)] fixed top-0 left-0 right-[20px] mt-[10px] ml-[20px] w-[calc(100%-40px)] z-50">
         <button
-          className="bg-[#3f51b5] ml-[30px] border-none cursor-pointer p-[5px] transition-transform duration-200 hover:scale-110"
+          className="bg-primary ml-[30px] border-none cursor-pointer p-[5px] transition-transform duration-200 hover:scale-110"
           onClick={toggleSidebar}
         >
           <svg
@@ -171,7 +171,7 @@ function LabelingInterface() {
         </button>
         <div className="flex">
           <button
-            className="flex items-center justify-center mr-[10px] bg-[#3f51b5] hover:bg-[#303f9f] text-white font-bold py-2 px-4 rounded"
+            className="flex items-center justify-center mr-[10px] bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded"
             onClick={() => navigate("/doctor")}
           >
             <img
@@ -182,7 +182,7 @@ function LabelingInterface() {
             Back to Dashboard
           </button>
           <button
-            className="flex items-center justify-center mr-[30px] ml-[10px] bg-[#303f9f] hover:bg-[#388e3c] text-white font-bold py-2 px-4 rounded"
+            className="flex items-center justify-center mr-[30px] ml-[10px] bg-secondary hover:bg-hoverblue text-white font-bold py-2 px-4 rounded"
             onClick={handleSave}
           >
             <img
@@ -201,7 +201,7 @@ function LabelingInterface() {
           isSidebarOpen ? "translate-x-[220px]" : ""
         }`}
       >
-        <h3 className="text-[1.2rem] text-[#3f51b5] mb-[15px] text-center">
+        <h3 className="text-[1.2rem] text-primary mb-[15px] text-center">
           Patients
         </h3>
 
@@ -223,7 +223,7 @@ function LabelingInterface() {
             {showSortOptions && (
               <div className="absolute top-full left-0 bg-white rounded-md p-2 z-10 shadow-lg">
                 <button
-                  className="block my-1 px-2 py-1 bg-[#3f51b5] text-white rounded-md hover:bg-[#303f9f]"
+                  className="block my-1 px-2 py-1 bg-primary text-white rounded-md hover:bg-secondary"
                   onClick={() => {
                     setSortOrder("asc");
                     setShowSortOptions(false);
@@ -232,7 +232,7 @@ function LabelingInterface() {
                   Ascending ID
                 </button>
                 <button
-                  className="block my-1 px-2 py-1 bg-[#3f51b5] text-white rounded-md hover:bg-[#303f9f]"
+                  className="block my-1 px-2 py-1 bg-primary text-white rounded-md hover:bg-secondary"
                   onClick={() => {
                     setSortOrder("desc");
                     setShowSortOptions(false);
@@ -260,7 +260,7 @@ function LabelingInterface() {
 
       {/* Patient Info Sidebar */}
       <div className="max-h-[calc(100vh_-_90px)] overflow-y-auto bg-white rounded-[10px] shadow-lg p-5 w-[300px]">
-        <h3 className="text-[1.2rem] text-[#3f51b5] mb-4 text-center">
+        <h3 className="text-[1.2rem] text-primary mb-4 text-center">
           Patient Information
         </h3>
 
@@ -270,7 +270,7 @@ function LabelingInterface() {
             type="text"
             value={personLabels.name}
             onChange={(e) => handleLabelChange("name", e.target.value)}
-            className="mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-[#3f51b5] outline-none"
+            className="mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
           />
         </label>
 
@@ -280,7 +280,7 @@ function LabelingInterface() {
             type="number"
             value={personLabels.age}
             onChange={(e) => handleLabelChange("age", e.target.value)}
-            className="mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-[#3f51b5] outline-none"
+            className="mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
           />
         </label>
 
@@ -289,7 +289,7 @@ function LabelingInterface() {
           <select
             value={personLabels.gender}
             onChange={(e) => handleLabelChange("gender", e.target.value)}
-            className="mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-[#3f51b5] outline-none"
+            className="mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
           >
             <option value="Select" disabled>
               Select
@@ -307,7 +307,7 @@ function LabelingInterface() {
             onChange={(e) =>
               handleLabelChange("healthCondition", e.target.value)
             }
-            className="mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-[#3f51b5] outline-none"
+            className="mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
           >
             <option value="Select" disabled>
               Select
@@ -326,7 +326,7 @@ function LabelingInterface() {
             onChange={(e) =>
               handleLabelChange("overallCondition", e.target.value)
             }
-            className="mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-[#3f51b5] outline-none"
+            className="mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
           />
         </label>
       </div>
@@ -372,13 +372,13 @@ function LabelingInterface() {
 
       {/* Image Labels Sidebar */}
       <div className="max-h-[calc(100vh_-_90px)] overflow-y-auto bg-white rounded-[10px] shadow-lg p-5 w-[320px]">
-        <h3 className="text-[1.2rem] text-[#3f51b5] mb-4 text-center">
+        <h3 className="text-[1.2rem] text-primary mb-4 text-center">
           Image Labels
         </h3>
 
         <label className="block mb-5 text-sm text-gray-700">
           Is infection visible?
-          <select className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-[#3f51b5] outline-none">
+          <select className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none">
             <option>Yes</option>
             <option>No</option>
           </select>
@@ -386,7 +386,7 @@ function LabelingInterface() {
 
         <label className="block mb-5 text-sm text-gray-700">
           Severity of Condition
-          <select className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-[#3f51b5] outline-none">
+          <select className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none">
             <option>Mild</option>
             <option>Moderate</option>
             <option>Severe</option>
@@ -398,7 +398,7 @@ function LabelingInterface() {
           <input
             type="text"
             placeholder="Describe anomalies"
-            className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-[#3f51b5] outline-none"
+            className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
           />
         </label>
       </div>
