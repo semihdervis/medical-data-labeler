@@ -5,7 +5,8 @@ import Register from "./pages/Register";
 import AdminDashboard from "./pages/AdminDashboard";
 import DoctorDashboard from "./pages/DoctorDashboard";
 import LabelingInterface from "./pages/LabelingInterface";
-import AdminProjectPage from "./pages/Admin/AdminProjectPage";
+import AdminProjectPage from "./pages/Edit/AdminProjectPage";
+import CreateProject from "./pages/CreateProject";
 
 const App = () => {
   return (
@@ -16,6 +17,8 @@ const App = () => {
       <Route path="/doctor" element={<DoctorDashboard />} />
       <Route path="/label" element={<LabelingInterface />} />
       <Route path="/edit" element={<AdminProjectPage />} />
+      <Route path="/create" element={<CreateProject />} />
+
     </Routes>
   );
 };

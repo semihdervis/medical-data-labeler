@@ -47,7 +47,7 @@ function AdminDashboard() {
 
   const handleViewProject = (id) => navigate(`/label`);
   const handleEditProject = (id) => navigate(`/edit`);
-  const handleAddProject = () => navigate(`/edit`);
+  const handleAddProject = () => navigate(`/create`);
   const handleLogout = () => navigate("/");
 
   return (
