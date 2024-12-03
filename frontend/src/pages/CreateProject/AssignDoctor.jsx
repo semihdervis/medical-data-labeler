@@ -17,7 +17,7 @@ function AssignDoctor({ assignedDoctors = [], setAssignedDoctors }) {
 
   return (
     <section className="bg-white rounded-lg p-5 shadow-md w-full max-w-md">
-      <h3 className="text-indigo-600 text-lg font-bold mb-4">
+      <h3 className="text-primary text-lg font-bold mb-4">
         Assign Project to Doctors
       </h3>
 
@@ -27,10 +27,10 @@ function AssignDoctor({ assignedDoctors = [], setAssignedDoctors }) {
           value={doctorEmail}
           placeholder="Enter doctor's email"
           onChange={(e) => setDoctorEmail(e.target.value)}
-          className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
         />
         <button
-          className="bg-indigo-700 text-white py-2 px-4 rounded-md hover:bg-indigo-800 transition"
+          className="bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition"
           onClick={handleAddDoctor}
         >
           Add Doctor

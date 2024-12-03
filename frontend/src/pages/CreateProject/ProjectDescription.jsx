@@ -8,7 +8,7 @@ function ProjectDescription({
 }) {
   return (
     <section className="bg-white rounded-lg p-5 shadow-md w-full max-w-lg">
-      <h3 className="text-indigo-600 text-lg font-bold mb-4">
+      <h3 className="text-primary text-lg font-bold mb-4">
         Project Details
       </h3>
       <div className="mb-5">
@@ -24,7 +24,7 @@ function ProjectDescription({
           value={projectName}
           onChange={(e) => setProjectName(e.target.value)}
           placeholder="Enter project name"
-          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </div>
       <div>
@@ -40,7 +40,7 @@ function ProjectDescription({
           onChange={(e) => setProjectDescription(e.target.value)}
           rows="3"
           placeholder="Enter project description"
-          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
         ></textarea>
       </div>
     </section>
