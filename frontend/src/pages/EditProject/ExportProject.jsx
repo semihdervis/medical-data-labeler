@@ -44,7 +44,7 @@ function ExportProject({ currentProject }) {
 
   return (
     <section className="bg-white rounded-lg p-5 shadow-md w-full max-w-md">
-      <h3 className="text-indigo-600 text-lg font-bold mb-4">Export Project</h3>
+      <h3 className="text-primary text-lg font-bold mb-4">Export Project</h3>
       <p className="text-gray-700 mb-3">
         Export your project data as a JSON or CSV file.
       </p>
@@ -53,20 +53,20 @@ function ExportProject({ currentProject }) {
         <strong className="font-semibold">{currentProject.name}</strong>
       </p>
       <label className="block mb-5">
-        <span className="text-indigo-600 font-semibold mb-2 block">
+        <span className="text-primary font-semibold mb-2 block">
           Select format:
         </span>
         <select
           value={exportFormat}
           onChange={(e) => setExportFormat(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
         >
           <option value="json">JSON</option>
           <option value="csv">CSV</option>
         </select>
       </label>
       <button
-        className="bg-indigo-700 text-white py-2 px-4 rounded-md hover:bg-indigo-800 transition"
+        className="bg-indigo-700 text-white py-2 px-4 rounded-md hover:bg-secondary transition"
         onClick={handleExport}
       >
         Export Project

@@ -37,7 +37,7 @@ function PersonLabels({ personLabels, setPersonLabels }) {
 
   return (
     <section className="bg-white rounded-lg p-5 shadow-md w-full max-w-xl">
-      <h3 className="text-indigo-600 text-lg font-bold mb-4">
+      <h3 className="text-primary text-lg font-bold mb-4">
         Person-Related Labels
       </h3>
       {personLabels.map((label, index) => (
@@ -52,7 +52,7 @@ function PersonLabels({ personLabels, setPersonLabels }) {
                 newLabels[index].name = e.target.value;
                 setPersonLabels(newLabels);
               }}
-              className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
             />
             <select
               value={label.type}
@@ -64,7 +64,7 @@ function PersonLabels({ personLabels, setPersonLabels }) {
                 }
                 setPersonLabels(newLabels);
               }}
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
             >
               <option value="text">Text</option>
               <option value="number">Number</option>
@@ -83,14 +83,14 @@ function PersonLabels({ personLabels, setPersonLabels }) {
           {label.type === "dropdown" && (
             <div>
               <button
-                className="bg-indigo-700 text-white py-2 px-4 rounded-md hover:bg-indigo-800 transition"
+                className="bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition"
                 onClick={() => handleToggleOptions(index)}
               >
                 Options
               </button>
               {isOptionsVisible === index && (
                 <div className="absolute bg-gray-50 border border-gray-300 p-4 rounded-md shadow-lg z-50 mt-2">
-                  <h4 className="text-indigo-600 text-md font-semibold mb-4">
+                  <h4 className="text-primary text-md font-semibold mb-4">
                     Options
                   </h4>
                   {label.options.map((option, optionIndex) => (
@@ -108,7 +108,7 @@ function PersonLabels({ personLabels, setPersonLabels }) {
                             e.target.value;
                           setPersonLabels(newLabels);
                         }}
-                        className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                       />
                       <button
                         className="bg-red-600 text-white py-1 px-2 rounded-md hover:bg-red-700 transition"
@@ -128,10 +128,10 @@ function PersonLabels({ personLabels, setPersonLabels }) {
                       value={newOption}
                       placeholder="New Option"
                       onChange={(e) => setNewOption(e.target.value)}
-                      className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                     <button
-                      className="bg-indigo-700 text-white py-2 px-4 rounded-md hover:bg-indigo-800 transition"
+                      className="bg-primary text-white py-2 px-4 rounded-md hover:bgsecondary transition"
                       onClick={() => handleAddOption(index)}
                     >
                       <img src={addIcon} alt="Add Option" className="w-4 h-4" />
@@ -144,7 +144,7 @@ function PersonLabels({ personLabels, setPersonLabels }) {
         </div>
       ))}
       <button
-        className="bg-indigo-700 text-white py-2 px-4 rounded-md hover:bg-indigo-800 transition w-full mt-3"
+        className="bg-primary text-white py-2 px-4 rounded-md hover:bgsecondary transition w-full mt-3"
         onClick={handleAddPersonLabel}
       >
         Add Person Label

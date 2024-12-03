@@ -57,18 +57,18 @@ function AdminProjectPage() {
       <Sidebar setActiveSection={setActiveSection} />
 
       <div className="flex-1 p-5 overflow-y-auto flex justify-center items-center">
-        <div className="flex justify-between items-center h-15 bg-indigo-600 rounded-lg shadow-md fixed top-0 left-0 right-[5px] mt-2.5 ml-1.25 px-4 w-[calc(100%-10px)] z-[1000]">
+        <div className="flex justify-between items-center h-15 bg-primary rounded-lg shadow-md fixed top-0 left-0 right-[5px] mt-2.5 ml-1.25 px-4 w-[calc(100%-10px)] z-[1000]">
           <button
             onClick={() => navigate("/admin")}
-            className={`flex items-center justify-center mr-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3.5 rounded cursor-pointer transition-colors ${
-              activeButton === "dashboard-button" ? "bg-indigo-700" : ""
+            className={`flex items-center justify-center mr-2.5 bg-primary hover:bg-secondary text-white font-bold py-2 px-3.5 rounded cursor-pointer transition-colors ${
+              activeButton === "dashboard-button" ? "bg-secondary" : ""
             }`}
           >
             <span>&#60; Go to Dashboard</span>
           </button>
 
           <button
-            className="flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3.5 rounded cursor-pointer transition-colors"
+            className="flex items-center justify-center bg-primary hover:bg-secondary text-white font-bold py-2 px-3.5 rounded cursor-pointer transition-colors"
             onClick={handleLogout}
           >
             <img src={logoutIcon} alt="Log out" className="w-5 h-5 mr-0.75" />

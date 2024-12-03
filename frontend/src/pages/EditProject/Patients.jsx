@@ -61,7 +61,7 @@ function Patients() {
 
   return (
     <section className="bg-white rounded-lg p-5 shadow-md w-full max-w-lg">
-      <h3 className="text-indigo-600 text-lg font-bold mb-4">Patients</h3>
+      <h3 className="text-primary text-lg font-bold mb-4">Patients</h3>
 
       {/* Search Bar */}
       <input
@@ -95,7 +95,7 @@ function Patients() {
 
       {/* Add Patient Button */}
       <button
-        className="bg-indigo-700 text-white py-2 px-4 rounded-md hover:bg-indigo-800 transition w-full mt-3"
+        className="bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition w-full mt-3"
         onClick={handleAddPatient}
       >
         Add Patient
@@ -111,7 +111,7 @@ function Patients() {
       />
       <label
         onClick={() => fileInputRef.current.click()}
-        className="flex items-center gap-2 bg-indigo-700 text-white py-2 px-4 rounded-md hover:bg-indigo-800 transition mt-3 cursor-pointer"
+        className="flex items-center gap-2 bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition mt-3 cursor-pointer"
       >
         Import Patients
         <img src={fileIcon} alt="Import" className="w-4 h-4" />
@@ -127,7 +127,7 @@ function Patients() {
       />
       <label
         onClick={() => zipInputRef.current.click()}
-        className="flex items-center gap-2 bg-indigo-700 text-white py-2 px-4 rounded-md hover:bg-indigo-800 transition mt-3 cursor-pointer"
+        className="flex items-center gap-2 bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition mt-3 cursor-pointer"
       >
         Upload ZIP File
         <img src={fileIcon} alt="Upload ZIP" className="w-4 h-4" />

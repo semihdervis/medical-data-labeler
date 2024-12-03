@@ -7,7 +7,7 @@ function RemoveCurrentProject({ currentProject, onRemove }) {
 
   return (
     <section className="bg-white rounded-lg p-5 shadow-md w-full max-w-lg">
-      <h3 className="text-indigo-600 text-lg font-bold mb-4">
+      <h3 className="text-primary text-lg font-bold mb-4">
         Remove Current Project
       </h3>
       <p className="text-gray-700 mb-5">
@@ -15,7 +15,7 @@ function RemoveCurrentProject({ currentProject, onRemove }) {
         <strong>{currentProject.name}</strong>?
       </p>
       <button
-        className="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 transition w-full"
+        className="bg-negative text-white py-2 px-4 rounded-md hover:bg-red-700 transition w-full"
         onClick={handleConfirmRemove}
       >
         Confirm Remove
