@@ -6,7 +6,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import DoctorDashboard from "./pages/DoctorDashboard";
 import LabelingInterface from "./pages/LabelingInterface";
 import AdminProjectPage from "./pages/EditProject/AdminProjectPage";
-import CreateProject from "./pages/CreateProject";
+import CreateProject from "./pages/CreateProject/CreateProject";
 
 const App = () => {
   return (
