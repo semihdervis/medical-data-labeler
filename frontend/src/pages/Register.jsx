@@ -1,35 +1,45 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Register() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleRegister = async () => {
+    // Check if fields are filled
     if (!email || !password || !confirmPassword) {
-      setError("Please fill in all fields.");
+      setError('Please fill in all fields.');
       return;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("Please enter a valid email address.");
+
+    // Validate email format
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      setError('Please enter a valid email address.');
       return;
     }
+
+    // Check if passwords match
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError('Passwords do not match.');
       return;
     }
 
     setLoading(true);
-    setError("");
+    setError('');
+
     try {
-      alert("Registration successful! Please log in.");
-      navigate("/");
-    } catch {
-      setError("Registration failed. Please try again.");
+      await axios.post('http://localhost:3001/api/auth/register', { email, password });
+      alert('Registration successful! Please log in.');
+      navigate('/'); // Go back to login page after successful registration
+    } catch (error) {
+      setError('Registration failed. Please try again.');
+      console.log(error);
     } finally {
       setLoading(false);
     }

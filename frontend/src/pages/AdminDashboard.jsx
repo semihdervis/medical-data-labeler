@@ -1,54 +1,59 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logoutIcon from "./icons/logout.png";
+import axios from 'axios'
 
 function AdminDashboard() {
-  const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate()
+  const [searchTerm, setSearchTerm] = useState('')
+  const [projects, setProjects] = useState([])
+  const [error, setError] = useState(null)
+  const token = localStorage.getItem('token') // Retrieve the token from local storage
 
-  const projects = [
-    {
-      id: "P001",
-      name: "Respiratory Health Project",
-      description: "Project focused on respiratory disease analysis.",
-    },
-    {
-      id: "P002",
-      name: "Cardiovascular Health Study",
-      description: "Study on cardiovascular health conditions.",
-    },
-    {
-      id: "P003",
-      name: "Neurological Study Project",
-      description: "Research on neurological health and disorders.",
-    },
-    {
-      id: "P004",
-      name: "Oncology Research Project",
-      description: "Analysis of cancer and related diseases.",
-    },
-    {
-      id: "P009",
-      name: "Infectious Disease Control Study",
-      description: "Study on controlling infectious diseases.",
-    },
-    {
-      id: "P010",
-      name: "Nutrition and Wellness Program",
-      description: "Program promoting nutrition and overall wellness.",
-    },
-  ];
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await axios.get(
+          'http://localhost:3001/api/projects/get',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        )
+        setProjects(response.data)
+      } catch (error) {
+        setError('Failed to fetch projects')
+        console.error('Error fetching projects:', error)
+      }
+    }
 
+    fetchProjects()
+  }, [token])
+
+  // Filter projects based on the search term
   const filteredProjects = projects.filter(
-    (project) =>
+    project =>
       project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       project.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  )
 
-  const handleViewProject = (id) => navigate(`/label`);
-  const handleEditProject = (id) => navigate(`/edit`);
-  const handleAddProject = () => navigate(`/create`);
-  const handleLogout = () => navigate("/");
+  const handleViewProject = id => {
+    navigate(`/labeling-interface`)
+  }
+
+  const handleEditProject = id => {
+    navigate(`/admin-project-page`)
+  }
+
+  const handleAddProject = () => {
+    // Navigate to or open project creation interface
+    navigate(`/admin-project-page`)
+  }
+
+  const handleLogout = () => {
+    navigate('/')
+  }
 
   return (
     <div className="relative text-center mt-12 p-5 bg-gray-100 min-h-screen">

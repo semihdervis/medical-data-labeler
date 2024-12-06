@@ -1,19 +1,34 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 
-function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = () => {
-    if (!email || !password) {
-      setError("Please enter both email and password.");
-      return;
+  const handleLogin = async () => {
+    try {
+      console.log('Sending login request in try...');
+      const response = await axios.post('/api/auth/login', { email, password });
+      console.log(response.data);
+      const { token, isAdmin } = response.data;
+
+      // Store the token in local storage or a cookie
+      localStorage.setItem('token', token);
+
+      // Clear error and navigate to the appropriate dashboard
+      setError('');
+      if (isAdmin) {
+        navigate('/admin');
+      } else {
+        navigate('/doctor');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setError('Invalid email or password');
     }
-    setError("");
-    navigate(email === "admin" ? "/admin" : "/doctor");
   };
 
   return (

@@ -1,42 +1,50 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logoutIcon from "./icons/logout.png";
+import axios from 'axios'
 
-function DoctorDashboard() {
-  const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
+function DoctorDashboard () {
+  const navigate = useNavigate()
+  const [searchTerm, setSearchTerm] = useState('')
+  const [projects, setProjects] = useState([])
+  const [error, setError] = useState(null)
+  const token = localStorage.getItem('token') // Retrieve the token from local storage
 
-  const projects = [
-    {
-      id: "P001",
-      name: "Respiratory Health Project",
-      description: "Project focused on respiratory disease analysis.",
-    },
-    {
-      id: "P002",
-      name: "Cardiovascular Health Study",
-      description: "Study on cardiovascular health conditions.",
-    },
-    {
-      id: "P003",
-      name: "Neurological Study Project",
-      description: "Research on neurological health and disorders.",
-    },
-    {
-      id: "P004",
-      name: "Oncology Research Project",
-      description: "Analysis of cancer and related diseases.",
-    },
-  ];
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await axios.get(
+          'http://localhost:3001/api/projects/get',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        )
+        setProjects(response.data)
+      } catch (error) {
+        setError('Failed to fetch projects')
+        console.error('Error fetching projects:', error)
+      }
+    }
 
+    fetchProjects()
+  }, [token])
+
+  // Filter projects based on the search term
   const filteredProjects = projects.filter(
-    (project) =>
+    project =>
       project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       project.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  )
 
-  const handleLogout = () => navigate("/");
-  const handleViewProject = (id) => navigate(`/label`);
+  const handleLogout = () => {
+    navigate('/')
+  }
+
+  const handleViewProject = id => {
+    navigate(`/labeling-interface`)
+  }
 
   return (
     <div className="relative text-center px-5 bg-gray-100 min-h-screen mt-10">
