@@ -39,16 +39,16 @@ function AdminDashboard() {
   )
 
   const handleViewProject = id => {
-    navigate(`/labeling-interface`)
+    navigate(`/label`)
   }
 
   const handleEditProject = id => {
-    navigate(`/admin-project-page`)
+    navigate(`/edit`)
   }
 
   const handleAddProject = () => {
     // Navigate to or open project creation interface
-    navigate(`/admin-project-page`)
+    navigate(`/create`)
   }
 
   const handleLogout = () => {

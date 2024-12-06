@@ -43,7 +43,7 @@ function DoctorDashboard () {
   }
 
   const handleViewProject = id => {
-    navigate(`/labeling-interface`)
+    navigate(`/label`)
   }
 
   return (

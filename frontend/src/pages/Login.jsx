@@ -11,7 +11,7 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       console.log('Sending login request in try...');
-      const response = await axios.post('/api/auth/login', { email, password });
+      const response = await axios.post('http://localhost:3001/api/auth/login', { email, password });
       console.log(response.data);
       const { token, isAdmin } = response.data;
 
