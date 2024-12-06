@@ -4,6 +4,8 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const imageController = require('../controllers/imageController');
+const authenticate = require('../middlewares/authenticate');
+const checkAdmin = require('../middlewares/checkAdmin');
 
 // Set up multer for file uploads
 const storage = multer.diskStorage({
@@ -30,7 +32,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Routes for image management
-router.post('/upload', upload.single('image'), imageController.uploadImage);
-router.get('/:projectId/:patientId', imageController.getImagesByProjectAndPatient);
+router.post('/upload', upload.single('image'), authenticate, checkAdmin, imageController.uploadImage);
+router.get('/:projectId/:patientId', authenticate, checkAdmin, imageController.getImagesByProjectAndPatient);
 
 module.exports = router;
