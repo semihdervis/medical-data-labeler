@@ -30,25 +30,6 @@ function CreateProject() {
   const handleLogout = () => {
     navigate("/");
   };
-  // Assume we have a single project loaded in the editor for simplicity
-  const [currentProject, setCurrentProject] = useState({
-    id: "P001",
-    name: "Respiratory Health Project",
-  });
-
-  const handleRemoveProject = (projectId) => {
-    // Logic to remove the project goes here (e.g., API call)
-    console.log(`Project ${projectId} removed`);
-    navigate("/admin");
-  };
-
-  const handleExport = () => {
-    const projectData = {
-      ...currentProject,
-      exportDate: new Date().toISOString(),
-    };
-    return projectData;
-  };
 
   return (
     <div className="flex h-screen bg-gray-100 admin-project-page">

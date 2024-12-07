@@ -13,6 +13,7 @@ function LabelingInterface() {
   const handleSave = () => {
     alert("Changes saved!");
   };
+  // api/patients/namelist
 
   const patients = [
     {
