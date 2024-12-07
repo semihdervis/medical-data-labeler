@@ -36,19 +36,25 @@ exports.getProjectById = async (req, res) => {
 
 exports.createProject = async (req, res) => {
   try {
-    const { name } = req.body
+    const { name } = req.body;
     if (!name) {
-      return res.status(400).json({ message: 'Project name is required' })
+      return res.status(400).json({ message: 'Project name is required' });
     }
-    const newProject = new Project({ name })
-    await newProject.save()
-    const projectDir = path.join(projectsDir, newProject._id.toString())
-    fs.mkdirSync(projectDir)
-    res.status(201).json(newProject)
+    const newProject = new Project({ name });
+    await newProject.save();
+    const projectDir = path.join(projectsDir, newProject._id.toString());
+
+    // Ensure the parent directory exists
+    if (!fs.existsSync(projectsDir)) {
+      fs.mkdirSync(projectsDir, { recursive: true });
+    }
+
+    fs.mkdirSync(projectDir);
+    res.status(201).json(newProject);
   } catch (err) {
-    res.status(500).json({ message: err.message })
+    res.status(500).json({ message: err.message });
   }
-}
+};
 
 exports.updateProject = async (req, res) => {
   try {
