@@ -6,7 +6,7 @@ import PersonLabels from "./PersonLabels";
 import ImageLabels from "./ImageLabels";
 import Patients from "./Patients";
 import AssignDoctor from "./AssignDoctor";
-import logoutIcon from "../icons/logout_dark.png";
+import logoutIcon from "../icons/logout.png";
 
 function CreateProject() {
   const navigate = useNavigate();
@@ -66,10 +66,10 @@ function CreateProject() {
           </button>
 
           <button
-            className="flex items-center justify-center bg-primary hover:bg-secondary text-white font-bold py-2 px-3.5 rounded cursor-pointer transition-colors"
+            className="flex items-center justify-center bg-primary hover:bg-red-700 text-white font-bold py-2 px-3.5 rounded cursor-pointer transition-colors"
             onClick={handleLogout}
           >
-            <img src={logoutIcon} alt="Log out" className="w-5 h-5 mr-0.75" />
+            <img src={logoutIcon} alt="Log out" className="w-5 h-5 mr-1 mt-1" />
             Log Out
           </button>
         </div>

@@ -54,9 +54,9 @@ function DoctorDashboard() {
         />
         <button
           onClick={handleLogout}
-          className="flex items-center justify-center bg-red-400 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition"
+          className="flex items-center justify-center bg-negative hover:bg-red-700 text-white px-4 py-2 rounded-lg transition"
         >
-          <img src={logoutIcon} alt="Log out" className="w-5 h-5 mr-2" />
+          <img src={logoutIcon} alt="Log out" className="w-5 h-5 mr-1 mt-1" />
           Log Out
         </button>
       </div>
