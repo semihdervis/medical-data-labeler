@@ -51,8 +51,8 @@ function AdminDashboard() {
   const handleLogout = () => navigate("/");
 
   return (
-    <div className="relative text-center mt-12 p-5 bg-gray-100 min-h-screen">
-      <div className="fixed top-2 left-2 right-2 bg-white rounded-lg shadow-md flex items-center justify-between px-4 py-3 z-50">
+    <div className="relative text-center px-5 bg-gray-100 min-h-screen flex flex-col">
+      <div className="sticky top-0 left-2 right-2 bg-white rounded-lg shadow-md flex items-center justify-between px-4 py-3 z-50">
         <h1 className="text-xl text-primary font-bold">Admin Dashboard</h1>
         <input
           type="text"
@@ -69,7 +69,7 @@ function AdminDashboard() {
           Log Out
         </button>
       </div>
-      <p className="mt-20 mb-5 text-lg font-medium text-gray-700">
+      <p className="mt-5 mb-5 text-lg font-medium text-gray-600">
         All Projects
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
