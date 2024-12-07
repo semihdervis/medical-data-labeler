@@ -24,11 +24,27 @@ function CreateProject() {
     { id: "Patient001", images: ["img1.jpg", "img2.jpg"] },
   ]);
   const [assignedDoctors, setAssignedDoctors] = useState([]);
-  const [activeButton, setActiveButton] = React.useState("description");
+  const [activeButton, setActiveButton] = useState("description");
   const [projectName, setProjectName] = useState("Respiratory Health Project");
 
   const handleLogout = () => {
     navigate("/");
+  };
+
+  const handleSave = () => {
+    // Collect all project data
+    const projectData = {
+      projectName,
+      projectDescription,
+      personLabels,
+      imageLabels,
+      patients,
+      assignedDoctors,
+    };
+
+    // Simulate saving (replace with API call)
+    console.log("Saving project data:", projectData);
+    alert("Project saved successfully!");
   };
 
   return (
@@ -44,6 +60,13 @@ function CreateProject() {
             }`}
           >
             <span>&#60; Go to Dashboard</span>
+          </button>
+
+          <button
+            onClick={handleSave}
+            className="flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-3.5 rounded cursor-pointer transition-colors"
+          >
+            Save
           </button>
 
           <button
