@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios"; // For API calls
 import Sidebar from "./Sidebar";
 import ProjectDescription from "./ProjectDescription";
 import PersonLabels from "./PersonLabels";
@@ -7,6 +8,7 @@ import ImageLabels from "./ImageLabels";
 import Patients from "./Patients";
 import AssignDoctor from "./AssignDoctor";
 import logoutIcon from "../icons/logout_dark.png";
+const token = localStorage.getItem('token') // Retrieve the token from local storage
 
 function CreateProject() {
   const navigate = useNavigate();
@@ -31,20 +33,39 @@ function CreateProject() {
     navigate("/");
   };
 
-  const handleSave = () => {
-    // Collect all project data
-    const projectData = {
-      projectName,
-      projectDescription,
-      personLabels,
-      imageLabels,
-      patients,
-      assignedDoctors,
-    };
-
-    // Simulate saving (replace with API call)
-    console.log("Saving project data:", projectData);
-    alert("Project saved successfully!");
+  const handleSave = async () => {
+    try {
+      // Collect all project data
+      const projectData = {
+        name: projectName,
+        description: projectDescription,
+      };
+  
+      // Make an API call to create the project
+      const response = await axios.post(
+        "http://localhost:3001/api/projects/add",
+        projectData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+  
+      if (response.status === 201) {
+        alert("Project created successfully!");
+        navigate("/admin"); // Redirect to dashboard or admin page
+      } else {
+        alert("Failed to create project. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error creating project:", error);
+      if (error.response && error.response.data && error.response.data.message) {
+        alert(`Failed to create project: ${error.response.data.message}`);
+      } else {
+        alert("Failed to create project. Please try again.");
+      }
+    }
   };
 
   return (
