@@ -11,7 +11,7 @@ function Sidebar({ setActiveSection }) {
   };
 
   return (
-    <aside className="bg-primary text-white p-5 rounded-lg w-64 sticky top-20 flex flex-col gap-4">
+    <aside className="bg-primary text-white p-5 rounded-lg w-64 sticky top-16 h-[calc(100vh-4rem)] flex flex-col gap-4">
       <h2 className="text-xl font-bold mb-4">Project Settings</h2>
       <button
         onClick={() => handleButtonClick("description")}
