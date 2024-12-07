@@ -86,9 +86,9 @@ function AdminDashboard() {
           <div className="text-5xl font-bold mb-2">+</div>
           <p className="font-semibold">Create New Project</p>
         </div>
-        {filteredProjects.map((project) => (
+        {filteredProjects.map((project, index) => (
           <div
-            key={project.id}
+            key={project.id || index}
             className="flex flex-col justify-between bg-white p-5 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition"
           >
             <h3 className="text-lg text-primary font-bold mb-2">

@@ -71,9 +71,9 @@ function DoctorDashboard () {
         Assigned Projects
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
-        {filteredProjects.map((project) => (
+        {filteredProjects.map((project, index) => (
           <div
-            key={project.id}
+            key={project.id || index}
             className="flex flex-col justify-between bg-white p-5 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition"
           >
             <h3 className="text-lg text-primary font-bold mb-2">
