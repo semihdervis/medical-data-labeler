@@ -17,7 +17,7 @@
       "Project focused on respiratory disease analysis."
     );
     const [personLabels, setPersonLabels] = useState([
-      { name: "Name", type: "text" },
+      { name: "Name", type: "text", options: ["Yes", "No"] },
     ]);
     const [imageLabels, setImageLabels] = useState([
       { name: "Is infection visible?", type: "dropdown", options: ["Yes", "No"] },
@@ -78,9 +78,34 @@
           }
         );
 
-        console.table("Image labels bound to project:", imageLabelResponse.data);
+
+        // Transform imageLabels array
+        const transformedPatientLabels = personLabels.map(label => ({
+          labelQuestion: label.name,
+          labelType: label.type,
+          labelOptions: label.options,
+        }));
     
-        console.log("Image labels bound to project:", imageLabelResponse.data);
+        const patientLabelData = {
+          projectId: response.data._id,
+          type: "patient",
+          labelData: transformedPatientLabels,
+        };
+    
+        // Make an API call to bind image labels to the project
+        const patientLabelResponse = await axios.post(
+          "/api/labels/schema",
+          patientLabelData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        console.table("Image labels bound to project:", imageLabelResponse.data);
+        console.table("Patient labels bound to project:", patientLabelResponse.data);
+    
         alert("Project created successfully!");
         navigate("/admin");
       } catch (error) {
