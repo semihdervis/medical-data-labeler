@@ -36,23 +36,24 @@ function PersonLabels({ personLabels, setPersonLabels }) {
     setIsOptionsVisible(isOptionsVisible === index ? null : index);
   };
 
-  // Close options menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        isOptionsVisible !== null &&
-        dropdownRefs.current[isOptionsVisible] &&
-        !dropdownRefs.current[isOptionsVisible].contains(event.target)
-      ) {
-        setIsOptionsVisible(null);
-      }
-    };
+// Close options menu when clicking outside
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (
+      isOptionsVisible !== null &&
+      dropdownRefs.current[isOptionsVisible] &&
+      !dropdownRefs.current[isOptionsVisible].contains(event.target)
+    ) {
+      setIsOptionsVisible(null);
+    }
+  };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isOptionsVisible]);
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, [isOptionsVisible]);
+
 
   return (
     <section className="bg-white rounded-lg p-5 shadow-md w-full max-w-xl">
@@ -92,7 +93,7 @@ function PersonLabels({ personLabels, setPersonLabels }) {
                 <option value="slider">Slider</option>
               </select>
 
-              {label.type === "dropdown" && (
+              {label.type === "dropdown" &&  (
                 <div className="relative">
                   <button
                     className="bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition"
@@ -102,35 +103,30 @@ function PersonLabels({ personLabels, setPersonLabels }) {
                   </button>
                   {isOptionsVisible === index && (
                     <div
-                      ref={(el) => (dropdownRefs.current[index] = el)}
-                      className="absolute right-0 bg-gray-50 border border-gray-300 p-4 rounded-md shadow-lg z-50 mt-2"
-                      style={{ minWidth: "200px" }}
+                      className="absolute bg-white border border-gray-300 p-4 rounded-md shadow-lg z-50 mt-2 w-full max-w-xs"
+                        style={{
+                          minWidth: "300px",
+
+            
+                        }}
                     >
-                      <h4 className="text-primary text-md font-semibold mb-4">
-                        Options
-                      </h4>
+                      <h4 className="text-primary text-md font-semibold mb-4">Options</h4>
                       {label.options.map((option, optionIndex) => (
-                        <div
-                          key={optionIndex}
-                          className="flex items-center gap-2 mb-2"
-                        >
+                        <div key={optionIndex} className="flex items-center gap-2 mb-2">
                           <input
                             type="text"
                             value={option}
                             placeholder="Enter option"
                             onChange={(e) => {
                               const newLabels = [...personLabels];
-                              newLabels[index].options[optionIndex] =
-                                e.target.value;
+                              newLabels[index].options[optionIndex] = e.target.value;
                               setPersonLabels(newLabels);
                             }}
                             className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                           />
                           <button
                             className="bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition"
-                            onClick={() =>
-                              handleRemoveOption(index, optionIndex)
-                            }
+                            onClick={() => handleRemoveOption(index, optionIndex)}
                           >
                             <img
                               src={removeIcon}
@@ -149,14 +145,10 @@ function PersonLabels({ personLabels, setPersonLabels }) {
                           className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                         />
                         <button
-                          className="bg-primary px-4 py-2 rounded-md hover:bg-secondary transition"
+                          className="bg-primary text-white p-2 rounded-md hover:bg-secondary transition"
                           onClick={() => handleAddOption(index)}
                         >
-                          <img
-                            src={addIcon}
-                            alt="Add Option"
-                            className="w-4 h-4"
-                          />
+                          <img src={addIcon} alt="Add Option" className="w-4 h-4" />
                         </button>
                       </div>
                     </div>

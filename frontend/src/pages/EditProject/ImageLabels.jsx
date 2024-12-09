@@ -113,7 +113,7 @@ function ImageLabels({ imageLabels, setImageLabels }) {
               className="absolute bg-white border border-gray-300 p-4 rounded-md shadow-lg z-50"
               style={{
                 minWidth: "200px",
-                right: 0,
+                right:0,
                 top: 110,
               }}
             >
@@ -135,7 +135,7 @@ function ImageLabels({ imageLabels, setImageLabels }) {
                     className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                   <button
-                    className="bg-red-600 text-white py-1 px-2 rounded-md hover:bg-red-700 transition"
+                    className="bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition"
                     onClick={() => handleRemoveOption(index, optionIndex)}
                   >
                     <img
@@ -155,7 +155,7 @@ function ImageLabels({ imageLabels, setImageLabels }) {
                   className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 />
                 <button
-                  className="bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition"
+                  className="bg-primary text-white p-2 rounded-md hover:bg-secondary transition"
                   onClick={() => handleAddOption(index)}
                 >
                   <img src={addIcon} alt="Add Option" className="w-4 h-4" />

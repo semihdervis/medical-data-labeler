@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import removeIcon from "../icons/remove.png";
 import addIcon from "../icons/add.png";
 
-function PersonLabels({ personLabels, setPersonLabels, projectId }) {
+function PersonLabels({ personLabels, setPersonLabels }) {
   const [isOptionsVisible, setIsOptionsVisible] = useState(null);
   const [newOption, setNewOption] = useState("");
 
@@ -54,6 +54,7 @@ function PersonLabels({ personLabels, setPersonLabels, projectId }) {
               }}
               className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
             />
+            <div className="flex gap-2 items-center">
             <select
               value={label.type}
               onChange={(e) => {
@@ -71,7 +72,71 @@ function PersonLabels({ personLabels, setPersonLabels, projectId }) {
               <option value="dropdown">Dropdown</option>
               <option value="slider">Slider</option>
             </select>
+
+            {label.type === "dropdown" && (
+  <div className="relative">
+    <button
+      className="bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition"
+      onClick={() => handleToggleOptions(index)}
+    >
+      Options
+    </button>
+    {isOptionsVisible === index && (
+      <div
+      className="absolute bg-white border border-gray-300 p-4 rounded-md shadow-lg z-50 mt-2 w-full max-w-xs"
+        style={{
+          minWidth: "300px",
+
+
+        }}
+      >
+        <h4 className="text-primary text-md font-semibold mb-4">Options</h4>
+        {label.options.map((option, optionIndex) => (
+          <div key={optionIndex} className="flex items-center gap-2 mb-2">
+            <input
+              type="text"
+              value={option}
+              placeholder="Enter option"
+              onChange={(e) => {
+                const newLabels = [...personLabels];
+                newLabels[index].options[optionIndex] = e.target.value;
+                setPersonLabels(newLabels);
+              }}
+              className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            />
             <button
+              className="bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition"
+              onClick={() => handleRemoveOption(index, optionIndex)}
+            >
+              <img
+                src={removeIcon}
+                alt="Remove Option"
+                className="w-4 h-4"
+              />
+            </button>
+          </div>
+        ))}
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={newOption}
+            placeholder="New Option"
+            onChange={(e) => setNewOption(e.target.value)}
+            className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+          <button
+            className="bg-primary text-white p-2 rounded-md hover:bg-secondary transition"
+            onClick={() => handleAddOption(index)}
+          >
+            <img src={addIcon} alt="Add Option" className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    )}
+  </div>
+)}
+
+<button
               className="bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition"
               onClick={() => handleRemovePersonLabel(index)}
             >
@@ -79,68 +144,13 @@ function PersonLabels({ personLabels, setPersonLabels, projectId }) {
             </button>
           </div>
 
-          {/* Options section toggle */}
-          {label.type === "dropdown" && (
-            <div>
-              <button
-                className="bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition"
-                onClick={() => handleToggleOptions(index)}
-              >
-                Options
-              </button>
-              {isOptionsVisible === index && (
-                <div className="absolute bg-gray-50 border border-gray-300 p-4 rounded-md shadow-lg z-50 mt-2">
-                  <h4 className="text-primary text-md font-semibold mb-4">
-                    Options
-                  </h4>
-                  {label.options.map((option, optionIndex) => (
-                    <div
-                      key={optionIndex}
-                      className="flex items-center gap-2 mb-2"
-                    >
-                      <input
-                        type="text"
-                        value={option}
-                        placeholder="Enter option"
-                        onChange={(e) => {
-                          const newLabels = [...personLabels];
-                          newLabels[index].options[optionIndex] =
-                            e.target.value;
-                          setPersonLabels(newLabels);
-                        }}
-                        className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                      />
-                      <button
-                        className="bg-red-600 text-white py-1 px-2 rounded-md hover:bg-red-700 transition"
-                        onClick={() => handleRemoveOption(index, optionIndex)}
-                      >
-                        <img
-                          src={removeIcon}
-                          alt="Remove Option"
-                          className="w-4 h-4"
-                        />
-                      </button>
-                    </div>
-                  ))}
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      value={newOption}
-                      placeholder="New Option"
-                      onChange={(e) => setNewOption(e.target.value)}
-                      className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                    />
-                    <button
-                      className="bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition"
-                      onClick={() => handleAddOption(index)}
-                    >
-                      <img src={addIcon} alt="Add Option" className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+          </div>
+
+           
+           
+
+          
+
         </div>
       ))}
       <button
