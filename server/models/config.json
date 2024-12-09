@@ -1,0 +1,20 @@
+{
+    "name": {
+        "type": "String",
+        "required": true,
+        "description": "'name' must be a string and is required"
+    },
+    "age": {
+        "type": "Number",
+        "required": true,
+        "min": 17,
+        "max": 45,
+        "description": "'age' must be an integer between 17 and 45"
+    },
+    "email": {
+        "type": "String",
+        "required": true,
+        "match": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+        "description": "'email' must be a valid email format if the field exists"
+    }
+}
