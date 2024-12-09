@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import removeIcon from "../icons/remove.png";
 import addIcon from "../icons/add.png";
 
-function PersonLabels({ personLabels, setPersonLabels }) {
+function PersonLabels({ personLabels = [], setPersonLabels }) {
   const [isOptionsVisible, setIsOptionsVisible] = useState(null);
   const [newOption, setNewOption] = useState("");
   const dropdownRef = useRef(null); // Ref for dropdown menu
@@ -110,36 +110,31 @@ function PersonLabels({ personLabels, setPersonLabels }) {
                         Options
                       </h4>
                       {label.options.map((option, optionIndex) => (
-                        <div
-                          key={optionIndex}
-                          className="flex items-center gap-2 mb-2"
-                        >
-                          <input
-                            type="text"
-                            value={option}
-                            placeholder="Enter option"
-                            onChange={(e) => {
-                              const newLabels = [...personLabels];
-                              newLabels[index].options[optionIndex] =
-                                e.target.value;
-                              setPersonLabels(newLabels);
-                            }}
-                            className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                          />
-                          <button
-                            className="bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition"
-                            onClick={() =>
-                              handleRemoveOption(index, optionIndex)
-                            }
-                          >
-                            <img
-                              src={removeIcon}
-                              alt="Remove Option"
-                              className="w-4 h-4"
-                            />
-                          </button>
-                        </div>
-                      ))}
+                <div key={optionIndex} className="flex items-center gap-2 mb-2">
+                  <input
+                    type="text"
+                    value={option}
+                    placeholder="Enter option"
+                    onChange={(e) => {
+                      const newLabels = [...personLabels];
+                      newLabels[index].options[optionIndex] =
+                        e.target.value;
+                      setImageLabels(newLabels);
+                    }}
+                    className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  />
+                  <button
+                    className="bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition"
+                    onClick={() => handleRemoveOption(index, optionIndex)}
+                  >
+                    <img
+                      src={removeIcon}
+                      alt="Remove Option"
+                      className="w-4 h-4"
+                    />
+                  </button>
+                </div>
+              ))}
                       <div className="flex items-center gap-2">
                         <input
                           type="text"
