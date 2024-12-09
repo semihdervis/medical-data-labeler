@@ -43,7 +43,9 @@ function AdminDashboard() {
   }
 
   const handleEditProject = id => {
-    navigate(`/edit`)
+    navigate(`/edit/${id}`)
+    // print console to id
+    console.log(id)
   }
 
   const handleAddProject = () => {
@@ -103,7 +105,10 @@ function AdminDashboard() {
                 View Project
               </button>
               <button
-                onClick={() => handleEditProject(project.id)}
+                onClick={() => {
+                  console.log('Edit button clicked for project:', project); // Log the project
+                  handleEditProject(project._id);
+                }}
                 className="flex-1 bg-orange-500 hover:bg-orange-700 text-white py-2 rounded-md transition"
               >
                 Edit Project
