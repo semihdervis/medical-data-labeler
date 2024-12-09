@@ -17,7 +17,7 @@
       "Project focused on respiratory disease analysis."
     );
     const [personLabels, setPersonLabels] = useState([
-      { name: "Name", type: "text" },
+      { name: "Name", type: "text", options: ["Yes", "No"] },
     ]);
     const [imageLabels, setImageLabels] = useState([
       { name: "Is infection visible?", type: "dropdown", options: ["Yes", "No"] },
