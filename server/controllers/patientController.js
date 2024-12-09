@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 const path = require('path');
 const fs = require('fs');
 const Patient = require('../models/PatientModel');
-const Project = require('../models/ProjectModel');
+const LabelAnswer = require('../models/LabelAnswersModel');
+const imageController = require('./imageController');
 
 // Function to create a folder for the patient
 const createFolder = (projectId, patientId) => {
@@ -107,27 +108,41 @@ exports.updatePatient = async (req, res) => {
   }
 };
 
-// Function to delete a patient and their folder
-// Example request: DELETE /patients/123
-exports.deletePatient = async (req, res) => {
+// Function to delete a patient by ID
+exports.deletePatientById = async (patientId) => {
   try {
-    const { id, patientId } = req.params; // Access the project ID and patient ID from the URL parameters
-    const deletedPatient = await Patient.findOneAndDelete({ _id: patientId, projectId: id });
-    if (!deletedPatient) {
-      return res.status(404).json({ message: 'Patient not found' });
+    const patient = await Patient.findById(patientId);
+    if (!patient) {
+      throw new Error('Patient not found');
     }
 
-    // Delete the patient's folder
-    const projectDir = path.join(__dirname, '../projects', id.toString());
-    const patientDir = path.join(projectDir, patientId.toString());
-    fs.rmSync(patientDir, { recursive: true });
+    // Delegate the deletion of images to the imageController
+    for (const imageId of patient.images) {
+      await imageController.deleteImageById(imageId);
+    }
 
     // Delete the patient's label answers
-    await LabelAnswer.deleteOne({ ownerId: id, patientId });
+    await LabelAnswer.deleteMany({ ownerId: patient._id });
 
+    // Delete the patient's folder
+    const projectDir = path.join(__dirname, '../projects', patient.projectId.toString());
+    const patientDir = path.join(projectDir, patient._id.toString());
+    fs.rmSync(patientDir, { recursive: true, force: true });
+
+    // Delete the patient itself
+    await patient.deleteOne();
+  } catch (error) {
+    throw new Error(`Error deleting patient: ${error.message}`);
+  }
+};
+
+// Controller method to handle HTTP DELETE request
+exports.deletePatient = async (req, res) => {
+  try {
+    const { id, patientId } = req.params;
+    await exports.deletePatientById(patientId);
     res.json({ message: 'Patient deleted successfully' });
   } catch (error) {
-    console.error('Error deleting patient:', error);
     res.status(500).json({ message: error.message });
   }
 };
