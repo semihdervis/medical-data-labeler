@@ -39,11 +39,11 @@ exports.getProjectById = async (req, res) => {
 
 exports.createProject = async (req, res) => {
   try {
-    const { name } = req.body;
+    const { name, description } = req.body;
     if (!name) {
       return res.status(400).json({ message: 'Project name is required' });
     }
-    const newProject = new Project({ name });
+    const newProject = new Project({ name, description });
     await newProject.save();
     const projectDir = path.join(projectsDir, newProject._id.toString());
 
