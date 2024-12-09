@@ -1,9 +1,11 @@
-const path = require('path') // Import the path module
-const fs = require('fs')
-const Project = require('../models/ProjectModel')
-const User = require('../models/UserModel')
+const Project = require('../models/ProjectModel');
+const patientController = require('./patientController');
+const LabelSchema = require('../models/LabelSchemaModel');
+const fs = require('fs');
+const path = require('path');
 
 const projectsDir = path.join(__dirname, '../projects') // Define the projects directory
+
 
 exports.getAllProjects = async (req, res) => {
   try {
@@ -74,30 +76,31 @@ exports.updateProject = async (req, res) => {
 
 exports.deleteProject = async (req, res) => {
   try {
-    const project = await Project.findById(req.params.id)
+    const project = await Project.findById(req.params.id);
     if (!project) {
-      return res.status(404).json({ message: 'Project not found' })
+      return res.status(404).json({ message: 'Project not found' });
     }
-    await project.deleteOne()
 
-    // Remove project folder
-    const projectDir = path.join(projectsDir, req.params.id)
-    fs.rmSync(projectDir, { recursive: true })
+    // Delegate the deletion of patients to the patientController
+    for (const patientId of project.patients) {
+      await patientController.deletePatientById(patientId);
+    }
 
-    // remove patients associated with the project
-    await Patient.deleteMany({ projectId: req.params.id })
+    // Delete the project's schemas
+    await LabelSchema.deleteMany({ projectId: project._id });
 
-    // remove label schemas associated with the project
-    await LabelSchema.deleteMany({ ownerId: req.params.id }) // deletes 2 label schemas
+    // Delete the project's folder
+    const projectDir = path.join(__dirname, '../projects', project._id.toString());
+    fs.rmSync(projectDir, { recursive: true, force: true });
 
-    // delete label answers associated with the project
-    await LabelAnswer.deleteMany({ projectId: req.params.id })
+    // Delete the project itself
+    await project.deleteOne();
 
-    res.json({ message: 'Project deleted' })
-  } catch (err) {
-    res.status(500).json({ message: err.message })
+    res.status(200).json({ message: 'Project and related data deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-}
+};
 
 exports.getPatientsByProjectId = async (req, res) => {
   try {
