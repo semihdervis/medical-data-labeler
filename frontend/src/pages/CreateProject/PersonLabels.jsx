@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import removeIcon from "../icons/remove.png";
 import addIcon from "../icons/add.png";
 
-function PersonLabels({ personLabels, setPersonLabels }) {
+function PersonLabels({ personLabels, setPersonLabels, projectId }) {
   const [isOptionsVisible, setIsOptionsVisible] = useState(null);
   const [newOption, setNewOption] = useState("");
 
