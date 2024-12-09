@@ -12,11 +12,11 @@ const Login = () => {
     try {
       const response = await axios.post('/api/auth/login', { email, password });
       const { token, isAdmin } = response.data;
-  
+
       // Store the token and role in local storage
       localStorage.setItem('token', token);
       localStorage.setItem('role', isAdmin ? 'admin' : 'doctor');
-  
+
       // Clear error and navigate to the appropriate dashboard
       setError('');
       if (isAdmin) {
@@ -27,6 +27,12 @@ const Login = () => {
     } catch (error) {
       console.error('Login error:', error);
       setError('Invalid email or password');
+    }
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleLogin();
     }
   };
 
@@ -41,6 +47,7 @@ const Login = () => {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          onKeyDown={handleKeyDown}
           className="w-full p-2 mb-4 text-base border rounded border-gray-300"
         />
         <input
@@ -48,6 +55,7 @@ const Login = () => {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={handleKeyDown}
           className="w-full p-2 mb-4 text-base border rounded border-gray-300"
         />
         {error && <p className="text-red-600 text-sm mb-3">{error}</p>}

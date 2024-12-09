@@ -11,20 +11,17 @@ function Register() {
   const navigate = useNavigate();
 
   const handleRegister = async () => {
-    // Check if fields are filled
     if (!email || !password || !confirmPassword) {
       setError('Please fill in all fields.');
       return;
     }
 
-    // Validate email format
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
       setError('Please enter a valid email address.');
       return;
     }
 
-    // Check if passwords match
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
       return;
@@ -45,6 +42,12 @@ function Register() {
     }
   };
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleRegister();
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-blue-100">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full text-center">
@@ -54,6 +57,7 @@ function Register() {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          onKeyDown={handleKeyDown}
           className="w-full p-2 mb-4 text-base border rounded border-gray-300"
         />
         <input
@@ -61,6 +65,7 @@ function Register() {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={handleKeyDown}
           className="w-full p-2 mb-4 text-base border rounded border-gray-300"
         />
         <input
@@ -68,6 +73,7 @@ function Register() {
           placeholder="Confirm Password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
+          onKeyDown={handleKeyDown}
           className="w-full p-2 mb-4 text-base border rounded border-gray-300"
         />
         {error && <p className="text-red-600 text-sm mb-3">{error}</p>}
