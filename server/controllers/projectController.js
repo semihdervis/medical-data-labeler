@@ -1,4 +1,5 @@
 const Project = require('../models/ProjectModel');
+const Patient = require('../models/PatientModel');
 const patientController = require('./patientController');
 const LabelSchema = require('../models/LabelSchemaModel');
 const fs = require('fs');
@@ -82,8 +83,10 @@ exports.deleteProject = async (req, res) => {
     }
 
     // Delegate the deletion of patients to the patientController
-    for (const patientId of project.patients) {
-      await patientController.deletePatientById(patientId);
+    const patients = await Patient.find({ projectId: project._id });
+
+    for (const patient of patients) {
+      await patientController.deletePatientById(patient._id);
     }
 
     // Delete the project's schemas
