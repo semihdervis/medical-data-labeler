@@ -117,6 +117,14 @@ exports.deletePatient = async (req, res) => {
       return res.status(404).json({ message: 'Patient not found' });
     }
 
+    // Delete the patient's folder
+    const projectDir = path.join(__dirname, '../projects', id.toString());
+    const patientDir = path.join(projectDir, patientId.toString());
+    fs.rmSync(patientDir, { recursive: true });
+
+    // Delete the patient's label answers
+    await LabelAnswer.deleteOne({ ownerId: id, patientId });
+
     res.json({ message: 'Patient deleted successfully' });
   } catch (error) {
     console.error('Error deleting patient:', error);

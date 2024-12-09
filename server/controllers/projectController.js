@@ -84,6 +84,15 @@ exports.deleteProject = async (req, res) => {
     const projectDir = path.join(projectsDir, req.params.id)
     fs.rmSync(projectDir, { recursive: true })
 
+    // remove patients associated with the project
+    await Patient.deleteMany({ projectId: req.params.id })
+
+    // remove label schemas associated with the project
+    await LabelSchema.deleteMany({ ownerId: req.params.id }) // deletes 2 label schemas
+
+    // delete label answers associated with the project
+    await LabelAnswer.deleteMany({ projectId: req.params.id })
+
     res.json({ message: 'Project deleted' })
   } catch (err) {
     res.status(500).json({ message: err.message })

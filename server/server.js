@@ -8,6 +8,9 @@ const fs = require('fs');
 const User = require('./models/UserModel');
 const helpers = require('./utils/helpers');
 const authenticate = require('./middlewares/authenticate');
+const Project = require('./models/ProjectModel');
+const Patient = require('./models/PatientModel');
+
 
 // Load environment variables from .env file
 dotenv.config();
@@ -47,6 +50,37 @@ const authorize = (req, res, next) => {
 
 // Serve static files with authentication and authorization
 app.use('/projects', authenticate, authorize, express.static('projects'));
+
+const initializeFolder = async (folderPath) => {
+  try {
+    // Ensure the base folder exists
+    fs.mkdirSync(folderPath, { recursive: true });
+
+    // Fetch all projects from the database
+    const projects = await Project.find();
+
+    for (const project of projects) {
+      const projectFolderPath = path.join(folderPath, project._id.toString());
+      fs.mkdirSync(projectFolderPath, { recursive: true });
+
+      // Fetch all patients associated with the project
+      const patients = await Patient.find({ projectId: project._id });
+
+      for (const patient of patients) {
+        const patientFolderPath = path.join(projectFolderPath, patient._id.toString());
+        fs.mkdirSync(patientFolderPath, { recursive: true });
+      }
+    }
+
+    console.log('Folders initialized successfully');
+  } catch (error) {
+    console.error('Error initializing folders:', error);
+  }
+};
+
+// Example usage
+const folderPath = path.join(__dirname, 'data');
+initializeFolder(folderPath);
 
 // Error handling middleware
 const errorHandler = require('./middlewares/errorHandler');
