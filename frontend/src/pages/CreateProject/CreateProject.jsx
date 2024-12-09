@@ -53,20 +53,18 @@
         );
     
         console.log("Project created:", response.data._id); // Log the project ID
+
+        // Transform imageLabels array
+        const transformedImageLabels = imageLabels.map(label => ({
+          labelQuestion: label.name,
+          labelType: label.type,
+          labelOptions: label.options,
+        }));
     
         const imageLabelData = {
           projectId: response.data._id,
           type: "image",
-          labelData: [
-            {
-              labelQuestion: "lblq1149",
-              labelType: "string",
-            },
-            {
-              labelQuestion: "date2911",
-              labelType: "int",
-            },
-          ],
+          labelData: transformedImageLabels,
         };
     
         // Make an API call to bind image labels to the project
@@ -79,6 +77,8 @@
             },
           }
         );
+
+        console.table("Image labels bound to project:", imageLabelResponse.data);
     
         console.log("Image labels bound to project:", imageLabelResponse.data);
         alert("Project created successfully!");
