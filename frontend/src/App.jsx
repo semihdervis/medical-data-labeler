@@ -7,18 +7,18 @@ import DoctorDashboard from "./pages/DoctorDashboard";
 import LabelingInterface from "./pages/LabelingInterface";
 import AdminProjectPage from "./pages/EditProject/AdminProjectPage";
 import CreateProject from "./pages/CreateProject/CreateProject";
+import ProtectedRoute from "./components/ProtectedRoute"; // Import the ProtectedRoute component
 
 const App = () => {
   return (
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/admin" element={<AdminDashboard />} />
-      <Route path="/doctor" element={<DoctorDashboard />} />
-      <Route path="/label" element={<LabelingInterface />} />
-      <Route path="/edit" element={<AdminProjectPage />} />
-      <Route path="/create" element={<CreateProject />} />
-
+      <Route path="/admin" element={<ProtectedRoute element={AdminDashboard} allowedRoles={['admin']} />} />
+      <Route path="/doctor" element={<ProtectedRoute element={DoctorDashboard} allowedRoles={['doctor']} />} />
+      <Route path="/label" element={<ProtectedRoute element={LabelingInterface} allowedRoles={['admin', 'doctor']} />} />
+      <Route path="/edit" element={<ProtectedRoute element={AdminProjectPage} allowedRoles={['admin']} />} />
+      <Route path="/create" element={<ProtectedRoute element={CreateProject} allowedRoles={['admin']} />} />
     </Routes>
   );
 };

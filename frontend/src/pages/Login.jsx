@@ -10,14 +10,13 @@ const Login = () => {
 
   const handleLogin = async () => {
     try {
-      console.log('Sending login request in try...');
-      const response = await axios.post('http://localhost:3001/api/auth/login', { email, password });
-      console.log(response.data);
+      const response = await axios.post('/api/auth/login', { email, password });
       const { token, isAdmin } = response.data;
-
-      // Store the token in local storage or a cookie
+  
+      // Store the token and role in local storage
       localStorage.setItem('token', token);
-
+      localStorage.setItem('role', isAdmin ? 'admin' : 'doctor');
+  
       // Clear error and navigate to the appropriate dashboard
       setError('');
       if (isAdmin) {
