@@ -1,33 +1,26 @@
-// App.js
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import Home from './pages/Home';
-import DynamicModelUpdateTest from './pages/DynamicModelUpdateTest';
-import ProjectsManagamentTest from './pages/ProjectsManagamentTest';
-import Admin from './pages/AdminPage';
-import './App.css';
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import AdminDashboard from "./pages/AdminDashboard";
+import DoctorDashboard from "./pages/DoctorDashboard";
+import LabelingInterface from "./pages/LabelingInterface";
+import AdminProjectPage from "./pages/EditProject/AdminProjectPage";
+import CreateProject from "./pages/CreateProject/CreateProject";
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-
-
-function App() {
+const App = () => {
   return (
-    <Router>
-      <nav className="nav-style">
-        <Link to="/" className="link-style">Home</Link>
-        <Link to="/dynamic" className="link-style">DynamicModelUpdateTest</Link>
-        <Link to="/projects" className="link-style">ProjectsManagamentTest</Link>
-        <Link to="/admin" className="link-style">Shrimp'sPlayground</Link>
-      </nav>
-      
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/dynamic" element={<DynamicModelUpdateTest />} />
-        <Route path="/projects" element={<ProjectsManagamentTest />} />
-        <Route path="/admin" element={<Admin />} />
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/admin" element={<AdminDashboard />} />
+      <Route path="/doctor" element={<DoctorDashboard />} />
+      <Route path="/label" element={<LabelingInterface />} />
+      <Route path="/edit" element={<AdminProjectPage />} />
+      <Route path="/create" element={<CreateProject />} />
 
-      </Routes>
-    </Router>
+    </Routes>
   );
-}
+};
 
 export default App;
