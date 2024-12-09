@@ -5,7 +5,7 @@ import Register from "./pages/Register";
 import AdminDashboard from "./pages/AdminDashboard";
 import DoctorDashboard from "./pages/DoctorDashboard";
 import LabelingInterface from "./pages/LabelingInterface";
-import AdminProjectPage from "./pages/EditProject/AdminProjectPage";
+import AdminProjectPage from "./pages/EditProject/EditProject";
 import CreateProject from "./pages/CreateProject/CreateProject";
 import ProtectedRoute from "./components/ProtectedRoute"; // Import the ProtectedRoute component
 
