@@ -102,36 +102,38 @@ function Patients() {
       </button>
 
       {/* Import Patients from File */}
-      <input
-        type="file"
-        ref={fileInputRef}
-        className="hidden"
-        accept=".json"
-        onChange={handleImportPatients}
-      />
-      <label
-        onClick={() => fileInputRef.current.click()}
-        className="flex items-center gap-2 bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition mt-3 cursor-pointer"
-      >
-        Import Patients
-        <img src={fileIcon} alt="Import" className="w-4 h-4" />
-      </label>
+      {/* Import Patients from File */}
+<input
+  type="file"
+  ref={fileInputRef}
+  className="hidden"
+  accept=".json"
+  onChange={handleImportPatients}
+/>
+<label
+  onClick={() => fileInputRef.current.click()}
+  className="flex items-center justify-center gap-2 bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition mt-3 cursor-pointer"
+>
+  <span>Import Patients</span>
+  <img src={fileIcon} alt="Import" className="w-4 h-4" />
+</label>
 
-      {/* Upload ZIP File */}
-      <input
-        type="file"
-        ref={zipInputRef}
-        className="hidden"
-        accept=".zip"
-        onChange={handleZipUpload}
-      />
-      <label
-        onClick={() => zipInputRef.current.click()}
-        className="flex items-center gap-2 bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition mt-3 cursor-pointer"
-      >
-        Upload ZIP File
-        <img src={fileIcon} alt="Upload ZIP" className="w-4 h-4" />
-      </label>
+{/* Upload ZIP File */}
+<input
+  type="file"
+  ref={zipInputRef}
+  className="hidden"
+  accept=".zip"
+  onChange={handleZipUpload}
+/>
+<label
+  onClick={() => zipInputRef.current.click()}
+  className="flex items-center justify-center gap-2 bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition mt-3 cursor-pointer"
+>
+  <span>Upload ZIP File</span>
+  <img src={fileIcon} alt="Upload ZIP" className="w-4 h-4" />
+</label>
+
     </section>
   );
 }
