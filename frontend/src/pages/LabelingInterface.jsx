@@ -127,6 +127,14 @@ function LabelingInterface() {
   const handleLabelChange = (label, value) => {
     setPersonLabels({ ...personLabels, [label]: value });
   };
+
+  useEffect(() => {
+    // Disable scrolling
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
   {
     /* End PatientInfoSidebar functions */
   }
@@ -152,14 +160,14 @@ function LabelingInterface() {
 
   return (
     <div
-      className={`mt-[60px] flex gap-[15px] p-[20px] bg-[#f0f2f5] min-h-screen transition-all duration-300 ease-in-out ${
+      className={`mt-[60px] flex gap-[15px] p-[20px] min-h-screen transition-all duration-300 ease-in-out ${
         isSidebarOpen ? "ml-[215px]" : ""
       } flex-row`}
     >
       {/* Top Bar */}
       <div className="flex justify-between items-center h-[60px] bg-white rounded-[10px] shadow-[4px_4px_12px_rgba(0,0,0,0.1)] fixed top-0 left-0 right-[20px] mt-[10px] ml-[20px] w-[calc(100%-40px)] z-50">
         <button
-          className="bg-primary ml-[30px] border-none cursor-pointer p-[5px] transition-transform duration-200 hover:scale-110"
+          className="bg-primary ml-[30px] rounded-md border-none cursor-pointer p-[5px] transition-transform duration-200 hover:scale-110"
           onClick={toggleSidebar}
         >
           <svg
@@ -172,7 +180,7 @@ function LabelingInterface() {
         </button>
         <div className="flex">
           <button
-            className="flex items-center justify-center mr-[10px] bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded"
+            className="flex items-center justify-center mr-[10px] bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded-md"
             onClick={() => navigate("/doctor")}
           >
             <img
@@ -183,7 +191,7 @@ function LabelingInterface() {
             Back to Dashboard
           </button>
           <button
-            className="flex items-center justify-center mr-[30px] ml-[10px] bg-secondary hover:bg-hoverblue text-white font-bold py-2 px-4 rounded"
+            className="flex items-center justify-center mr-[30px] ml-[10px] bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded-md"
             onClick={handleSave}
           >
             <img
