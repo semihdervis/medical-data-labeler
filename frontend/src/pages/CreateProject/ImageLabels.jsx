@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import removeIcon from "../icons/remove.png";
 import addIcon from "../icons/add.png";
 
 function ImageLabels({ imageLabels, setImageLabels }) {
   const [isOptionsVisible, setIsOptionsVisible] = useState(null);
   const [newOption, setNewOption] = useState("");
+  const optionsRef = useRef(null);
 
   const handleAddImageLabel = () => {
     setImageLabels([...imageLabels, { name: "", type: "text", options: [] }]);
@@ -34,6 +35,19 @@ function ImageLabels({ imageLabels, setImageLabels }) {
   const handleToggleOptions = (index) => {
     setIsOptionsVisible(isOptionsVisible === index ? null : index);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (optionsRef.current && !optionsRef.current.contains(event.target)) {
+        setIsOptionsVisible(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <section className="bg-white rounded-lg p-5 shadow-md w-full max-w-xl relative">
@@ -90,6 +104,7 @@ function ImageLabels({ imageLabels, setImageLabels }) {
           {/* Options section */}
           {label.type === "dropdown" && isOptionsVisible === index && (
             <div
+              ref={optionsRef}
               className="absolute bg-white border border-gray-300 p-4 rounded-md shadow-lg z-50"
               style={{
                 minWidth: "200px",

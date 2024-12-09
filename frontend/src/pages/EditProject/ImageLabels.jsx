@@ -113,7 +113,7 @@ function ImageLabels({ imageLabels, setImageLabels }) {
               className="absolute bg-white border border-gray-300 p-4 rounded-md shadow-lg z-50"
               style={{
                 minWidth: "200px",
-                right:0,
+                right:-125,
                 top: 110,
               }}
             >

@@ -36,30 +36,26 @@ function PersonLabels({ personLabels, setPersonLabels }) {
     setIsOptionsVisible(isOptionsVisible === index ? null : index);
   };
 
-// Close options menu when clicking outside
-useEffect(() => {
-  const handleClickOutside = (event) => {
-    if (
-      isOptionsVisible !== null &&
-      dropdownRefs.current[isOptionsVisible] &&
-      !dropdownRefs.current[isOptionsVisible].contains(event.target)
-    ) {
-      setIsOptionsVisible(null);
-    }
-  };
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        isOptionsVisible !== null &&
+        dropdownRefs.current[isOptionsVisible] &&
+        !dropdownRefs.current[isOptionsVisible].contains(event.target)
+      ) {
+        setIsOptionsVisible(null);
+      }
+    };
 
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, [isOptionsVisible]);
-
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOptionsVisible]);
 
   return (
     <section className="bg-white rounded-lg p-5 shadow-md w-full max-w-xl">
-      <h3 className="text-primary text-lg font-bold mb-4">
-        Person-Related Labels
-      </h3>
+      <h3 className="text-primary text-lg font-bold mb-4">Person-Related Labels</h3>
       {personLabels.map((label, index) => (
         <div key={index} className="flex flex-col gap-4 mb-6">
           <div className="flex gap-4 items-start">
@@ -93,8 +89,11 @@ useEffect(() => {
                 <option value="slider">Slider</option>
               </select>
 
-              {label.type === "dropdown" &&  (
-                <div className="relative">
+              {label.type === "dropdown" && (
+                <div
+                  className="relative"
+                  ref={(el) => (dropdownRefs.current[index] = el)}
+                >
                   <button
                     className="bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition"
                     onClick={() => handleToggleOptions(index)}
@@ -104,11 +103,7 @@ useEffect(() => {
                   {isOptionsVisible === index && (
                     <div
                       className="absolute bg-white border border-gray-300 p-4 rounded-md shadow-lg z-50 mt-2 w-full max-w-xs"
-                        style={{
-                          minWidth: "300px",
-
-            
-                        }}
+                      style={{ minWidth: "300px" }}
                     >
                       <h4 className="text-primary text-md font-semibold mb-4">Options</h4>
                       {label.options.map((option, optionIndex) => (
@@ -128,11 +123,7 @@ useEffect(() => {
                             className="bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition"
                             onClick={() => handleRemoveOption(index, optionIndex)}
                           >
-                            <img
-                              src={removeIcon}
-                              alt="Remove Option"
-                              className="w-4 h-4"
-                            />
+                            <img src={removeIcon} alt="Remove Option" className="w-4 h-4" />
                           </button>
                         </div>
                       ))}
