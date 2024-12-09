@@ -47,24 +47,45 @@
           projectData,
           {
             headers: {
-              Authorization: `Bearer ${token}`
-            }
+              Authorization: `Bearer ${token}`,
+            },
           }
         );
     
-        if (response.status === 201) {
-          alert("Project created successfully!");
-          navigate("/admin"); // Redirect to dashboard or admin page
-        } else {
-          alert("Failed to create project. Please try again.");
-        }
+        console.log("Project created:", response.data._id); // Log the project ID
+    
+        const imageLabelData = {
+          projectId: response.data._id,
+          type: "image",
+          labelData: [
+            {
+              labelQuestion: "lblq1149",
+              labelType: "string",
+            },
+            {
+              labelQuestion: "date2911",
+              labelType: "int",
+            },
+          ],
+        };
+    
+        // Make an API call to bind image labels to the project
+        const imageLabelResponse = await axios.post(
+          "/api/labels/schema",
+          imageLabelData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+    
+        console.log("Image labels bound to project:", imageLabelResponse.data);
+        alert("Project created successfully!");
+        navigate("/admin");
       } catch (error) {
-        console.error("Error creating project:", error);
-        if (error.response && error.response.data && error.response.data.message) {
-          alert(`Failed to create project: ${error.response.data.message}`);
-        } else {
-          alert("Failed to create project. Please try again.");
-        }
+        console.error("Error:", error.response ? error.response.data : error.message);
+        alert("Failed to create project. Check the console for more information.");
       }
     };
 
