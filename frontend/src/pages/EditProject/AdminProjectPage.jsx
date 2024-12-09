@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import ProjectDescription from "./ProjectDescription";
 import PersonLabels from "./PersonLabels";
@@ -9,13 +9,13 @@ import AssignDoctor from "./AssignDoctor";
 import RemoveCurrentProject from "./RemoveCurrentProject";
 import ExportProject from "./ExportProject";
 import logoutIcon from "../icons/logout_dark.png";
+import axios from 'axios'
 
 function AdminProjectPage() {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [activeSection, setActiveSection] = useState("description");
-  const [projectDescription, setProjectDescription] = useState(
-    "Project focused on respiratory disease analysis."
-  );
+  const [projectDescription, setProjectDescription] = useState();
   const [personLabels, setPersonLabels] = useState([
     { name: "Name", type: "text" },
   ]);
@@ -27,7 +27,32 @@ function AdminProjectPage() {
   ]);
   const [assignedDoctors, setAssignedDoctors] = useState([]);
   const [activeButton, setActiveButton] = React.useState("description");
-  const [projectName, setProjectName] = useState("Respiratory Health Project");
+  const [projectName, setProjectName] = useState();
+
+  const token = localStorage.getItem('token') // Retrieve the token from local storage
+
+  useEffect(() => {
+    const fetchProject = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3001/api/projects/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        )
+        console.log(response.data)
+        setProjectName(response.data.name)
+        setProjectDescription(response.data.description)
+
+      } catch (error) {
+        console.error('Error fetching projects:', error)
+      }
+    }
+
+    fetchProject()
+  }, [token])
 
   const handleLogout = () => {
     navigate("/");
@@ -38,10 +63,21 @@ function AdminProjectPage() {
     name: "Respiratory Health Project",
   });
 
-  const handleRemoveProject = (projectId) => {
-    // Logic to remove the project goes here (e.g., API call)
-    console.log(`Project ${projectId} removed`);
-    navigate("/admin");
+  const handleRemoveProject = async (projectId) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3001/api/projects/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      console.log(`Project ${projectId} removed`, response.data);
+      navigate("/admin");
+    } catch (error) {
+      console.error(`Error removing project ${projectId}:`, error);
+    }
   };
 
   const handleExport = () => {
