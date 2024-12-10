@@ -10,6 +10,7 @@ import AssignDoctor from "./AssignDoctor";
 import RemoveCurrentProject from "./RemoveCurrentProject";
 import ExportProject from "./ExportProject";
 import logoutIcon from "../icons/logout.png";
+import saveIcon from "../icons/save.png";
 
 const token = localStorage.getItem('token'); // Retrieve the token from local storage
 
@@ -205,21 +206,28 @@ function AdminProjectPage() {
           >
             <span>&#60; Go to Dashboard</span>
           </button>
+          <h1 className="text-white font-bold text-xl"><u>{projectName}</u></h1>          <div className="flex items-center justify-between gap-2">
+        <button
+          onClick={handleSave}
+          className="flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-3.5 rounded cursor-pointer transition-colors"
+        >
+           <img
+              src={saveIcon}
+              alt="Save"
+              className="w-[20px] h-[20px] mr-[3px]"
+            />
+          Save
+        </button>
 
-            <button
-              onClick={handleSave}
-              className="flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-3.5 rounded cursor-pointer transition-colors"
-            >
-              Save
-            </button>
+        <button
+          className="flex items-center justify-center bg-primary hover:bg-red-700 text-white font-bold py-2 px-3.5 rounded cursor-pointer transition-colors"
+          onClick={handleLogout}
+        >
+          <img src={logoutIcon} alt="Log out" className="w-5 h-5 mr-1 mt-1" />
+          Log Out
+        </button>
+      </div>
 
-          <button
-            className="flex items-center justify-center bg-primary hover:bg-red-700 text-white font-bold py-2 px-3.5 rounded cursor-pointer transition-colors"
-            onClick={handleLogout}
-          >
-            <img src={logoutIcon} alt="Log out" className="w-5 h-5 mr-1 mt-1" />
-            Log Out
-          </button>
         </div>
         {activeSection === "description" && (
           <ProjectDescription
