@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 import Sidebar from "./Sidebar";
 import ProjectDescription from "./ProjectDescription";
 import PersonLabels from "./PersonLabels";
@@ -9,7 +10,6 @@ import AssignDoctor from "./AssignDoctor";
 import RemoveCurrentProject from "./RemoveCurrentProject";
 import ExportProject from "./ExportProject";
 import logoutIcon from "../icons/logout.png";
-import axios from 'axios'
 
 const token = localStorage.getItem('token'); // Retrieve the token from local storage
 
@@ -20,12 +20,11 @@ function AdminProjectPage() {
   const [projectDescription, setProjectDescription] = useState();
   const [personLabels, setPersonLabels] = useState([]);
   const [imageLabels, setImageLabels] = useState([]);
-  const [patients, setPatients] = useState([
-    { id: "Patient001", images: ["img1.jpg", "img2.jpg"] },
-  ]);
+  const [patients, setPatients] = useState([]);
   const [assignedDoctors, setAssignedDoctors] = useState([]);
-  const [activeButton, setActiveButton] = React.useState("description");
+  const [activeButton, setActiveButton] = useState("description");
   const [projectName, setProjectName] = useState();
+  const [currentProject, setCurrentProject] = useState(null);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -36,6 +35,8 @@ function AdminProjectPage() {
           }
         });
         setCurrentProject(response.data);
+        setProjectName(response.data.name); // Set the project name
+        setProjectDescription(response.data.description); // Set the project description
       } catch (error) {
         console.error("Error fetching project:", error);
       }
@@ -48,7 +49,6 @@ function AdminProjectPage() {
             Authorization: `Bearer ${token}`
           }
         });
-        console.log("Fetched labels:", response.data);
         const [patientSchema, imageSchema] = response.data;
         setPersonLabels(patientSchema.labelData);
         setImageLabels(imageSchema.labelData);
@@ -57,18 +57,29 @@ function AdminProjectPage() {
       }
     };
 
+    const fetchPatients = async () => {
+      try {
+        const response = await axios.get(`/api/patients/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        setPatients(response.data);
+      } catch (error) {
+        console.error("Error fetching patients:", error);
+      }
+    };
+
     fetchProject();
     fetchLabels();
+    fetchPatients();
   }, [id]);
 
   const handleLogout = () => {
     navigate("/");
   };
   // Assume we have a single project loaded in the editor for simplicity
-  const [currentProject, setCurrentProject] = useState({
-    id: "P001",
-    name: "Respiratory Health Project",
-  });
+  
 
   const handleRemoveProject = async (projectId) => {
     try {

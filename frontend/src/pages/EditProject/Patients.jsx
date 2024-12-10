@@ -1,27 +1,34 @@
 import React, { useState, useRef } from "react";
+import axios from "axios";
 import JSZip from "jszip";
 import removeIcon from "../icons/remove.png";
 import fileIcon from "../icons/file.png";
 
-function Patients() {
+const token = localStorage.getItem('token'); // Retrieve the token from local storage
+
+function Patients({ projectId, patients, setPatients }) {
   const fileInputRef = useRef(null);
   const zipInputRef = useRef(null);
   const [searchTerm, setSearchTerm] = useState("");
-
-  // Predefined patients for testing
-  const [patients, setPatients] = useState([
-    { id: "Patient1", images: [] },
-    { id: "Patient2", images: [] },
-    { id: "Patient3", images: [] },
-    { id: "Patient4", images: [] },
-
-  ]);
 
   const handleAddPatient = () => {
     setPatients([
       ...patients,
       { id: `Patient${patients.length + 1}`, images: [] },
     ]);
+  };
+
+  const handleRemovePatient = async (patientId) => {
+    try {
+      await axios.delete(`/api/patients/${projectId}/${patientId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      setPatients(patients.filter(patient => patient._id !== patientId));
+    } catch (error) {
+      console.error(`Error removing patient ${patientId}:`, error);
+    }
   };
 
   const handleImportPatients = (event) => {
@@ -76,16 +83,13 @@ function Patients() {
       <div className="h-64 overflow-y-auto">
         {filteredPatients.slice(0, 10).map((patient, index) => (
           <div
-            key={patient.id}
+            key={patient._id}
             className="flex justify-between items-center bg-gray-50 p-3 mb-3 rounded-md shadow-sm"
           >
             <p className="text-gray-700 font-medium">{patient.id}</p>
             <button
               className="bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition"
-              onClick={() => {
-                const newPatients = patients.filter((_, i) => i !== index);
-                setPatients(newPatients);
-              }}
+              onClick={() => handleRemovePatient(patient._id)}
             >
               <img src={removeIcon} alt="Remove" className="w-5 h-5" />
             </button>
@@ -102,38 +106,36 @@ function Patients() {
       </button>
 
       {/* Import Patients from File */}
-      {/* Import Patients from File */}
-<input
-  type="file"
-  ref={fileInputRef}
-  className="hidden"
-  accept=".json"
-  onChange={handleImportPatients}
-/>
-<label
-  onClick={() => fileInputRef.current.click()}
-  className="flex items-center justify-center gap-2 bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition mt-3 cursor-pointer"
->
-  <span>Import Patients</span>
-  <img src={fileIcon} alt="Import" className="w-4 h-4" />
-</label>
+      <input
+        type="file"
+        ref={fileInputRef}
+        className="hidden"
+        accept=".json"
+        onChange={handleImportPatients}
+      />
+      <label
+        onClick={() => fileInputRef.current.click()}
+        className="flex items-center gap-2 bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition mt-3 cursor-pointer"
+      >
+        Import Patients
+        <img src={fileIcon} alt="Import" className="w-4 h-4" />
+      </label>
 
-{/* Upload ZIP File */}
-<input
-  type="file"
-  ref={zipInputRef}
-  className="hidden"
-  accept=".zip"
-  onChange={handleZipUpload}
-/>
-<label
-  onClick={() => zipInputRef.current.click()}
-  className="flex items-center justify-center gap-2 bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition mt-3 cursor-pointer"
->
-  <span>Upload ZIP File</span>
-  <img src={fileIcon} alt="Upload ZIP" className="w-4 h-4" />
-</label>
-
+      {/* Upload ZIP File */}
+      <input
+        type="file"
+        ref={zipInputRef}
+        className="hidden"
+        accept=".zip"
+        onChange={handleZipUpload}
+      />
+      <label
+        onClick={() => zipInputRef.current.click()}
+        className="flex items-center gap-2 bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition mt-3 cursor-pointer"
+      >
+        Upload ZIP File
+        <img src={fileIcon} alt="Upload ZIP" className="w-4 h-4" />
+      </label>
     </section>
   );
 }
