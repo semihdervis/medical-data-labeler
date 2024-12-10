@@ -16,7 +16,7 @@ function Patients() {
     { id: "Patient4", images: [] },
   ]);
 
-  const [selectedPatient, setSelectedPatient] = useState(null);
+  const [selectedPatientId, setSelectedPatientId] = useState(null);
 
   const handleAddPatient = () => {
     setPatients([
@@ -31,7 +31,7 @@ function Patients() {
       const reader = new FileReader();
       reader.onload = (e) => {
         const importedPatients = JSON.parse(e.target.result);
-        setPatients([...patients, ...importedPatients]);
+        setPatients((prev) => [...prev, ...importedPatients]);
       };
       reader.readAsText(file);
     }
@@ -52,12 +52,12 @@ function Patients() {
         }
       }
 
-      setPatients([...patients, ...newPatients]);
+      setPatients((prev) => [...prev, ...newPatients]);
     }
   };
 
   const handleImageUpload = (event) => {
-    if (!selectedPatient) return;
+    if (!selectedPatientId) return;
 
     const files = Array.from(event.target.files);
     const newImages = files.map((file) => ({
@@ -67,22 +67,22 @@ function Patients() {
 
     setPatients((prevPatients) =>
       prevPatients.map((patient) =>
-        patient.id === selectedPatient.id
+        patient.id === selectedPatientId
           ? { ...patient, images: [...patient.images, ...newImages] }
           : patient
       )
     );
   };
 
-  const handleRemoveImage = (id) => {
-    if (!selectedPatient) return;
+  const handleRemoveImage = (imageId) => {
+    if (!selectedPatientId) return;
 
     setPatients((prevPatients) =>
       prevPatients.map((patient) =>
-        patient.id === selectedPatient.id
+        patient.id === selectedPatientId
           ? {
               ...patient,
-              images: patient.images.filter((image) => image.id !== id),
+              images: patient.images.filter((image) => image.id !== imageId),
             }
           : patient
       )
@@ -91,6 +91,10 @@ function Patients() {
 
   const filteredPatients = patients.filter((patient) =>
     patient.id.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const selectedPatient = patients.find(
+    (patient) => patient.id === selectedPatientId
   );
 
   return (
@@ -112,9 +116,9 @@ function Patients() {
             <div
               key={patient.id}
               className={`flex justify-between items-center bg-gray-50 p-3 mb-3 rounded-md shadow-sm cursor-pointer ${
-                selectedPatient?.id === patient.id ? "bg-blue-100" : ""
+                selectedPatientId === patient.id ? "bg-blue-100" : ""
               }`}
-              onClick={() => setSelectedPatient(patient)}
+              onClick={() => setSelectedPatientId(patient.id)}
             >
               <p className="text-gray-700 font-medium">{patient.id}</p>
               <button
@@ -124,8 +128,8 @@ function Patients() {
                   setPatients((prevPatients) =>
                     prevPatients.filter((p) => p.id !== patient.id)
                   );
-                  if (selectedPatient?.id === patient.id) {
-                    setSelectedPatient(null);
+                  if (selectedPatientId === patient.id) {
+                    setSelectedPatientId(null);
                   }
                 }}
               >
