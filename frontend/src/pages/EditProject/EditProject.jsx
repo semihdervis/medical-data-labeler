@@ -79,6 +79,10 @@ function AdminProjectPage() {
     navigate("/");
   };
   // Assume we have a single project loaded in the editor for simplicity
+
+    const handleSave = async () => {
+
+    };
   
 
   const handleRemoveProject = async (projectId) => {
@@ -120,6 +124,13 @@ function AdminProjectPage() {
           >
             <span>&#60; Go to Dashboard</span>
           </button>
+
+            <button
+              onClick={handleSave}
+              className="flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-3.5 rounded cursor-pointer transition-colors"
+            >
+              Save
+            </button>
 
           <button
             className="flex items-center justify-center bg-primary hover:bg-red-700 text-white font-bold py-2 px-3.5 rounded cursor-pointer transition-colors"
