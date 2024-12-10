@@ -70,9 +70,30 @@ function AdminProjectPage() {
       }
     };
 
+    const fetchAssignedDoctors = async () => {
+      try {
+        const response = await axios.get(`/api/users/doctors`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        // Filter doctors who have this project ID in their projects array
+        const assignedDoctors = response.data.filter(doctor =>
+          doctor.projects.includes(id)
+        );
+        console.log("All doctors:", response.data);
+        console.log("Assigned doctors:", assignedDoctors);
+    
+        setAssignedDoctors(assignedDoctors.map(doctor => doctor.email));
+      } catch (error) {
+        console.error("Error fetching assigned doctors:", error);
+      }
+    };
+
     fetchProject();
     fetchLabels();
     fetchPatients();
+    fetchAssignedDoctors();
   }, [id]);
 
   const handleLogout = () => {
@@ -167,6 +188,7 @@ function AdminProjectPage() {
           <AssignDoctor
             assignedDoctors={assignedDoctors}
             setAssignedDoctors={setAssignedDoctors}
+            projectId={id}
           />
         )}
         {activeSection === "removeCurrentProject" && (
