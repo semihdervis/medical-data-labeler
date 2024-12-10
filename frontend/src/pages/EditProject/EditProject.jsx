@@ -109,7 +109,7 @@ function AdminProjectPage() {
   const handleRemoveProject = async (projectId) => {
     try {
       const response = await axios.delete(
-        `/api/projects/${projectId}`,
+        `/api/projects/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`
