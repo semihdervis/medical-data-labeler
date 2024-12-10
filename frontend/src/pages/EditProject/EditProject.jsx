@@ -53,6 +53,8 @@ function AdminProjectPage() {
         const [patientSchema, imageSchema] = response.data;
         setPersonLabels(patientSchema.labelData);
         setImageLabels(imageSchema.labelData);
+        console.log("person labels", personLabels);
+        console.log("image labels", imageLabels);
       } catch (error) {
         console.error("Error fetching labels:", error);
       }
@@ -102,9 +104,27 @@ function AdminProjectPage() {
   };
   // Assume we have a single project loaded in the editor for simplicity
 
-    const handleSave = async () => {
+  const handleSave = async () => {
 
-    };
+    try {
+      const response = await axios.put(
+        `/api/projects/${id}`,
+        {
+          name: projectName,
+          description: projectDescription
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      console.log("Project saved", response.data);
+    } catch (error) {
+      console.error("Error saving project:", error);
+    }
+
+  };
   
 
   const handleRemoveProject = async (projectId) => {
