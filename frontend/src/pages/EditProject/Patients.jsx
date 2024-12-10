@@ -14,14 +14,15 @@ function Patients({ patients, setPatients }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPatientId, setSelectedPatientId] = useState(null);
   const [images, setImages] = useState([]);
+  const [imageUrls, setImageUrls] = useState({});
 
   useEffect(() => {
     const fetchPatients = async () => {
       try {
         const response = await axios.get(`/api/patients/${id}`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
         });
         setPatients(response.data);
       } catch (error) {
@@ -38,10 +39,11 @@ function Patients({ patients, setPatients }) {
         try {
           const response = await axios.get(`/api/images/${id}/${selectedPatientId}`, {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
+              Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
           });
           setImages(response.data);
+          fetchImageUrls(response.data);
         } catch (error) {
           console.error("Error fetching images:", error);
         }
@@ -51,13 +53,32 @@ function Patients({ patients, setPatients }) {
     fetchImages();
   }, [selectedPatientId, id]);
 
+  const fetchImageUrls = async (images) => {
+    const urls = {};
+    for (const image of images) {
+      try {
+        const response = await axios.get(`http://localhost:3001/${image.filepath}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          },
+          responseType: 'blob'
+        });
+        const url = URL.createObjectURL(response.data);
+        urls[image._id] = url;
+      } catch (error) {
+        console.error("Error fetching image:", error);
+      }
+    }
+    setImageUrls(urls);
+  };
+
   const handleAddPatient = async () => {
     const newPatient = { projectId: id, name: `Patient${patients.length + 1}`, age: "0", gender: "null" };
     try {
       const response = await axios.post(`/api/patients`, newPatient, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
       });
       setPatients([...patients, response.data]);
     } catch (error) {
@@ -69,13 +90,14 @@ function Patients({ patients, setPatients }) {
     try {
       await axios.delete(`/api/patients/${id}/${patientId}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
       });
       setPatients(patients.filter((patient) => patient._id !== patientId));
       if (selectedPatientId === patientId) {
         setSelectedPatientId(null);
         setImages([]);
+        setImageUrls({});
       }
     } catch (error) {
       console.error("Error removing patient:", error);
@@ -148,10 +170,15 @@ function Patients({ patients, setPatients }) {
     try {
       await axios.delete(`/api/images/${id}/${selectedPatientId}/${imageId}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
       });
       setImages(images.filter((image) => image._id !== imageId));
+      setImageUrls((prevUrls) => {
+        const newUrls = { ...prevUrls };
+        delete newUrls[imageId];
+        return newUrls;
+      });
     } catch (error) {
       console.error("Error removing image:", error);
     }
@@ -161,10 +188,12 @@ function Patients({ patients, setPatients }) {
     patient.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const selectedPatient = patients.find((patient) => patient._id === selectedPatientId);
+  const selectedPatient = patients.find(
+    (patient) => patient._id === selectedPatientId
+  );
 
   return (
-    <div className="flex flex-col md:flex-row gap-5 mt-10">
+    <div className="flex flex-col md:flex-row gap-5">
       {/* Patient Management Container */}
       <section className="bg-white rounded-lg p-5 shadow-md w-96">
         <h3 className="text-primary text-lg font-bold mb-4">Patients</h3>
@@ -239,14 +268,30 @@ function Patients({ patients, setPatients }) {
       </section>
 
       {/* Patient Images Container */}
-      <section className="bg-white rounded-lg p-5 shadow-md w-96 flex flex-col ">
+      <section className="bg-white rounded-lg p-5 shadow-md w-96">
         <h3 className="text-primary text-lg font-bold mb-4">
           {selectedPatient ? `${selectedPatient.name} Images` : "Select a Patient"}
         </h3>
 
         {selectedPatient && (
           <>
-            <div className="h-64 overflow-y-auto flex-grow">
+            <input
+              type="file"
+              ref={imageInputRef}
+              className="hidden"
+              accept="image/*"
+              multiple
+              onChange={handleImageUpload}
+            />
+            <label
+              onClick={() => imageInputRef.current.click()}
+              className="flex items-center gap-2 bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition mt-3 cursor-pointer"
+            >
+              Upload Images
+              <img src={fileIcon} alt="Upload" className="w-4 h-4" />
+            </label>
+
+            <div className="h-64 overflow-y-auto mt-4">
               {images.length > 0 ? (
                 images.map((image) => (
                   <div
@@ -254,7 +299,7 @@ function Patients({ patients, setPatients }) {
                     className="flex items-center justify-between bg-gray-50 p-3 mb-3 rounded-md shadow-sm"
                   >
                     <img
-                      src={image.url}
+                      src={imageUrls[image._id]}
                       alt={image.name}
                       className="w-16 h-16 rounded-md object-cover"
                     />
@@ -271,22 +316,6 @@ function Patients({ patients, setPatients }) {
                 <p className="text-gray-500">No images uploaded.</p>
               )}
             </div>
-
-            <input
-              type="file"
-              ref={imageInputRef}
-              className="hidden"
-              accept="image/*"
-              multiple
-              onChange={handleImageUpload}
-            />
-            <label
-              onClick={() => imageInputRef.current.click()}
-              className="flex items-center gap-2 bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition mt-3 cursor-pointer mt-auto"
-            >
-              Upload Images
-              <img src={fileIcon} alt="Upload" className="w-4 h-4" />
-            </label>
           </>
         )}
       </section>

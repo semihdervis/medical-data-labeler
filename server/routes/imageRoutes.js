@@ -42,5 +42,5 @@ router.post(
 );
 
 router.get('/:projectId/:patientId', authenticate, checkAdmin, imageController.getImagesByProjectAndPatient);
-
+router.delete('/:projectId/:patientId/:imageId', authenticate, checkAdmin, imageController.deleteImageWithRequest);
 module.exports = router;

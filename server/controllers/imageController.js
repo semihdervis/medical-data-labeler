@@ -87,28 +87,43 @@ exports.uploadMultipleImages = async (req, res) => {
   }
 };
 
-
-
-exports.deleteImageById = async (imageId) => {
+const deleteImage = async (imageId) => {
   try {
     const image = await Image.findById(imageId);
     if (!image) {
       throw new Error('Image not found');
     }
 
-    // Delete the image's disk files
-    const imagePath = path.join(__dirname, '../uploads', image.filename);
-    if (fs.existsSync(imagePath)) {
-      fs.unlinkSync(imagePath);
-    }
+    // Delete the image file from the filesystem
+    fs.unlinkSync(path.join(__dirname, '..', image.filepath));
 
-    // Delete the image's label answers
-    await LabelAnswer.deleteMany({ ownerId: image._id });
+    // Delete the image entry from the database
+    await Image.findByIdAndDelete(imageId);
 
-    // Delete the image itself
-    await image.deleteOne();
+    return { message: 'Image deleted successfully' };
   } catch (error) {
+    console.error(`Error deleting image: ${error.message}`);
     throw new Error(`Error deleting image: ${error.message}`);
+  }
+};
+
+exports.deleteImageWithRequest = async (req, res) => {
+  try {
+    const { imageId } = req.params;
+    const result = await deleteImage(imageId);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Helper function to delete an image by ID
+exports.deleteImageById = async (imageId) => {
+  try {
+    const result = await deleteImage(imageId);
+    return result;
+  } catch (error) {
+    throw new Error(error.message);
   }
 };
 
