@@ -25,6 +25,8 @@ function AdminProjectPage() {
   const [activeButton, setActiveButton] = useState("description");
   const [projectName, setProjectName] = useState();
   const [currentProject, setCurrentProject] = useState(null);
+  const [patientSchemaId, setPatientSchemaId] = useState(null);
+  const [imageSchemaId, setImageSchemaId] = useState(null);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -52,8 +54,10 @@ function AdminProjectPage() {
         const [patientSchema, imageSchema] = response.data;
         setPersonLabels(patientSchema.labelData);
         setImageLabels(imageSchema.labelData);
-        console.log("person labels", personLabels);
-        console.log("image labels", imageLabels);
+        setPatientSchemaId(patientSchema._id);
+        setImageSchemaId(imageSchema._id);
+        console.log("person schema id", patientSchemaId);
+        console.log("image schema id", imageSchemaId);
       } catch (error) {
         console.error("Error fetching labels:", error);
       }
@@ -121,6 +125,42 @@ function AdminProjectPage() {
       console.log("Project saved", response.data);
     } catch (error) {
       console.error("Error saving project:", error);
+    }
+
+    // update person labels
+    try {
+      const response = await axios.put(
+        `/api/labels/schema/${patientSchemaId}`,
+        {
+          labelData: personLabels
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      console.log("Person labels saved", response.data);
+    } catch (error) {
+      console.error("Error saving person labels:", error);
+    }
+
+    // update image labels
+    try {
+      const response = await axios.put(
+        `/api/labels/schema/${imageSchemaId}`,
+        {
+          labelData: imageLabels
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      console.log("Image labels saved", response.data);
+    } catch (error) {
+      console.error("Error saving image labels:", error);
     }
 
   };
