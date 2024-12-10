@@ -18,11 +18,10 @@ function Patients({ patients, setPatients }) {
   useEffect(() => {
     const fetchPatients = async () => {
       try {
-        console.log(`Fetching patients for project ${id}`);
         const response = await axios.get(`/api/patients/${id}`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         });
         setPatients(response.data);
       } catch (error) {
@@ -39,8 +38,8 @@ function Patients({ patients, setPatients }) {
         try {
           const response = await axios.get(`/api/images/${id}/${selectedPatientId}`, {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
           });
           setImages(response.data);
         } catch (error) {
@@ -57,8 +56,8 @@ function Patients({ patients, setPatients }) {
     try {
       const response = await axios.post(`/api/patients`, newPatient, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
       setPatients([...patients, response.data]);
     } catch (error) {
@@ -70,8 +69,8 @@ function Patients({ patients, setPatients }) {
     try {
       await axios.delete(`/api/patients/${id}/${patientId}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
       setPatients(patients.filter((patient) => patient._id !== patientId));
       if (selectedPatientId === patientId) {
@@ -126,8 +125,8 @@ function Patients({ patients, setPatients }) {
     try {
       const response = await axios.post(`/api/images/${id}/${selectedPatientId}`, newImages, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
       setImages([...images, ...response.data]);
     } catch (error) {
@@ -141,8 +140,8 @@ function Patients({ patients, setPatients }) {
     try {
       await axios.delete(`/api/images/${id}/${selectedPatientId}/${imageId}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
       setImages(images.filter((image) => image._id !== imageId));
     } catch (error) {
@@ -154,12 +153,10 @@ function Patients({ patients, setPatients }) {
     patient.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const selectedPatient = patients.find(
-    (patient) => patient._id === selectedPatientId
-  );
+  const selectedPatient = patients.find((patient) => patient._id === selectedPatientId);
 
   return (
-    <div className="flex flex-col md:flex-row gap-5">
+    <div className="flex flex-col md:flex-row gap-5 mt-10">
       {/* Patient Management Container */}
       <section className="bg-white rounded-lg p-5 shadow-md w-96">
         <h3 className="text-primary text-lg font-bold mb-4">Patients</h3>
@@ -234,30 +231,14 @@ function Patients({ patients, setPatients }) {
       </section>
 
       {/* Patient Images Container */}
-      <section className="bg-white rounded-lg p-5 shadow-md w-96">
+      <section className="bg-white rounded-lg p-5 shadow-md w-96 flex flex-col ">
         <h3 className="text-primary text-lg font-bold mb-4">
           {selectedPatient ? `${selectedPatient.name} Images` : "Select a Patient"}
         </h3>
 
         {selectedPatient && (
           <>
-            <input
-              type="file"
-              ref={imageInputRef}
-              className="hidden"
-              accept="image/*"
-              multiple
-              onChange={handleImageUpload}
-            />
-            <label
-              onClick={() => imageInputRef.current.click()}
-              className="flex items-center gap-2 bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition mt-3 cursor-pointer"
-            >
-              Upload Images
-              <img src={fileIcon} alt="Upload" className="w-4 h-4" />
-            </label>
-
-            <div className="h-64 overflow-y-auto mt-4">
+            <div className="h-64 overflow-y-auto flex-grow">
               {images.length > 0 ? (
                 images.map((image) => (
                   <div
@@ -282,6 +263,22 @@ function Patients({ patients, setPatients }) {
                 <p className="text-gray-500">No images uploaded.</p>
               )}
             </div>
+
+            <input
+              type="file"
+              ref={imageInputRef}
+              className="hidden"
+              accept="image/*"
+              multiple
+              onChange={handleImageUpload}
+            />
+            <label
+              onClick={() => imageInputRef.current.click()}
+              className="flex items-center gap-2 bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition mt-3 cursor-pointer mt-auto"
+            >
+              Upload Images
+              <img src={fileIcon} alt="Upload" className="w-4 h-4" />
+            </label>
           </>
         )}
       </section>
