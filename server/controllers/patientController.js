@@ -62,7 +62,8 @@ exports.addPatient = async (req, res) => {
 // Get list of patient names
 exports.getPatientsList = async (req, res) => {
   try {
-    const patients = await Patient.find({}, 'name') // Only select the 'name' field
+    const { id } = req.params
+    const patients = await Patient.find({ projectId: id}, 'name') // Only select the 'name' field
     res.status(200).json(patients)
   } catch (error) {
     res.status(500).json({ message: error.message })

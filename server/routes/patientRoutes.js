@@ -12,7 +12,7 @@ router.use((req, res, next) => {
 
 // Routes for patient management
 router.post('/', authenticate, checkAdmin, patientController.addPatient);
-router.get('/namelist', authenticate, patientController.getPatientsList);
+router.get('/namelist/:id', authenticate, patientController.getPatientsList);
 router.get('/:id/:patientId', authenticate, checkAdmin, patientController.getPatientById); // Specific route should come before the general route
 router.get('/:id', authenticate, patientController.getAllPatients); // General route, may be restricted to admins only
 router.put('/:id/:patientId', authenticate, checkAdmin, patientController.updatePatient); // Update route with both projectId and patientId

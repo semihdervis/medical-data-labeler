@@ -14,7 +14,7 @@ function DoctorDashboard () {
     const fetchProjects = async () => {
       try {
         const response = await axios.get(
-          'http://localhost:3001/api/projects/get',
+          '/api/projects/get',
           {
             headers: {
               Authorization: `Bearer ${token}`
@@ -42,8 +42,10 @@ function DoctorDashboard () {
     navigate('/')
   }
 
-  const handleViewProject = id => {
-    navigate(`/label`)
+  // Navigate to the LabelingInterface page with the project ID
+
+  const handleViewProject = (projectId) => {
+    navigate(`/label/${projectId}`)
   }
 
   return (
@@ -81,7 +83,7 @@ function DoctorDashboard () {
             </h3>
             <p className="text-sm text-gray-600 mb-4">{project.description}</p>
             <button
-              onClick={() => handleViewProject(project.id)}
+              onClick={() => handleViewProject(project._id)}
               className="w-full bg-primary hover:bg-secondary text-white py-2 rounded-md transition"
             >
               View Project

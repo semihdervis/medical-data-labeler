@@ -39,7 +39,7 @@ function AdminDashboard() {
   )
 
   const handleViewProject = id => {
-    navigate(`/label`)
+    navigate(`/label/${id}`)
   }
 
   const handleEditProject = id => {
@@ -99,7 +99,7 @@ function AdminDashboard() {
             <p className="text-sm text-gray-600 mb-4">{project.description}</p>
             <div className="flex space-x-2">
               <button
-                onClick={() => handleViewProject(project.id)}
+                onClick={() => handleViewProject(project._id)}
                 className="flex-1 bg-primary hover:bg-secondary text-white py-2 rounded-md transition"
               >
                 View Project
