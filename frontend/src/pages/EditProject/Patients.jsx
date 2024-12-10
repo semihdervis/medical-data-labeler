@@ -115,21 +115,29 @@ function Patients({ patients, setPatients }) {
   };
 
   const handleImageUpload = async (event) => {
-    if (!selectedPatientId) return;
+    if (!selectedPatientId) {
+      console.error('No patient selected for uploading images.');
+      return;
+    }
 
     const files = Array.from(event.target.files);
-    const newImages = files.map((file) => ({
-      id: file.name,
-      url: URL.createObjectURL(file),
-    }));
+    const formData = new FormData();
+    formData.append('uploader', localStorage.getItem('email'));
+    console.log('test:', localStorage.getItem('email')); 
+    formData.append('projectId', id);
+    formData.append('patientId', selectedPatientId);
+    files.forEach(file => formData.append('images', file));
 
     try {
-      const response = await axios.post(`/api/images/${id}/${selectedPatientId}`, newImages, {
+      const response = await axios.post('/api/images/upload-multiple', formData, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'multipart/form-data'
         }
       });
-      setImages([...images, ...response.data]);
+
+      // parse the response data and update the images state
+      setImages([...images, ...response.data.uploadedImages]);
     } catch (error) {
       console.error("Error uploading images:", error);
     }

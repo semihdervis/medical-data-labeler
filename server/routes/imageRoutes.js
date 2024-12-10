@@ -33,7 +33,14 @@ const upload = multer({ storage });
 
 // Routes for image management
 router.post('/upload', upload.single('image'), authenticate, checkAdmin, imageController.uploadImage);
+router.post(
+  '/upload-multiple',
+  upload.array('images', 10), // Allows up to 10 files in one request
+  authenticate,
+  checkAdmin,
+  imageController.uploadMultipleImages
+);
+
 router.get('/:projectId/:patientId', authenticate, checkAdmin, imageController.getImagesByProjectAndPatient);
-router.post('/:projectId/:patientId', authenticate, checkAdmin, imageController.uploadImages);
 
 module.exports = router;

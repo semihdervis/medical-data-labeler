@@ -19,7 +19,7 @@ exports.uploadImage = async (req, res) => {
 
     // Create a temporary image entry in the database with the initial filepath
     const initialFilepath = path.join('projects', projectId, patientId, filename).replace(/\\/g, '/');
-    const newImage = new ImageModel({ name, filepath: initialFilepath, uploader, projectId, patientId });
+    const newImage = new Image({ name, filepath: initialFilepath, uploader, projectId, patientId });
     await newImage.save();
 
     // Rename the file using the MongoDB ID to avoid filename conflicts
@@ -39,36 +39,55 @@ exports.uploadImage = async (req, res) => {
   }
 };
 
-exports.uploadImages = async (projectId, patientId, images) => {
+exports.uploadMultipleImages = async (req, res) => {
   try {
-    const newImages = images.map((image) => ({
-      name: image.name,
-      uploader: image.uploader,
-      projectId,
-      patientId,
-      filename: image.filename,
-    }));
+    const { uploader, projectId, patientId } = req.body;
 
-    const uploadedImages = await Image.insertMany(newImages);
-
-    // handle renaming and moving the files
-    for (const uploadedImage of uploadedImages) {
-      const initialFilepath = path.join(__dirname, '../uploads', uploadedImage.filename);
-      const newFilename = `${uploadedImage._id}${path.extname(uploadedImage.filename)}`;
-      const newFilepath = path.join(__dirname, '../projects', projectId, patientId, newFilename);
-
-      fs.renameSync(initialFilepath, newFilepath);
-      uploadedImage.filename = newFilename;
-      uploadedImage.filepath = path.join('projects', projectId, patientId, newFilename).replace(/\\/g, '');
-      await uploadedImage.save();
+    // Ensure all required fields are present
+    if (!uploader || !projectId || !patientId || !req.files) {
+      return res.status(400).json({ message: 'Missing required fields in upload request' });
     }
 
+    const uploadedImages = [];
 
-    return uploadedImages;
+    for (const file of req.files) {
+      const { originalname, path: tempFilepath } = file;
+
+      // Create a temporary image entry in the database
+      const initialFilepath = path
+        .join('projects', projectId, patientId, originalname)
+        .replace(/\\/g, '/');
+      const newImage = new Image({
+        name: originalname,
+        filepath: initialFilepath,
+        uploader,
+        projectId,
+        patientId,
+      });
+      await newImage.save();
+
+      // Rename the file using the MongoDB ID to avoid filename conflicts
+      const newFilename = `${newImage._id}${path.extname(originalname)}`;
+      const newFilepath = path.join(path.dirname(tempFilepath), newFilename);
+      fs.renameSync(tempFilepath, newFilepath);
+
+      // Update the image entry with the final filepath
+      newImage.filepath = path
+        .join('projects', projectId, patientId, newFilename)
+        .replace(/\\/g, '/');
+      await newImage.save();
+
+      uploadedImages.push(newImage);
+    }
+
+    res.status(201).json({ message: 'Images uploaded successfully', uploadedImages });
   } catch (error) {
-    throw new Error(`Error uploading images: ${error.message}`);
+    console.error('Error uploading images:', error);
+    res.status(500).json({ message: 'Error uploading images', error: error.message });
   }
-}
+};
+
+
 
 exports.deleteImageById = async (imageId) => {
   try {
