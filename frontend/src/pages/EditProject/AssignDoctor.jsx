@@ -1,18 +1,50 @@
 import React, { useState } from "react";
+import axios from "axios";
 
-function AssignDoctor({ assignedDoctors = [], setAssignedDoctors }) {
-  // Default to empty array
+function AssignDoctor({ assignedDoctors = [], setAssignedDoctors, projectId }) {
   const [doctorEmail, setDoctorEmail] = useState("");
+  const [error, setError] = useState("");
 
-  const handleAddDoctor = () => {
+  const handleAddDoctor = async () => {
     if (doctorEmail && !assignedDoctors.includes(doctorEmail)) {
-      setAssignedDoctors([...assignedDoctors, doctorEmail]);
-      setDoctorEmail("");
+      try {
+        // Add the doctor to the project
+        const response = await axios.post(`/api/projects/${projectId}/assign-doctor`, { email: doctorEmail }, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        setAssignedDoctors([...assignedDoctors, doctorEmail]);
+        setDoctorEmail("");
+        setError("");
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          setError("Doctor not found. Please ensure the email is correct and the doctor exists.");
+        } else {
+          console.error("Error adding doctor:", error);
+          setError("Error adding doctor. Please try again.");
+        }
+      }
     }
   };
 
-  const handleRemoveDoctor = (email) => {
-    setAssignedDoctors(assignedDoctors.filter((doctor) => doctor !== email));
+  const handleRemoveDoctor = async (doctorEmail) => {
+    if (doctorEmail && assignedDoctors.includes(doctorEmail)) {
+      try {
+        // Remove the doctor from the project
+        await axios.post(`/api/projects/${projectId}/remove-doctor`, {
+          doctorEmail: doctorEmail
+        }, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        setAssignedDoctors(assignedDoctors.filter((doctor) => doctor !== doctorEmail));
+      } catch (error) {
+        console.error("Error removing doctor:", error);
+      }
+    }
   };
 
   return (
@@ -25,29 +57,27 @@ function AssignDoctor({ assignedDoctors = [], setAssignedDoctors }) {
         <input
           type="email"
           value={doctorEmail}
-          placeholder="Enter doctor's email"
           onChange={(e) => setDoctorEmail(e.target.value)}
-          className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          placeholder="Doctor's email"
+          className="flex-1 p-2 border rounded"
         />
         <button
-          className="bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition"
           onClick={handleAddDoctor}
+          className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition"
         >
-          Add Doctor
+          Add
         </button>
       </div>
 
-      {/* List of assigned doctors */}
-      <ul className="list-none p-0">
-        {assignedDoctors.map((email, index) => (
-          <li
-            key={index}
-            className="flex justify-between items-center bg-gray-100 p-3 mb-2 rounded-md"
-          >
-            <span>{email}</span>
+      {error && <p className="text-red-500">{error}</p>}
+
+      <ul>
+        {assignedDoctors.map((doctor) => (
+          <li key={doctor} className="flex justify-between items-center mb-2">
+            <span>{doctor}</span>
             <button
-              className="bg-red-600 text-white py-1 px-3 rounded-md hover:bg-red-700 transition"
-              onClick={() => handleRemoveDoctor(email)}
+              onClick={() => handleRemoveDoctor(doctor)}
+              className="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 transition"
             >
               Remove
             </button>

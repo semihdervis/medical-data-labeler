@@ -10,6 +10,23 @@ exports.getAllUsers = async (req, res) => {
     }
 };
 
+exports.getDoctors = async (req, res) => {
+    try {
+        const doctors = await User.find({ isAdmin: false }); // filter by isAdmin
+        // only return email and name
+        const doctorList = doctors.map(doctor => {
+            return {
+                _id: doctor._id,
+                email: doctor.email,
+                projects: doctor.projects
+            }
+        });
+        res.status(200).json(doctorList);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // Get user by ID
 exports.getUserById = async (req, res) => {
     try {
