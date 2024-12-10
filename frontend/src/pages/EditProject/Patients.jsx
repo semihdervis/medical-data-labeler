@@ -13,6 +13,7 @@ function Patients({ patients, setPatients }) {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPatientId, setSelectedPatientId] = useState(null);
+  const [images, setImages] = useState([]);
 
   useEffect(() => {
     const fetchPatients = async () => {
@@ -32,8 +33,27 @@ function Patients({ patients, setPatients }) {
     fetchPatients();
   }, [id]);
 
+  useEffect(() => {
+    const fetchImages = async () => {
+      if (selectedPatientId) {
+        try {
+          const response = await axios.get(`/api/images/${id}/${selectedPatientId}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+          });
+          setImages(response.data);
+        } catch (error) {
+          console.error("Error fetching images:", error);
+        }
+      }
+    };
+
+    fetchImages();
+  }, [selectedPatientId, id]);
+
   const handleAddPatient = async () => {
-    const newPatient = {projectId: id, name: `Patient${patients.length + 1}`, age: "0", gender : "null" };
+    const newPatient = { projectId: id, name: `Patient${patients.length + 1}`, age: "0", gender: "null" };
     try {
       const response = await axios.post(`/api/patients`, newPatient, {
         headers: {
@@ -56,6 +76,7 @@ function Patients({ patients, setPatients }) {
       setPatients(patients.filter((patient) => patient._id !== patientId));
       if (selectedPatientId === patientId) {
         setSelectedPatientId(null);
+        setImages([]);
       }
     } catch (error) {
       console.error("Error removing patient:", error);
@@ -93,7 +114,7 @@ function Patients({ patients, setPatients }) {
     }
   };
 
-  const handleImageUpload = (event) => {
+  const handleImageUpload = async (event) => {
     if (!selectedPatientId) return;
 
     const files = Array.from(event.target.files);
@@ -102,28 +123,31 @@ function Patients({ patients, setPatients }) {
       url: URL.createObjectURL(file),
     }));
 
-    setPatients((prevPatients) =>
-      prevPatients.map((patient) =>
-        patient._id === selectedPatientId
-          ? { ...patient, images: [...patient.images, ...newImages] }
-          : patient
-      )
-    );
+    try {
+      const response = await axios.post(`/api/images/${id}/${selectedPatientId}`, newImages, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setImages([...images, ...response.data]);
+    } catch (error) {
+      console.error("Error uploading images:", error);
+    }
   };
 
-  const handleRemoveImage = (imageId) => {
+  const handleRemoveImage = async (imageId) => {
     if (!selectedPatientId) return;
 
-    setPatients((prevPatients) =>
-      prevPatients.map((patient) =>
-        patient._id === selectedPatientId
-          ? {
-              ...patient,
-              images: patient.images.filter((image) => image.id !== imageId),
-            }
-          : patient
-      )
-    );
+    try {
+      await axios.delete(`/api/images/${id}/${selectedPatientId}/${imageId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setImages(images.filter((image) => image._id !== imageId));
+    } catch (error) {
+      console.error("Error removing image:", error);
+    }
   };
 
   const filteredPatients = patients.filter((patient) =>
@@ -234,21 +258,21 @@ function Patients({ patients, setPatients }) {
             </label>
 
             <div className="h-64 overflow-y-auto mt-4">
-              {selectedPatient.images.length > 0 ? (
-                selectedPatient.images.map((image) => (
+              {images.length > 0 ? (
+                images.map((image) => (
                   <div
-                    key={image.id}
+                    key={image._id}
                     className="flex items-center justify-between bg-gray-50 p-3 mb-3 rounded-md shadow-sm"
                   >
                     <img
                       src={image.url}
-                      alt={image.id}
+                      alt={image.name}
                       className="w-16 h-16 rounded-md object-cover"
                     />
-                    <p className="text-gray-700">{image.id}</p>
+                    <p className="text-gray-700">{image.name}</p>
                     <button
                       className="bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition"
-                      onClick={() => handleRemoveImage(image.id)}
+                      onClick={() => handleRemoveImage(image._id)}
                     >
                       <img src={removeIcon} alt="Remove" className="w-5 h-5" />
                     </button>
