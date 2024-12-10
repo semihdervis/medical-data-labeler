@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 const path = require('path');
 const fs = require('fs');
+const Project = require('../models/ProjectModel');
 const Patient = require('../models/PatientModel');
+const Image = require('../models/ImageModel');
 const LabelAnswer = require('../models/LabelAnswersModel');
 const imageController = require('./imageController');
 
@@ -116,9 +118,10 @@ exports.deletePatientById = async (patientId) => {
       throw new Error('Patient not found');
     }
 
-    // Delegate the deletion of images to the imageController
-    for (const imageId of patient.images) {
-      await imageController.deleteImageById(imageId);
+    const images = await Image.find({ patientId: patientId });
+
+    for (const image of images) {
+      await imageController.deleteImageById(image._id);
     }
 
     // Delete the patient's label answers

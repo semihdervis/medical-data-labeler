@@ -1,28 +1,65 @@
-import React, { useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import JSZip from "jszip";
 import removeIcon from "../icons/remove.png";
 import fileIcon from "../icons/file.png";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 
-function Patients() {
+function Patients({ patients, setPatients }) {
+  const { id } = useParams(); // Get the project ID from the URL parameters
   const fileInputRef = useRef(null);
   const zipInputRef = useRef(null);
   const imageInputRef = useRef(null);
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [patients, setPatients] = useState([
-    { id: "Patient1", images: [] },
-    { id: "Patient2", images: [] },
-    { id: "Patient3", images: [] },
-    { id: "Patient4", images: [] },
-  ]);
-
   const [selectedPatientId, setSelectedPatientId] = useState(null);
 
-  const handleAddPatient = () => {
-    setPatients([
-      ...patients,
-      { id: `Patient${patients.length + 1}`, images: [] },
-    ]);
+  useEffect(() => {
+    const fetchPatients = async () => {
+      try {
+        console.log(`Fetching patients for project ${id}`);
+        const response = await axios.get(`/api/patients/${id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        setPatients(response.data);
+      } catch (error) {
+        console.error("Error fetching patients:", error);
+      }
+    };
+
+    fetchPatients();
+  }, [id]);
+
+  const handleAddPatient = async () => {
+    const newPatient = {projectId: id, name: `Patient${patients.length + 1}`, age: "0", gender : "null" };
+    try {
+      const response = await axios.post(`/api/patients`, newPatient, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setPatients([...patients, response.data]);
+    } catch (error) {
+      console.error("Error adding patient:", error);
+    }
+  };
+
+  const handleRemovePatient = async (patientId) => {
+    try {
+      await axios.delete(`/api/patients/${id}/${patientId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setPatients(patients.filter((patient) => patient._id !== patientId));
+      if (selectedPatientId === patientId) {
+        setSelectedPatientId(null);
+      }
+    } catch (error) {
+      console.error("Error removing patient:", error);
+    }
   };
 
   const handleImportPatients = (event) => {
@@ -67,7 +104,7 @@ function Patients() {
 
     setPatients((prevPatients) =>
       prevPatients.map((patient) =>
-        patient.id === selectedPatientId
+        patient._id === selectedPatientId
           ? { ...patient, images: [...patient.images, ...newImages] }
           : patient
       )
@@ -79,7 +116,7 @@ function Patients() {
 
     setPatients((prevPatients) =>
       prevPatients.map((patient) =>
-        patient.id === selectedPatientId
+        patient._id === selectedPatientId
           ? {
               ...patient,
               images: patient.images.filter((image) => image.id !== imageId),
@@ -90,11 +127,11 @@ function Patients() {
   };
 
   const filteredPatients = patients.filter((patient) =>
-    patient.id.toLowerCase().includes(searchTerm.toLowerCase())
+    patient.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const selectedPatient = patients.find(
-    (patient) => patient.id === selectedPatientId
+    (patient) => patient._id === selectedPatientId
   );
 
   return (
@@ -105,7 +142,7 @@ function Patients() {
 
         <input
           type="text"
-          placeholder="Search patients by ID..."
+          placeholder="Search patients by name..."
           className="w-full mb-4 px-3 py-2 border rounded-md"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -114,23 +151,18 @@ function Patients() {
         <div className="h-64 overflow-y-auto">
           {filteredPatients.map((patient) => (
             <div
-              key={patient.id}
+              key={patient._id}
               className={`flex justify-between items-center bg-gray-50 p-3 mb-3 rounded-md shadow-sm cursor-pointer ${
-                selectedPatientId === patient.id ? "bg-blue-100" : ""
+                selectedPatientId === patient._id ? "bg-blue-100" : ""
               }`}
-              onClick={() => setSelectedPatientId(patient.id)}
+              onClick={() => setSelectedPatientId(patient._id)}
             >
-              <p className="text-gray-700 font-medium">{patient.id}</p>
+              <p className="text-gray-700 font-medium">{patient.name}</p>
               <button
                 className="bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setPatients((prevPatients) =>
-                    prevPatients.filter((p) => p.id !== patient.id)
-                  );
-                  if (selectedPatientId === patient.id) {
-                    setSelectedPatientId(null);
-                  }
+                  handleRemovePatient(patient._id);
                 }}
               >
                 <img src={removeIcon} alt="Remove" className="w-5 h-5" />
@@ -180,7 +212,7 @@ function Patients() {
       {/* Patient Images Container */}
       <section className="bg-white rounded-lg p-5 shadow-md w-96">
         <h3 className="text-primary text-lg font-bold mb-4">
-          {selectedPatient ? `${selectedPatient.id} Images` : "Select a Patient"}
+          {selectedPatient ? `${selectedPatient.name} Images` : "Select a Patient"}
         </h3>
 
         {selectedPatient && (
