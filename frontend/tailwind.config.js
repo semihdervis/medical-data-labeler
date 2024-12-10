@@ -12,11 +12,12 @@ export default {
         lightblue: "#5c6bc0",
         hoverblue: "#0f1b65",
         negative: "#d32f2f",
-        editred: "#ff5722",
         authbutton: "#1976d2",
         authbuttonhover: "#1565c0",
-        bgblue: "#e3f2fd",  //background (login)
       },
+      boxShadow:{
+        'custom-negative': '0 4px 6px rgba(211, 47, 47, 0.5)',
+      }
     },
   },
   plugins: [],

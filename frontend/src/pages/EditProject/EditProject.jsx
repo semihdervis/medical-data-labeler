@@ -10,6 +10,7 @@ import AssignDoctor from "./AssignDoctor";
 import RemoveCurrentProject from "./RemoveCurrentProject";
 import ExportProject from "./ExportProject";
 import logoutIcon from "../icons/logout.png";
+import saveIcon from "../icons/save.png";
 
 const token = localStorage.getItem('token'); // Retrieve the token from local storage
 
@@ -145,11 +146,16 @@ function AdminProjectPage() {
           >
             <span>&#60; Go to Dashboard</span>
           </button>
-          <div className="flex items-center justify-between gap-2">
+          <h1 className="text-white font-bold text-xl"><u>{projectName}</u></h1>          <div className="flex items-center justify-between gap-2">
         <button
           onClick={handleSave}
           className="flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-3.5 rounded cursor-pointer transition-colors"
         >
+           <img
+              src={saveIcon}
+              alt="Save"
+              className="w-[20px] h-[20px] mr-[3px]"
+            />
           Save
         </button>
 

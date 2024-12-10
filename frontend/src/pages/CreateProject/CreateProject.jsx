@@ -9,6 +9,7 @@
   import AssignDoctor from "./AssignDoctor";
   import logoutIcon from "../icons/logout.png";
   const token = localStorage.getItem('token') // Retrieve the token from local storage
+  import saveIcon from "../icons/save.png";
 
   function CreateProject() {
     const navigate = useNavigate();
@@ -134,6 +135,11 @@
               onClick={handleSave}
               className="flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-3.5 rounded cursor-pointer transition-colors"
             >
+               <img
+              src={saveIcon}
+              alt="Save"
+              className="w-[20px] h-[20px] mr-[3px]"
+            />
               Save
             </button>
 
