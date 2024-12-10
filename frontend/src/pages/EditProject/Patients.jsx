@@ -74,6 +74,21 @@ function Patients() {
     );
   };
 
+  const handleRemoveImage = (id) => {
+    if (!selectedPatient) return;
+
+    setPatients((prevPatients) =>
+      prevPatients.map((patient) =>
+        patient.id === selectedPatient.id
+          ? {
+              ...patient,
+              images: patient.images.filter((image) => image.id !== id),
+            }
+          : patient
+      )
+    );
+  };
+
   const filteredPatients = patients.filter((patient) =>
     patient.id.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -81,7 +96,7 @@ function Patients() {
   return (
     <div className="flex flex-col md:flex-row gap-5">
       {/* Patient Management Container */}
-            <section className="bg-white rounded-lg p-5 shadow-md  w-96">
+      <section className="bg-white rounded-lg p-5 shadow-md w-96">
         <h3 className="text-primary text-lg font-bold mb-4">Patients</h3>
 
         <input
@@ -195,6 +210,12 @@ function Patients() {
                       className="w-16 h-16 rounded-md object-cover"
                     />
                     <p className="text-gray-700">{image.id}</p>
+                    <button
+                      className="bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition"
+                      onClick={() => handleRemoveImage(image.id)}
+                    >
+                      <img src={removeIcon} alt="Remove" className="w-5 h-5" />
+                    </button>
                   </div>
                 ))
               ) : (
