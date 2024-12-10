@@ -9,7 +9,7 @@ function AssignDoctor({ assignedDoctors = [], setAssignedDoctors, projectId }) {
     if (doctorEmail && !assignedDoctors.includes(doctorEmail)) {
       try {
         // Add the doctor to the project
-        const response = await axios.post(`/api/projects/${projectId}/assign-doctor`, { email: doctorEmail }, {
+        const response = await axios.post(`/api/projects/${projectId}/assign-doctor`, { doctorEmail: doctorEmail }, {// very STRICTLY doctorEmail : doctorEmail, do not ever change it
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }

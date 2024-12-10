@@ -39,6 +39,37 @@ exports.uploadImage = async (req, res) => {
   }
 };
 
+exports.uploadImages = async (projectId, patientId, images) => {
+  try {
+    const newImages = images.map((image) => ({
+      name: image.name,
+      uploader: image.uploader,
+      projectId,
+      patientId,
+      filename: image.filename,
+    }));
+
+    const uploadedImages = await Image.insertMany(newImages);
+
+    // handle renaming and moving the files
+    for (const uploadedImage of uploadedImages) {
+      const initialFilepath = path.join(__dirname, '../uploads', uploadedImage.filename);
+      const newFilename = `${uploadedImage._id}${path.extname(uploadedImage.filename)}`;
+      const newFilepath = path.join(__dirname, '../projects', projectId, patientId, newFilename);
+
+      fs.renameSync(initialFilepath, newFilepath);
+      uploadedImage.filename = newFilename;
+      uploadedImage.filepath = path.join('projects', projectId, patientId, newFilename).replace(/\\/g, '');
+      await uploadedImage.save();
+    }
+
+
+    return uploadedImages;
+  } catch (error) {
+    throw new Error(`Error uploading images: ${error.message}`);
+  }
+}
+
 exports.deleteImageById = async (imageId) => {
   try {
     const image = await Image.findById(imageId);
