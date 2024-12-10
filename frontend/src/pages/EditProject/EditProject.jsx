@@ -10,6 +10,7 @@ import AssignDoctor from "./AssignDoctor";
 import RemoveCurrentProject from "./RemoveCurrentProject";
 import ExportProject from "./ExportProject";
 import logoutIcon from "../icons/logout.png";
+import saveIcon from "../icons/save.png";
 
 const token = localStorage.getItem('token'); // Retrieve the token from local storage
 
@@ -25,6 +26,8 @@ function AdminProjectPage() {
   const [activeButton, setActiveButton] = useState("description");
   const [projectName, setProjectName] = useState();
   const [currentProject, setCurrentProject] = useState(null);
+  const [patientSchemaId, setPatientSchemaId] = useState(null);
+  const [imageSchemaId, setImageSchemaId] = useState(null);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -52,6 +55,10 @@ function AdminProjectPage() {
         const [patientSchema, imageSchema] = response.data;
         setPersonLabels(patientSchema.labelData);
         setImageLabels(imageSchema.labelData);
+        setPatientSchemaId(patientSchema._id);
+        setImageSchemaId(imageSchema._id);
+        console.log("person schema id", patientSchemaId);
+        console.log("image schema id", imageSchemaId);
       } catch (error) {
         console.error("Error fetching labels:", error);
       }
@@ -101,9 +108,63 @@ function AdminProjectPage() {
   };
   // Assume we have a single project loaded in the editor for simplicity
 
-    const handleSave = async () => {
+  const handleSave = async () => {
 
-    };
+    try {
+      const response = await axios.put(
+        `/api/projects/${id}`,
+        {
+          name: projectName,
+          description: projectDescription
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      console.log("Project saved", response.data);
+    } catch (error) {
+      console.error("Error saving project:", error);
+    }
+
+    // update person labels
+    try {
+      const response = await axios.put(
+        `/api/labels/schema/${patientSchemaId}`,
+        {
+          labelData: personLabels
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      console.log("Person labels saved", response.data);
+    } catch (error) {
+      console.error("Error saving person labels:", error);
+    }
+
+    // update image labels
+    try {
+      const response = await axios.put(
+        `/api/labels/schema/${imageSchemaId}`,
+        {
+          labelData: imageLabels
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      console.log("Image labels saved", response.data);
+    } catch (error) {
+      console.error("Error saving image labels:", error);
+    }
+
+  };
   
 
   const handleRemoveProject = async (projectId) => {
@@ -145,21 +206,28 @@ function AdminProjectPage() {
           >
             <span>&#60; Go to Dashboard</span>
           </button>
+          <h1 className="text-white font-bold text-xl"><u>{projectName}</u></h1>          <div className="flex items-center justify-between gap-2">
+        <button
+          onClick={handleSave}
+          className="flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-3.5 rounded cursor-pointer transition-colors"
+        >
+           <img
+              src={saveIcon}
+              alt="Save"
+              className="w-[20px] h-[20px] mr-[3px]"
+            />
+          Save
+        </button>
 
-            <button
-              onClick={handleSave}
-              className="flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-3.5 rounded cursor-pointer transition-colors"
-            >
-              Save
-            </button>
+        <button
+          className="flex items-center justify-center bg-primary hover:bg-red-700 text-white font-bold py-2 px-3.5 rounded cursor-pointer transition-colors"
+          onClick={handleLogout}
+        >
+          <img src={logoutIcon} alt="Log out" className="w-5 h-5 mr-1 mt-1" />
+          Log Out
+        </button>
+      </div>
 
-          <button
-            className="flex items-center justify-center bg-primary hover:bg-red-700 text-white font-bold py-2 px-3.5 rounded cursor-pointer transition-colors"
-            onClick={handleLogout}
-          >
-            <img src={logoutIcon} alt="Log out" className="w-5 h-5 mr-1 mt-1" />
-            Log Out
-          </button>
         </div>
         {activeSection === "description" && (
           <ProjectDescription
