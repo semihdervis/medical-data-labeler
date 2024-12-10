@@ -11,17 +11,15 @@ import ExportProject from "./ExportProject";
 import logoutIcon from "../icons/logout.png";
 import axios from 'axios'
 
+const token = localStorage.getItem('token'); // Retrieve the token from local storage
+
 function AdminProjectPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [activeSection, setActiveSection] = useState("description");
   const [projectDescription, setProjectDescription] = useState();
-  const [personLabels, setPersonLabels] = useState([
-    { name: "Name", type: "text" },
-  ]);
-  const [imageLabels, setImageLabels] = useState([
-    { name: "Is infection visible?", type: "dropdown", options: ["Yes", "No"] },
-  ]);
+  const [personLabels, setPersonLabels] = useState([]);
+  const [imageLabels, setImageLabels] = useState([]);
   const [patients, setPatients] = useState([
     { id: "Patient001", images: ["img1.jpg", "img2.jpg"] },
   ]);
@@ -29,30 +27,39 @@ function AdminProjectPage() {
   const [activeButton, setActiveButton] = React.useState("description");
   const [projectName, setProjectName] = useState();
 
-  const token = localStorage.getItem('token') // Retrieve the token from local storage
-
   useEffect(() => {
     const fetchProject = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:3001/api/projects/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
+        const response = await axios.get(`/api/projects/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
           }
-        )
-        console.log(response.data)
-        setProjectName(response.data.name)
-        setProjectDescription(response.data.description)
-
+        });
+        setCurrentProject(response.data);
       } catch (error) {
-        console.error('Error fetching projects:', error)
+        console.error("Error fetching project:", error);
       }
-    }
+    };
 
-    fetchProject()
-  }, [token])
+    const fetchLabels = async () => {
+      try {
+        const response = await axios.get(`/api/labels/schema/project/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        console.log("Fetched labels:", response.data);
+        const [patientSchema, imageSchema] = response.data;
+        setPersonLabels(patientSchema.labelData);
+        setImageLabels(imageSchema.labelData);
+      } catch (error) {
+        console.error("Error fetching labels:", error);
+      }
+    };
+
+    fetchProject();
+    fetchLabels();
+  }, [id]);
 
   const handleLogout = () => {
     navigate("/");
@@ -66,7 +73,7 @@ function AdminProjectPage() {
   const handleRemoveProject = async (projectId) => {
     try {
       const response = await axios.delete(
-        `http://localhost:3001/api/projects/${id}`,
+        `/api/projects/${projectId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`

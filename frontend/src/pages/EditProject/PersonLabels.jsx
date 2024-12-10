@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import removeIcon from "../icons/remove.png";
 import addIcon from "../icons/add.png";
 
@@ -8,7 +8,7 @@ function PersonLabels({ personLabels, setPersonLabels }) {
   const dropdownRefs = useRef([]);
 
   const handleAddPersonLabel = () => {
-    setPersonLabels([...personLabels, { name: "", type: "text", options: [] }]);
+    setPersonLabels([...personLabels, { labelQuestion: "", labelType: "text", labelOptions: [] }]);
   };
 
   const handleRemovePersonLabel = (indexToRemove) => {
@@ -16,145 +16,126 @@ function PersonLabels({ personLabels, setPersonLabels }) {
   };
 
   const handleAddOption = (labelIndex) => {
-    const newLabels = [...personLabels];
     if (newOption) {
-      newLabels[labelIndex].options.push(newOption);
-      setPersonLabels(newLabels);
+      const updatedLabels = [...personLabels];
+      updatedLabels[labelIndex].labelOptions.push(newOption);
+      setPersonLabels(updatedLabels);
       setNewOption("");
     }
   };
 
-  const handleRemoveOption = (labelIndex, optionIndex) => {
-    const newLabels = [...personLabels];
-    newLabels[labelIndex].options = newLabels[labelIndex].options.filter(
-      (_, idx) => idx !== optionIndex
-    );
-    setPersonLabels(newLabels);
-  };
-
-  const handleToggleOptions = (index) => {
-    setIsOptionsVisible(isOptionsVisible === index ? null : index);
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        isOptionsVisible !== null &&
-        dropdownRefs.current[isOptionsVisible] &&
-        !dropdownRefs.current[isOptionsVisible].contains(event.target)
-      ) {
-        setIsOptionsVisible(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isOptionsVisible]);
-
   return (
     <section className="bg-white rounded-lg p-5 shadow-md w-full max-w-xl">
-      <h3 className="text-primary text-lg font-bold mb-4">Person-Related Labels</h3>
+      <h3 className="text-primary text-lg font-bold mb-4">
+        Person-Related Labels
+      </h3>
       {personLabels.map((label, index) => (
         <div key={index} className="flex flex-col gap-4 mb-6">
           <div className="flex gap-4 items-start">
             <input
               type="text"
-              value={label.name}
+              value={label.labelQuestion}
               placeholder="Enter person label"
               onChange={(e) => {
                 const newLabels = [...personLabels];
-                newLabels[index].name = e.target.value;
+                newLabels[index].labelQuestion = e.target.value;
                 setPersonLabels(newLabels);
               }}
               className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
             />
-            <div className="flex gap-2 items-center">
-              <select
-                value={label.type}
-                onChange={(e) => {
-                  const newLabels = [...personLabels];
-                  newLabels[index].type = e.target.value;
-                  if (e.target.value !== "dropdown") {
-                    newLabels[index].options = [];
-                  }
-                  setPersonLabels(newLabels);
-                }}
-                className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                <option value="text">Text</option>
-                <option value="number">Number</option>
-                <option value="dropdown">Dropdown</option>
-                <option value="slider">Slider</option>
-              </select>
+            <select
+              value={label.labelType}
+              onChange={(e) => {
+                const newLabels = [...personLabels];
+                newLabels[index].labelType = e.target.value;
+                if (e.target.value !== "dropdown") {
+                  newLabels[index].labelOptions = [];
+                }
+                setPersonLabels(newLabels);
+              }}
+              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="string">String</option>
+              <option value="int">Integer</option>
+              <option value="dropdown">Dropdown</option>
+              <option value="slider">Slider</option>
+            </select>
+            <button
+              className="bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition"
+              onClick={() => handleRemovePersonLabel(index)}
+            >
+              <img src={removeIcon} alt="Remove" className="w-5 h-5" />
+            </button>
+          </div>
 
-              {label.type === "dropdown" && (
-                <div
-                  className="relative"
-                  ref={(el) => (dropdownRefs.current[index] = el)}
-                >
-                  <button
-                    className="bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition"
-                    onClick={() => handleToggleOptions(index)}
-                  >
+          {/* Options section toggle */}
+          {label.labelType === "dropdown" && (
+            <div>
+              <button
+                className="bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition"
+                onClick={() => setIsOptionsVisible(isOptionsVisible === index ? null : index)}
+              >
+                Options
+              </button>
+              {isOptionsVisible === index && (
+                <div className="absolute bg-gray-50 border border-gray-300 p-4 rounded-md shadow-lg z-50 mt-2">
+                  <h4 className="text-primary text-md font-semibold mb-4">
                     Options
-                  </button>
-                  {isOptionsVisible === index && (
+                  </h4>
+                  {label.labelOptions.map((option, optionIndex) => (
                     <div
-                      className="absolute bg-white border border-gray-300 p-4 rounded-md shadow-lg z-50 mt-2 w-full max-w-xs"
-                      style={{ minWidth: "300px" }}
+                      key={optionIndex}
+                      className="flex items-center gap-2 mb-2"
                     >
-                      <h4 className="text-primary text-md font-semibold mb-4">Options</h4>
-                      {label.options.map((option, optionIndex) => (
-                        <div key={optionIndex} className="flex items-center gap-2 mb-2">
-                          <input
-                            type="text"
-                            value={option}
-                            placeholder="Enter option"
-                            onChange={(e) => {
-                              const newLabels = [...personLabels];
-                              newLabels[index].options[optionIndex] = e.target.value;
-                              setPersonLabels(newLabels);
-                            }}
-                            className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                          />
-                          <button
-                            className="bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition"
-                            onClick={() => handleRemoveOption(index, optionIndex)}
-                          >
-                            <img src={removeIcon} alt="Remove Option" className="w-4 h-4" />
-                          </button>
-                        </div>
-                      ))}
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="text"
-                          value={newOption}
-                          placeholder="New Option"
-                          onChange={(e) => setNewOption(e.target.value)}
-                          className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                      <input
+                        type="text"
+                        value={option}
+                        placeholder="Enter option"
+                        onChange={(e) => {
+                          const newLabels = [...personLabels];
+                          newLabels[index].labelOptions[optionIndex] =
+                            e.target.value;
+                          setPersonLabels(newLabels);
+                        }}
+                        className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                      />
+                      <button
+                        className="bg-red-600 text-white py-1 px-2 rounded-md hover:bg-red-700 transition"
+                        onClick={() => {
+                          const newLabels = [...personLabels];
+                          newLabels[index].labelOptions = newLabels[index].labelOptions.filter(
+                            (_, idx) => idx !== optionIndex
+                          );
+                          setPersonLabels(newLabels);
+                        }}
+                      >
+                        <img
+                          src={removeIcon}
+                          alt="Remove Option"
+                          className="w-4 h-4"
                         />
-                        <button
-                          className="bg-primary text-white p-2 rounded-md hover:bg-secondary transition"
-                          onClick={() => handleAddOption(index)}
-                        >
-                          <img src={addIcon} alt="Add Option" className="w-4 h-4" />
-                        </button>
-                      </div>
+                      </button>
                     </div>
-                  )}
+                  ))}
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={newOption}
+                      placeholder="New Option"
+                      onChange={(e) => setNewOption(e.target.value)}
+                      className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                    <button
+                      className="bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition"
+                      onClick={() => handleAddOption(index)}
+                    >
+                      <img src={addIcon} alt="Add Option" className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               )}
-
-              <button
-                className="bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition"
-                onClick={() => handleRemovePersonLabel(index)}
-              >
-                <img src={removeIcon} alt="Remove" className="w-5 h-5" />
-              </button>
             </div>
-          </div>
+          )}
         </div>
       ))}
       <button
