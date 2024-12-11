@@ -171,25 +171,52 @@ const LabelingInterface = () => {
   {
     /* PatientInfoSidebar functions */
   }
+
+  const [personLabels, setPersonLabels] = useState([]);
+  const [imageLabels, setImageLabels] = useState([]);
+  
+  useEffect(() => {
+    const fetchLabels = async () => {
+      try {
+        console.log("project id", projectId);
+        const response = await axios.get(`/api/labels/schema/project/${projectId}`, 
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        const [patientSchema, imageSchema] = response.data;
+  
+        // Add value property to each person label
+        const updatedPersonLabels = patientSchema.labelData.map(label => ({
+          ...label,
+          value: "" // Default value, you can change it as needed
+        }));
+  
+        setPersonLabels(updatedPersonLabels);
+        setImageLabels(imageSchema.labelData);
+        console.log("person schema id", patientSchema._id);
+        console.log("image schema id", imageSchema._id);
+        setQuestions(updatedPersonLabels);
+      } catch (error) {
+        console.error("Error fetching labels:", error);
+      }
+    };
+  
+    fetchLabels();
+  }, [projectId]);
+  
+  useEffect(() => {
+    console.log("Person labels:", personLabels);
+  }, [personLabels]);
+  
+  useEffect(() => {
+    console.log("Image labels:", imageLabels);
+  }, [imageLabels]);
+
   const [questions, setQuestions] = useState([
-    {
-      labelOptions: ["Yes", "No"],
-      labelQuestion: "Image related label",
-      labelType: "dropdown",
-      value: "Yes" // Default or initial value
-    },
-    {
-      labelOptions: [],
-      labelQuestion: "Describe your issue",
-      labelType: "text",
-      value: "" // Default or initial value
-    },
-    {
-      labelOptions: [],
-      labelQuestion: "Enter a number",
-      labelType: "int",
-      value: 0 // Default or initial value
-    }
+
   ]);
   
   const handleQuestionChange = (index, value) => {
@@ -331,7 +358,7 @@ const LabelingInterface = () => {
 
       {/* Patient Info Sidebar */}
       <div className='max-h-[calc(100vh_-_90px)] overflow-y-auto bg-white rounded-[10px] shadow-lg p-5 w-[300px]'>
-    <h3 className='text-[1.2rem] text-primary mb-4 text-center'>Dynamic Questions</h3>
+    <h3 className='text-[1.2rem] text-primary mb-4 text-center'>Patient Labels</h3>
     {questions.map((question, index) => (
       <label key={index} className='flex flex-col mb-4 text-sm text-gray-700'>
         {question.labelQuestion}:
