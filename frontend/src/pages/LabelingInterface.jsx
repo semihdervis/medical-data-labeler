@@ -171,38 +171,94 @@ const LabelingInterface = () => {
   {
     /* PatientInfoSidebar functions */
   }
-  const [personLabels, setPersonLabels] = useState({
-    name: selectedPatient?.name || '',
-    age: selectedPatient?.age || '',
-    gender: selectedPatient?.gender || 'Select',
-    healthCondition: selectedPatient?.healthCondition || 'Select',
-    overallCondition: selectedPatient?.overallCondition || 'No Issues'
-  })
-
-  // Update state when patient prop changes
+  const [patientInfo, setPatientInfo] = useState({
+    labels: {
+      name: selectedPatient?.name || '',
+      age: selectedPatient?.age || '',
+      gender: selectedPatient?.gender || 'Select',
+      healthCondition: selectedPatient?.healthCondition || 'Select',
+      overallCondition: selectedPatient?.overallCondition || 'No Issues'
+    },
+    questions: [
+      {
+        id: 1,
+        label: 'Name and Surname',
+        type: 'text',
+        value: selectedPatient?.name || '',
+        key: 'name',
+        placeholder: 'Enter full name'
+      },
+      {
+        id: 2,
+        label: 'Age',
+        type: 'number',
+        value: selectedPatient?.age || '',
+        key: 'age',
+        placeholder: 'Enter age'
+      },
+      {
+        id: 3,
+        label: 'Gender',
+        type: 'select',
+        value: selectedPatient?.gender || 'Select',
+        key: 'gender',
+        options: ['Male', 'Female', 'Other']
+      },
+      {
+        id: 4,
+        label: 'General Health Condition',
+        type: 'select',
+        value: selectedPatient?.healthCondition || 'Select',
+        key: 'healthCondition',
+        options: ['Diabetic', 'Hypertensive', 'Healthy']
+      },
+      {
+        id: 5,
+        label: 'Overall Condition Observed',
+        type: 'text',
+        value: selectedPatient?.overallCondition || 'No Issues',
+        key: 'overallCondition',
+        placeholder: 'Describe condition'
+      }
+    ]
+  });
+  
+  // Update state when selectedPatient changes
   useEffect(() => {
     if (selectedPatient) {
-      setPersonLabels({
-        name: selectedPatient.name || '',
-        age: selectedPatient.age || '',
-        gender: selectedPatient.gender || 'Select',
-        healthCondition: selectedPatient.healthCondition || 'Select',
-        overallCondition: selectedPatient.overallCondition || 'No Issues'
-      })
+      setPatientInfo({
+        labels: {
+          name: selectedPatient.name || '',
+          age: selectedPatient.age || '',
+          gender: selectedPatient.gender || 'Select',
+          healthCondition: selectedPatient.healthCondition || 'Select',
+          overallCondition: selectedPatient.overallCondition || 'No Issues'
+        },
+        questions: patientInfo.questions.map(question => ({
+          ...question,
+          value: selectedPatient[question.key] || question.value
+        }))
+      });
     }
-  }, [selectedPatient]) // Re-run the effect whenever the 'patient' prop changes
-
-  const handleLabelChange = (label, value) => {
-    setPersonLabels({ ...personLabels, [label]: value })
-  }
-
+  }, [selectedPatient]);
+  
+  const handleFieldChange = (key, value) => {
+    setPatientInfo(prev => ({
+      ...prev,
+      labels: { ...prev.labels, [key]: value },
+      questions: prev.questions.map(question =>
+        question.key === key ? { ...question, value } : question
+      )
+    }));
+  };
+  
+  // Prevent scrolling when component is rendered
   useEffect(() => {
-    // Disable scrolling
-    document.body.style.overflow = 'hidden'
+    document.body.style.overflow = 'hidden';
     return () => {
-      document.body.style.overflow = 'auto'
-    }
-  }, [])
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
   {
     /* End PatientInfoSidebar functions */
   }
@@ -337,74 +393,37 @@ const LabelingInterface = () => {
 
       {/* Patient Info Sidebar */}
       <div className='max-h-[calc(100vh_-_90px)] overflow-y-auto bg-white rounded-[10px] shadow-lg p-5 w-[300px]'>
-        <h3 className='text-[1.2rem] text-primary mb-4 text-center'>
-          Patient Information
-        </h3>
-
-        <label className='flex flex-col mb-4 text-sm text-gray-700'>
-          Name and Surname:
+    <h3 className='text-[1.2rem] text-primary mb-4 text-center'>Patient Information</h3>
+    {patientInfo.questions.map(question => (
+      <label key={question.id} className='flex flex-col mb-4 text-sm text-gray-700'>
+        {question.label}:
+        {question.type === 'text' || question.type === 'number' ? (
           <input
-            type='text'
-            value={personLabels.name}
-            onChange={e => handleLabelChange('name', e.target.value)}
+            type={question.type}
+            value={question.value}
+            onChange={e => handleFieldChange(question.key, e.target.value)}
             className='mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none'
+            placeholder={question.placeholder}
           />
-        </label>
-
-        <label className='flex flex-col mb-4 text-sm text-gray-700'>
-          Age:
-          <input
-            type='number'
-            value={personLabels.age}
-            onChange={e => handleLabelChange('age', e.target.value)}
-            className='mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none'
-          />
-        </label>
-
-        <label className='flex flex-col mb-4 text-sm text-gray-700'>
-          Gender:
+        ) : (
           <select
-            value={personLabels.gender}
-            onChange={e => handleLabelChange('gender', e.target.value)}
+            value={question.value}
+            onChange={e => handleFieldChange(question.key, e.target.value)}
             className='mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none'
           >
             <option value='Select' disabled>
               Select
             </option>
-            <option value='Male'>Male</option>
-            <option value='Female'>Female</option>
-            <option value='Other'>Other</option>
+            {question.options.map(option => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
           </select>
-        </label>
-
-        <label className='flex flex-col mb-4 text-sm text-gray-700'>
-          General Health Condition:
-          <select
-            value={personLabels.healthCondition}
-            onChange={e => handleLabelChange('healthCondition', e.target.value)}
-            className='mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none'
-          >
-            <option value='Select' disabled>
-              Select
-            </option>
-            <option value='Diabetic'>Diabetic</option>
-            <option value='Hypertensive'>Hypertensive</option>
-            <option value='Healthy'>Healthy</option>
-          </select>
-        </label>
-
-        <label className='flex flex-col mb-4 text-sm text-gray-700'>
-          Overall Condition Observed:
-          <input
-            type='text'
-            value={personLabels.overallCondition}
-            onChange={e =>
-              handleLabelChange('overallCondition', e.target.value)
-            }
-            className='mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none'
-          />
-        </label>
-      </div>
+        )}
+      </label>
+    ))}
+  </div>
 
       {/* Image Display */}
       <div className='relative bg-white rounded-[10px] shadow-lg p-5 flex flex-col items-center justify-center overflow-hidden max-h-[calc(100vh_-_90px)]'>
