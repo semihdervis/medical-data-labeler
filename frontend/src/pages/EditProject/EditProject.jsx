@@ -23,6 +23,7 @@ function AdminProjectPage() {
   const [imageLabels, setImageLabels] = useState([]);
   const [patients, setPatients] = useState([]);
   const [assignedDoctors, setAssignedDoctors] = useState([]);
+  const [allDoctors, setAllDoctors] = useState([]);
   const [activeButton, setActiveButton] = useState("description");
   const [projectName, setProjectName] = useState();
   const [currentProject, setCurrentProject] = useState(null);
@@ -84,8 +85,10 @@ function AdminProjectPage() {
             Authorization: `Bearer ${token}`
           }
         });
+        const allDoctors = response.data;
+        setAllDoctors(allDoctors);
         // Filter doctors who have this project ID in their projects array
-        const assignedDoctors = response.data.filter(doctor =>
+        const assignedDoctors = allDoctors.filter(doctor =>
           doctor.projects.includes(id)
         );
         console.log("All doctors:", response.data);
@@ -101,6 +104,7 @@ function AdminProjectPage() {
     fetchLabels();
     fetchPatients();
     fetchAssignedDoctors();
+    //fetchalldoctors
   }, [id]);
 
   const handleLogout = () => {
@@ -164,6 +168,25 @@ function AdminProjectPage() {
       console.error("Error saving image labels:", error);
     }
 
+
+    // assign doctors
+    try {
+      
+      const response = await axios.put(
+        `/api/projects/${id}/update-assigns`,
+        {
+          assignedDoctors: assignedDoctors
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      console.log('Doctors assigned successfully:', response.data);
+    } catch (error) {
+      console.error('Error assigning doctors:', error);
+    }
   };
   
 
@@ -183,6 +206,8 @@ function AdminProjectPage() {
       console.error(`Error removing project ${projectId}:`, error);
     }
   };
+
+  
 
   const handleExport = () => {
     const projectData = {
@@ -254,8 +279,11 @@ function AdminProjectPage() {
         )}
         {activeSection === "assignDoctor" && (
           <AssignDoctor
+            allDoctors = {allDoctors}
             assignedDoctors={assignedDoctors}
+            
             setAssignedDoctors={setAssignedDoctors}
+
             projectId={id}
           />
         )}
