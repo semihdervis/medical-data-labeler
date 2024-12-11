@@ -193,12 +193,18 @@ const LabelingInterface = () => {
           ...label,
           value: "" // Default value, you can change it as needed
         }));
+
+        const updatedImageLabels = imageSchema.labelData.map(label => ({
+          ...label,
+          value: "" // Default value, you can change it as needed
+        }));
   
         setPersonLabels(updatedPersonLabels);
-        setImageLabels(imageSchema.labelData);
+        setImageLabels(updatedImageLabels);
         console.log("person schema id", patientSchema._id);
         console.log("image schema id", imageSchema._id);
         setQuestions(updatedPersonLabels);
+        console.log("image labels", imageLabels);
       } catch (error) {
         console.error("Error fetching labels:", error);
       }
@@ -224,6 +230,13 @@ const LabelingInterface = () => {
       prevQuestions.map((q, i) => (i === index ? { ...q, value } : q))
     );
   };
+
+  const handleLabelChange = (index, value) => {
+    setImageLabels(prevLabels =>
+      prevLabels.map((label, i) => (i === index ? { ...label, value } : label))
+    );
+  };
+  
   {
     /* End PatientInfoSidebar functions */
   }
@@ -438,36 +451,34 @@ const LabelingInterface = () => {
 
       {/* Image Labels Sidebar */}
       <div className="max-h-[calc(100vh_-_90px)] overflow-y-auto bg-white rounded-[10px] shadow-lg p-5 w-[320px]">
-        <h3 className="text-[1.2rem] text-primary mb-4 text-center">
-          Image Labels
-        </h3>
-
-        <label className="block mb-5 text-sm text-gray-700">
-          Is infection visible?
-          <select className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none">
-            <option>Yes</option>
-            <option>No</option>
+    <h3 className="text-[1.2rem] text-primary mb-4 text-center">Image Labels</h3>
+    {imageLabels.map((label, index) => (
+      <label key={index} className="block mb-5 text-sm text-gray-700">
+        {label.labelQuestion}
+        {label.labelType === "dropdown" ? (
+          <select
+            value={label.value}
+            onChange={e => handleLabelChange(index, e.target.value)}
+            className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
+          >
+            {label.labelOptions.map(option => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
           </select>
-        </label>
-
-        <label className="block mb-5 text-sm text-gray-700">
-          Severity of Condition
-          <select className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none">
-            <option>Mild</option>
-            <option>Moderate</option>
-            <option>Severe</option>
-          </select>
-        </label>
-
-        <label className="block mb-5 text-sm text-gray-700">
-          Presence of Anomalies
+        ) : (
           <input
             type="text"
-            placeholder="Describe anomalies"
+            placeholder="Enter details"
+            value={label.value}
+            onChange={e => handleLabelChange(index, e.target.value)}
             className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
           />
-        </label>
-      </div>
+        )}
+      </label>
+    ))}
+  </div>
     </div>
   );
 };
