@@ -171,94 +171,72 @@ const LabelingInterface = () => {
   {
     /* PatientInfoSidebar functions */
   }
-  const [patientInfo, setPatientInfo] = useState({
-    labels: {
-      name: selectedPatient?.name || "",
-      age: selectedPatient?.age || "",
-      gender: selectedPatient?.gender || "Select",
-      healthCondition: selectedPatient?.healthCondition || "Select",
-      overallCondition: selectedPatient?.overallCondition || "No Issues",
-    },
-    questions: [
-      {
-        id: 1,
-        label: "Name and Surname",
-        type: "text",
-        value: selectedPatient?.name || "",
-        key: "name",
-        placeholder: "Enter full name",
-      },
-      {
-        id: 2,
-        label: "Age",
-        type: "number",
-        value: selectedPatient?.age || "",
-        key: "age",
-        placeholder: "Enter age",
-      },
-      {
-        id: 3,
-        label: "Gender",
-        type: "select",
-        value: selectedPatient?.gender || "Select",
-        key: "gender",
-        options: ["Male", "Female", "Other"],
-      },
-      {
-        id: 4,
-        label: "General Health Condition",
-        type: "select",
-        value: selectedPatient?.healthCondition || "Select",
-        key: "healthCondition",
-        options: ["Diabetic", "Hypertensive", "Healthy"],
-      },
-      {
-        id: 5,
-        label: "Overall Condition Observed",
-        type: "text",
-        value: selectedPatient?.overallCondition || "No Issues",
-        key: "overallCondition",
-        placeholder: "Describe condition",
-      },
-    ],
-  });
 
-  // Update state when selectedPatient changes
+  const [personLabels, setPersonLabels] = useState([]);
+  const [imageLabels, setImageLabels] = useState([]);
+  
   useEffect(() => {
-    if (selectedPatient) {
-      setPatientInfo({
-        labels: {
-          name: selectedPatient.name || "",
-          age: selectedPatient.age || "",
-          gender: selectedPatient.gender || "Select",
-          healthCondition: selectedPatient.healthCondition || "Select",
-          overallCondition: selectedPatient.overallCondition || "No Issues",
-        },
-        questions: patientInfo.questions.map((question) => ({
-          ...question,
-          value: selectedPatient[question.key] || question.value,
-        })),
-      });
-    }
-  }, [selectedPatient]);
+    const fetchLabels = async () => {
+      try {
+        console.log("project id", projectId);
+        const response = await axios.get(`/api/labels/schema/project/${projectId}`, 
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        const [patientSchema, imageSchema] = response.data;
+  
+        // Add value property to each person label
+        const updatedPersonLabels = patientSchema.labelData.map(label => ({
+          ...label,
+          value: "" // Default value, you can change it as needed
+        }));
 
-  const handleFieldChange = (key, value) => {
-    setPatientInfo((prev) => ({
-      ...prev,
-      labels: { ...prev.labels, [key]: value },
-      questions: prev.questions.map((question) =>
-        question.key === key ? { ...question, value } : question
-      ),
-    }));
+        const updatedImageLabels = imageSchema.labelData.map(label => ({
+          ...label,
+          value: "" // Default value, you can change it as needed
+        }));
+  
+        setPersonLabels(updatedPersonLabels);
+        setImageLabels(updatedImageLabels);
+        console.log("person schema id", patientSchema._id);
+        console.log("image schema id", imageSchema._id);
+        setQuestions(updatedPersonLabels);
+        console.log("image labels", imageLabels);
+      } catch (error) {
+        console.error("Error fetching labels:", error);
+      }
+    };
+  
+    fetchLabels();
+  }, [projectId]);
+  
+  useEffect(() => {
+    console.log("Person labels:", personLabels);
+  }, [personLabels]);
+  
+  useEffect(() => {
+    console.log("Image labels:", imageLabels);
+  }, [imageLabels]);
+
+  const [questions, setQuestions] = useState([
+
+  ]);
+  
+  const handleQuestionChange = (index, value) => {
+    setQuestions(prevQuestions =>
+      prevQuestions.map((q, i) => (i === index ? { ...q, value } : q))
+    );
   };
 
-  // Prevent scrolling when component is rendered
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, []);
+  const handleLabelChange = (index, value) => {
+    setImageLabels(prevLabels =>
+      prevLabels.map((label, i) => (i === index ? { ...label, value } : label))
+    );
+  };
+
   {
     /* End PatientInfoSidebar functions */
   }
@@ -379,9 +357,9 @@ const LabelingInterface = () => {
         </div>
 
         <ul className="list-none p-0">
-          {sortedPatients.map((patient) => (
+          {sortedPatients.map((patient, index) => (
             <li
-              key={patient.id}
+              key={patient.id || index} // Use patient.id if available, otherwise use index
               onClick={() => handleClick(patient)}
               className="p-3 mb-2 cursor-pointer rounded-lg transition-all duration-300 text-center bg-gray-300 hover:bg-gray-400 hover:shadow-md"
             >
@@ -392,47 +370,43 @@ const LabelingInterface = () => {
       </div>
 
       {/* Patient Info Sidebar */}
-      <div className="max-h-[calc(100vh_-_90px)] overflow-y-auto bg-white rounded-[10px] shadow-lg p-5 w-[300px]">
-        <h3 className="text-[1.2rem] text-primary mb-4 text-center">
-          Patient Information
-        </h3>
-        {patientInfo.questions.map((question) => (
-          <label
-            key={question.id}
-            className="flex flex-col mb-4 text-sm text-gray-700"
+      <div className='max-h-[calc(100vh_-_90px)] overflow-y-auto bg-white rounded-[10px] shadow-lg p-5 w-[300px]'>
+    <h3 className='text-[1.2rem] text-primary mb-4 text-center'>Patient Labels</h3>
+    {questions.map((question, index) => (
+      <label key={index} className='flex flex-col mb-4 text-sm text-gray-700'>
+        {question.labelQuestion}:
+        {question.labelType === 'text' ? (
+          <input
+            type='text'
+            value={question.value}
+            onChange={e => handleQuestionChange(index, e.target.value)}
+            className='mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none'
+            placeholder='Enter text here'
+          />
+        ) : question.labelType === 'int' ? (
+          <input
+            type='number'
+            value={question.value}
+            onChange={e => handleQuestionChange(index, e.target.value)}
+            className='mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none'
+            placeholder='Enter a number'
+          />
+        ) : question.labelType === 'dropdown' ? (
+          <select
+            value={question.value}
+            onChange={e => handleQuestionChange(index, e.target.value)}
+            className='mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none'
           >
-            {question.label}:
-            {question.type === "text" || question.type === "number" ? (
-              <input
-                type={question.type}
-                value={question.value}
-                onChange={(e) =>
-                  handleFieldChange(question.key, e.target.value)
-                }
-                className="mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
-                placeholder={question.placeholder}
-              />
-            ) : (
-              <select
-                value={question.value}
-                onChange={(e) =>
-                  handleFieldChange(question.key, e.target.value)
-                }
-                className="mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
-              >
-                <option value="Select" disabled>
-                  Select
-                </option>
-                {question.options.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            )}
-          </label>
-        ))}
-      </div>
+            {question.labelOptions.map(option => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        ) : null}
+      </label>
+    ))}
+  </div>
 
       {/* Image Display */}
       <div className="relative bg-white rounded-[10px] shadow-lg p-5 flex flex-col items-center justify-center overflow-hidden max-h-[calc(100vh_-_90px)]">
@@ -477,36 +451,34 @@ const LabelingInterface = () => {
 
       {/* Image Labels Sidebar */}
       <div className="max-h-[calc(100vh_-_90px)] overflow-y-auto bg-white rounded-[10px] shadow-lg p-5 w-[320px]">
-        <h3 className="text-[1.2rem] text-primary mb-4 text-center">
-          Image Labels
-        </h3>
-
-        <label className="block mb-5 text-sm text-gray-700">
-          Is infection visible?
-          <select className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none">
-            <option>Yes</option>
-            <option>No</option>
+    <h3 className="text-[1.2rem] text-primary mb-4 text-center">Image Labels</h3>
+    {imageLabels.map((label, index) => (
+      <label key={index} className="block mb-5 text-sm text-gray-700">
+        {label.labelQuestion}
+        {label.labelType === "dropdown" ? (
+          <select
+            value={label.value}
+            onChange={e => handleLabelChange(index, e.target.value)}
+            className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
+          >
+            {label.labelOptions.map(option => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
           </select>
-        </label>
-
-        <label className="block mb-5 text-sm text-gray-700">
-          Severity of Condition
-          <select className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none">
-            <option>Mild</option>
-            <option>Moderate</option>
-            <option>Severe</option>
-          </select>
-        </label>
-
-        <label className="block mb-5 text-sm text-gray-700">
-          Presence of Anomalies
+        ) : (
           <input
             type="text"
-            placeholder="Describe anomalies"
+            placeholder="Enter details"
+            value={label.value}
+            onChange={e => handleLabelChange(index, e.target.value)}
             className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
           />
-        </label>
-      </div>
+        )}
+      </label>
+    ))}
+  </div>
     </div>
   );
 };
