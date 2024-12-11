@@ -166,3 +166,65 @@ exports.removeDoctor = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+exports.updateAssigns = async (req, res) => {
+  const { projectId } = req.params;
+  const { assignedDoctors } = req.body;
+
+  console.log('Updating assigns:', assignedDoctors);
+
+  try {
+    // Validate input
+    if (!Array.isArray(assignedDoctors)) {
+      return res.status(400).json({ message: 'Assigned doctors must be an array' });
+    }
+
+    // Fetch the project
+    const project = await Project.findById(projectId);
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    // Remove project from current doctors' project lists
+    await User.updateMany(
+      { projects: projectId }, 
+      { $pull: { projects: projectId } }
+    );
+
+    // Track successful and failed assignments
+    const successfulAssignments = [];
+    const failedAssignments = [];
+
+    // Assign new doctors to the project
+    for (const doctor of assignedDoctors) {
+      try {
+        console.log('Assigning doctor:', doctor);
+        const user = await User.findOne({ email: doctor });
+        if (!user) {
+          failedAssignments.push(doctor);
+          continue;
+        }
+
+        // Add project to doctor's projects if not already there
+        if (!user.projects.includes(projectId)) {
+          user.projects.push(projectId);
+          await user.save();
+          successfulAssignments.push(doctor);
+        }
+      } catch (assignError) {
+        console.error(`Error assigning doctor ${doctor}:`, assignError);
+        failedAssignments.push(doctor);
+      }
+    }
+
+    // Provide detailed response
+    return res.status(200).json({ 
+      message: 'Doctors assignment process completed',
+      successfulAssignments,
+      failedAssignments
+    });
+
+  } catch (error) {
+    console.error('Error assigning doctors to project:', error);
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};

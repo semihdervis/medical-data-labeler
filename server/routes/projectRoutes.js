@@ -36,4 +36,11 @@ router.post(
   projectController.removeDoctor
 )
 
+router.put(
+  '/:projectId/update-assigns',
+  authenticate,
+  checkAdmin,
+  projectController.updateAssigns
+)
+
 module.exports = router
