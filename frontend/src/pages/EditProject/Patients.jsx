@@ -117,10 +117,7 @@ function Patients ({ patients, setPatients, patientService }) {
     formData.append('projectId', id)
     formData.append('patientId', selectedPatientId)
     files.forEach(file => formData.append('images', file))
-
-    patientService.addToQueue(() =>
-      patientService.uploadImages(formData)
-    )
+    patientService.uploadImages(formData)
 
     // Generate local preview URLs for new images
     const newImages = files.map(file => {
@@ -137,8 +134,6 @@ function Patients ({ patients, setPatients, patientService }) {
     // generate request to upload images
 
     setImages(prevImages => [...prevImages, ...newImages])
-
-   
   }
 
   const handleRemoveImage = imageId => {

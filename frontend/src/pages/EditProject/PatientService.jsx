@@ -113,7 +113,7 @@ class PatientService {
 
   uploadImages (formData) {
     return this.addToQueue(() =>
-      axios.post(`${API_BASE_URL}/api/images/upload`, formData, {
+      axios.post(`${API_BASE_URL}/api/images/upload-multiple`, formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'multipart/form-data'

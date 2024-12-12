@@ -7,6 +7,13 @@ const imageController = require('../controllers/imageController');
 const authenticate = require('../middlewares/authenticate');
 const checkAdmin = require('../middlewares/checkAdmin');
 
+
+// log every request to the console
+router.use((req, res, next) => {
+  console.log(`Request: ${req.method} ${req.originalUrl}`);
+  next();
+});
+
 // Set up multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
