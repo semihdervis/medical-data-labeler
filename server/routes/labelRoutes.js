@@ -4,6 +4,13 @@ const labelController = require('../controllers/labelController')
 const authenticate = require('../middlewares/authenticate')
 const checkAdmin = require('../middlewares/checkAdmin')
 
+
+// log all requests
+router.use((req, res, next) => {
+  console.log('Label request made: ', req.method, req.path)
+  next()
+})
+
 // Label Schema Routes
 router.post(
   '/schema',

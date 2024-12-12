@@ -87,6 +87,11 @@ const LabelingInterface = () => {
     alert("Changes saved!");
   };
 
+
+
+
+
+
   const fetchImageWithAuth = async (imagePath) => {
     try {
       const response = await axios.get(`http://localhost:3001/${imagePath}`, {
@@ -174,6 +179,8 @@ const LabelingInterface = () => {
 
   const [personLabels, setPersonLabels] = useState([]);
   const [imageLabels, setImageLabels] = useState([]);
+  const [personLabelsId, setPersonLabelsId] = useState("");
+  const [imageLabelsId, setImageLabelsId] = useState("");
   
   useEffect(() => {
     const fetchLabels = async () => {
@@ -203,6 +210,8 @@ const LabelingInterface = () => {
         setImageLabels(updatedImageLabels);
         console.log("person schema id", patientSchema._id);
         console.log("image schema id", imageSchema._id);
+        setPersonLabelsId(patientSchema._id);
+        setImageLabelsId(imageSchema._id);
         setQuestions(updatedPersonLabels);
         console.log("image labels", imageLabels);
       } catch (error) {
@@ -259,6 +268,82 @@ const LabelingInterface = () => {
   {
     /* End ImageDisplay functions */
   }
+
+
+
+
+    // use effect for current image change
+    useEffect(() => {
+      // axios get request for specific image with http://localhost:3001/answer/:imageid
+      const fetchLabels = async () => {
+        try {
+          const response = await axios.get(`http://localhost:3001/api/labels/answer/${currentImage._id}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          });
+          console.log("Fetched labels:", response.data);
+          // Handle the response data as needed
+        } catch (error) {
+          console.error("Error fetching labels:", error);
+        }
+      };
+    
+      if (currentImage && currentImage._id) {
+        fetchLabels();
+      }
+    }, [currentImage]);
+  
+    // use effect for current image again
+    useEffect(() => {
+      // post in this template 
+      //{
+      //  "schemaId": "6758800360e976ca83deca28",
+      //  "ownerId" : "6758b5c75ff5138a73dccec4",
+      //  "answers": [
+      //    {
+      //      "field": "date2911",
+      //      "value": "lmao"
+      //    },
+      //    {
+      //      "field": "lblq1149",
+      //      "value": "31"
+      //    }
+      //  ]
+      //}
+
+      const saveLabels = async () => {
+        try {
+          const answers = imageLabels.map(label => ({
+            field: label.labelQuestion,
+            value: label.value
+          }));
+          console.log("Answers:", answers);
+          const response = await axios.post(
+            `http://localhost:3001/api/labels/answer`,
+            {
+              schemaId: imageLabelsId,
+              ownerId: currentImage._id,
+              answers: answers
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+          console.log("Labels saved:", response.data);
+          
+        } catch (error) {
+          console.error("Error saving labels:", error);
+        }
+      }
+  
+      
+  
+      saveLabels();
+  
+    }, [currentImage]);
 
   return (
     <div

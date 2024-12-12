@@ -127,10 +127,12 @@ exports.createLabelAnswer = async (req, res) => {
       return res.status(400).json({ message: 'Project ID does not match' });
     }
 
+    
     // Validate the label answer
     const schemaFields = labelSchema.labelData.map(field => field.labelQuestion);
     const answerFields = answers.map(answer => answer.field);
 
+    console.log(schemaFields);
     const isValid = answerFields.every(field => schemaFields.includes(field));
     if (!isValid) {
       return res.status(400).json({ message: 'Label answer does not match the label schema' });
@@ -140,6 +142,7 @@ exports.createLabelAnswer = async (req, res) => {
     await labelAnswer.save();
     res.status(201).json(labelAnswer);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -157,7 +160,8 @@ exports.getAllLabelAnswers = async (req, res) => {
 // Get a label answer by ID
 exports.getLabelAnswerById = async (req, res) => {
   try {
-    const labelAnswer = await LabelAnswer.findById(req.params.id)
+    //const labelAnswer = await LabelAnswer.findById(req.params.id)
+    const labelAnswer = await LabelAnswer.find({ ownerId: req.params.id })
     if (!labelAnswer) {
       return res.status(404).json({ message: 'Label answer not found' })
     }

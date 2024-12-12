@@ -11,7 +11,7 @@ const labelAnswerSchema = new mongoose.Schema({
   labelData: [
     {
       field: { type: String, required: true },
-      value: { type: String, required: true }
+      value: { type: String }
     }
   ]
 });
