@@ -216,7 +216,7 @@ function AdminProjectPage () {
       <Sidebar setActiveSection={setActiveSection} />
 
       <div className='flex-1 p-5 overflow-y-auto flex justify-center items-center'>
-        <div className='flex justify-between items-center h-12 bg-primary rounded-lg shadow-md fixed top-0 left-0 right-[5px] mt-2.5 ml-1.25 px-4 w-[calc(100%-10px)] z-[1000]'>
+        <div className='flex justify-between items-center h-12 bg-primary rounded-lg shadow-md fixed top-0 left-[5px] right-[5px] mt-2.5 ml-1.25 px-4 w-[calc(100%-10px)] z-[1000]'>
           <button
             onClick={() => navigate('/admin')}
             className={`flex items-center justify-center mr-2.5 bg-primary hover:bg-secondary text-white font-bold py-2 px-3.5 rounded cursor-pointer transition-colors ${

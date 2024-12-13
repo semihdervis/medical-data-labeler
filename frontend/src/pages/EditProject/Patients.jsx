@@ -235,60 +235,61 @@ function Patients ({ patients, setPatients, patientService }) {
         </label>
       </section>
 
-      {/* Patient Images Container */}
-      <section className='bg-white rounded-lg p-5 shadow-md w-96'>
-        <h3 className='text-primary text-lg font-bold mb-4'>
-          {selectedPatient
-            ? `${selectedPatient.name} Images`
-            : 'Select a Patient'}
-        </h3>
+     {/* Patient Images Container */}
+<section className='bg-white rounded-lg p-5 shadow-md w-96 flex flex-col'>
+  <h3 className='text-primary text-lg font-bold mb-4'>
+    {selectedPatient
+      ? `${selectedPatient.name} Images`
+      : 'Select a Patient'}
+  </h3>
 
-        {selectedPatient && (
-          <>
-            <input
-              type='file'
-              ref={imageInputRef}
-              className='hidden'
-              accept='image/*'
-              multiple
-              onChange={handleImageUpload}
-            />
-            <label
-              onClick={() => imageInputRef.current.click()}
-              className='flex items-center gap-2 bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition mt-3 cursor-pointer'
+  {selectedPatient && (
+    <div className='flex flex-col flex-grow'>
+      <div className='h-64 overflow-y-auto mt-4'>
+        {images.length > 0 ? (
+          images.map(image => (
+            <div
+              key={image._id}
+              className='flex items-center justify-between bg-gray-50 p-3 mb-3 rounded-md shadow-sm'
             >
-              Upload Images
-              <img src={fileIcon} alt='Upload' className='w-4 h-4' />
-            </label>
-
-            <div className='h-64 overflow-y-auto mt-4'>
-              {images.length > 0 ? (
-                images.map(image => (
-                  <div
-                    key={image._id}
-                    className='flex items-center justify-between bg-gray-50 p-3 mb-3 rounded-md shadow-sm'
-                  >
-                    <img
-                      src={image.localUrl || imageUrls[image._id]}
-                      alt={image.name}
-                      className='w-16 h-16 rounded-md object-cover'
-                    />
-                    <p className='text-gray-700'>{image.name}</p>
-                    <button
-                      className='bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition'
-                      onClick={() => handleRemoveImage(image._id)}
-                    >
-                      <img src={removeIcon} alt='Remove' className='w-5 h-5' />
-                    </button>
-                  </div>
-                ))
-              ) : (
-                <p className='text-gray-500'>No images uploaded.</p>
-              )}
+              <img
+                src={image.localUrl || imageUrls[image._id]}
+                alt={image.name}
+                className='w-16 h-16 rounded-md object-cover'
+              />
+              <p className='text-gray-700'>{image.name}</p>
+              <button
+                className='bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition'
+                onClick={() => handleRemoveImage(image._id)}
+              >
+                <img src={removeIcon} alt='Remove' className='w-5 h-5' />
+              </button>
             </div>
-          </>
+          ))
+        ) : (
+          <p className='text-gray-500'>No images uploaded.</p>
         )}
-      </section>
+      </div>
+
+      <input
+        type='file'
+        ref={imageInputRef}
+        className='hidden'
+        accept='image/*'
+        multiple
+        onChange={handleImageUpload}
+      />
+      <label
+        onClick={() => imageInputRef.current.click()}
+        className='flex items-center gap-2 bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition mt-auto cursor-pointer'
+      >
+        Upload Images
+        <img src={fileIcon} alt='Upload' className='w-4 h-4' />
+      </label>
+    </div>
+  )}
+</section>
+
     </div>
   )
 }
