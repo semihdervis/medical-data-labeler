@@ -195,7 +195,7 @@ exports.getAllLabelAnswers = async (req, res) => {
 exports.getLabelAnswerById = async (req, res) => {
   try {
     //const labelAnswer = await LabelAnswer.findById(req.params.id)
-    const labelAnswer = await LabelAnswer.find({ ownerId: req.params.id })
+    const labelAnswer = await LabelAnswer.findOne({ ownerId: req.params.id })
     if (!labelAnswer) {
       return res.status(404).json({ message: 'Label answer not found' })
     }
