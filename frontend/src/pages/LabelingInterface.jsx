@@ -9,6 +9,9 @@ import nextIcon from "./icons/next.png";
 
 const LabelingInterface = () => {
   const navigate = useNavigate();
+  
+  // Check if user is admin
+  const isAdmin = localStorage.getItem("role") === "admin";
   const { projectId } = useParams();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -359,7 +362,15 @@ const LabelingInterface = () => {
         <div className="flex">
           <button
             className="flex items-center justify-center mr-[10px] bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded-md"
-            onClick={() => navigate("/doctor")}
+           // if admin navigate admin else navigate doctor
+           onClick={() => {
+            if (isAdmin) {
+              navigate(`/admin`);
+            } else {
+              navigate(`/doctor`);
+            }
+          }}
+
           >
             <img
               src={backArrow}
