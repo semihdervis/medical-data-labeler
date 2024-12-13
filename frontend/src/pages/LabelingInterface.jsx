@@ -528,38 +528,47 @@ const LabelingInterface = () => {
         )}
       </div>
 
-      {/* Image Labels Sidebar */}
-      <div className="max-h-[calc(100vh_-_90px)] overflow-y-auto bg-white rounded-[10px] shadow-lg p-5 w-[320px]">
-        <h3 className="text-[1.2rem] text-primary mb-4 text-center">
-          Image Labels
-        </h3>
-        {imageLabels.map((label, index) => (
-          <label key={index} className="block mb-5 text-sm text-gray-700">
-            {label.labelQuestion}
-            {label.labelType === "dropdown" ? (
-              <select
-                value={label.value}
-                onChange={(e) => handleImageLabelChange(index, e.target.value)}
-                className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
-              >
-                {label.labelOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <input
-                type="text"
-                placeholder="Enter details"
-                value={label.value}
-                onChange={(e) => handleImageLabelChange(index, e.target.value)}
-                className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
-              />
-            )}
-          </label>
-        ))}
-      </div>
+{/* Image Labels Sidebar */}
+<div className="max-h-[calc(100vh_-_90px)] overflow-y-auto bg-white rounded-[10px] shadow-lg p-5 w-[320px]">
+  <h3 className="text-[1.2rem] text-primary mb-4 text-center">
+    Image Labels
+  </h3>
+  {imageLabels.map((label, index) => (
+    <label key={index} className="block mb-5 text-sm text-gray-700">
+      {label.labelQuestion}
+      {label.labelType === "dropdown" ? (
+        <select
+          value={label.value}
+          onChange={(e) => handleImageLabelChange(index, e.target.value)}
+          className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
+        >
+          {label.labelOptions.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+      ) : label.labelType === "int" ? (
+        <input
+          type="number"
+          placeholder="Enter a number"
+          value={label.value}
+          onChange={(e) => handleImageLabelChange(index, e.target.value)}
+          className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
+        />
+      ) : (
+        <input
+          type="text"
+          placeholder="Enter details"
+          value={label.value}
+          onChange={(e) => handleImageLabelChange(index, e.target.value)}
+          className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
+        />
+      )}
+    </label>
+  ))}
+</div>
+
     </div>
   );
 };
