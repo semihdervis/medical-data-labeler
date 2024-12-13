@@ -213,7 +213,7 @@ function Patients ({ patients, setPatients, patientService }) {
         />
         <label
           onClick={() => fileInputRef.current.click()}
-          className='flex items-center gap-2 bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition mt-3 cursor-pointer'
+          className='flex items-center justify-center gap-2 bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition mt-3 cursor-pointer'
         >
           Import Patients
           <img src={fileIcon} alt='Import' className='w-4 h-4' />
@@ -228,7 +228,7 @@ function Patients ({ patients, setPatients, patientService }) {
         />
         <label
           onClick={() => zipInputRef.current.click()}
-          className='flex items-center gap-2 bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition mt-3 cursor-pointer'
+          className='flex items-center justify-center gap-2 bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition mt-3 cursor-pointer'
         >
           Upload ZIP File
           <img src={fileIcon} alt='Upload ZIP' className='w-4 h-4' />
@@ -281,7 +281,7 @@ function Patients ({ patients, setPatients, patientService }) {
       />
       <label
         onClick={() => imageInputRef.current.click()}
-        className='flex items-center gap-2 bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition mt-auto cursor-pointer'
+        className='flex items-center justify-center gap-2 bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition mt-auto cursor-pointer'
       >
         Upload Images
         <img src={fileIcon} alt='Upload' className='w-4 h-4' />
