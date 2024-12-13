@@ -208,8 +208,8 @@ const LabelingInterface = () => {
         console.log("image schema id", imageSchema._id);
         setPersonLabelsId(patientSchema._id);
         setImageLabelsId(imageSchema._id);
-        setPersonLabels(updatedPersonLabels);
         console.log("image labels", imageLabels);
+        console.log("person labels", personLabels);
       } catch (error) {
         console.error("Error fetching labels:", error);
       }
@@ -242,24 +242,8 @@ const LabelingInterface = () => {
     /* End PatientInfoSidebar functions */
   }
 
-  {
-    /* ImageDisplay functions */
-  }
 
-  //const [isModalOpen, setIsModalOpen] = useState(false);
-  //const displayImage = selectedImage || "/logo192.png";
 
-  const handleImageClick = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
-  {
-    /* End ImageDisplay functions */
-  }
 
   return (
     <div
