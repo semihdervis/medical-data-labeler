@@ -98,7 +98,7 @@ function AdminProjectPage () {
   }, [id])
 
   const handleLogout = () => {
-    navigate('/admin')
+    navigate('/')
   }
   // Assume we have a single project loaded in the editor for simplicity
 
