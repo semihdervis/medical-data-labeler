@@ -40,13 +40,18 @@ exports.uploadImage = async (req, res) => {
     const result = await labelController.getLabelSchemaByProjectIdService(projectId);
     const [patientSchema, imageSchema] = result.data;
 
-    const emptyArray = [];
+    const defaultAnswers = imageSchema.labelData.map(label => {
+      return {
+        field: label.labelQuestion,
+        answer: label.labelType === 'dropdown' ? label.labelOptions[0] : '' // if dropdown, then first option, if text or number, then empty string
+      };
+    });
 
     // create answer document for this image
     const newAnswer = await labelController.createLabelAnswerService(
       imageSchema._id, // Pass the ObjectId of the image schema
       newImage._id, // Pass the ObjectId of the image
-      []
+      defaultAnswers
     );
 
     console.log('newanswer', newAnswer);
