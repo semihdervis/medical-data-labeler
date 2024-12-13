@@ -143,8 +143,6 @@ const LabelingInterface = () => {
     /* PatientListSidebar functions */
   }
 
-  const imageQuestionToSchemaMap = new Map();
-
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("asc"); // Default sort order
   const [showSortOptions, setShowSortOptions] = useState(false); // State for showing sort options
@@ -192,11 +190,6 @@ const LabelingInterface = () => {
           }
         );
         const [patientSchema, imageSchema] = response.data;
-
-        // map image label question to schema
-        imageSchema.labelData.forEach((label) => {
-          imageQuestionToSchemaMap.set(label.labelQuestion, label);
-        });
 
         // Add value property to each person label
         const updatedPersonLabels = patientSchema.labelData.map((label) => ({
@@ -302,6 +295,9 @@ const LabelingInterface = () => {
 
         // change field to labelQuestion
 
+        // print previous image labels 
+        console.log("Previous image labels:", imageLabels);
+
         const updatedImageLabels = response.data.labelData.map((label) => {
           const { field, ...rest } = label;
           return {
@@ -319,7 +315,7 @@ const LabelingInterface = () => {
             const updatedLabel = updatedImageLabels.find(
               (ulabel) => ulabel.labelQuestion === label.labelQuestion
             );
-            return updatedLabel ? updatedLabel : label;
+            return updatedLabel ? { ...label, ...updatedLabel } : label;
           })
         );
 
@@ -540,7 +536,7 @@ const LabelingInterface = () => {
         {imageLabels.map((label, index) => (
           <label key={index} className="block mb-5 text-sm text-gray-700">
             {label.labelQuestion}
-            {imageQuestionToSchemaMap.get(label.labelQuestion) === "dropdown" ? (
+            {label.labelType === "dropdown" ? (
               <select
                 value={label.value}
                 onChange={(e) => handleImageLabelChange(index, e.target.value)}
