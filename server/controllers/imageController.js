@@ -43,7 +43,7 @@ exports.uploadImage = async (req, res) => {
     const defaultAnswers = imageSchema.labelData.map(label => {
       return {
         field: label.labelQuestion,
-        answer: label.labelType === 'dropdown' ? label.labelOptions[0] : '' // if dropdown, then first option, if text or number, then empty string
+        value: label.labelType === 'dropdown' ? label.labelOptions[0] : '' // if dropdown, then first option, if text or number, then empty string
       };
     });
 
