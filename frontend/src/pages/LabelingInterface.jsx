@@ -274,9 +274,12 @@ const LabelingInterface = () => {
   // use effect for current image change
   useEffect(() => {
 
+    // print current image id
+    
     // axios get request for specific image with http://localhost:3001/answer/:imageid
     const fetchLabels = async () => {
       try {
+        console.log("Current Image ID:", currentImage._id);
         const response = await axios.get(
           `http://localhost:3001/api/labels/answer/${currentImage._id}`,
           {
