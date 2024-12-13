@@ -87,11 +87,6 @@ const LabelingInterface = () => {
     alert("Changes saved!");
   };
 
-
-
-
-
-
   const fetchImageWithAuth = async (imagePath) => {
     try {
       const response = await axios.get(`http://localhost:3001/${imagePath}`, {
@@ -181,12 +176,13 @@ const LabelingInterface = () => {
   const [imageLabels, setImageLabels] = useState([]);
   const [personLabelsId, setPersonLabelsId] = useState("");
   const [imageLabelsId, setImageLabelsId] = useState("");
-  
+
   useEffect(() => {
     const fetchLabels = async () => {
       try {
         console.log("project id", projectId);
-        const response = await axios.get(`/api/labels/schema/project/${projectId}`, 
+        const response = await axios.get(
+          `/api/labels/schema/project/${projectId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -194,18 +190,18 @@ const LabelingInterface = () => {
           }
         );
         const [patientSchema, imageSchema] = response.data;
-  
+
         // Add value property to each person label
-        const updatedPersonLabels = patientSchema.labelData.map(label => ({
+        const updatedPersonLabels = patientSchema.labelData.map((label) => ({
           ...label,
-          value: "" // Default value, you can change it as needed
+          value: "", // Default value, you can change it as needed
         }));
 
-        const updatedImageLabels = imageSchema.labelData.map(label => ({
+        const updatedImageLabels = imageSchema.labelData.map((label) => ({
           ...label,
-          value: "" // Default value, you can change it as needed
+          value: "", // Default value, you can change it as needed
         }));
-  
+
         setPersonLabels(updatedPersonLabels);
         setImageLabels(updatedImageLabels);
         console.log("person schema id", patientSchema._id);
@@ -218,30 +214,28 @@ const LabelingInterface = () => {
         console.error("Error fetching labels:", error);
       }
     };
-  
+
     fetchLabels();
   }, [projectId]);
-  
+
   useEffect(() => {
     console.log("Person labels:", personLabels);
   }, [personLabels]);
-  
+
   useEffect(() => {
     console.log("Image labels:", imageLabels);
   }, [imageLabels]);
 
-  const [questions, setQuestions] = useState([
+  const [questions, setQuestions] = useState([]);
 
-  ]);
-  
   const handleQuestionChange = (index, value) => {
-    setQuestions(prevQuestions =>
+    setQuestions((prevQuestions) =>
       prevQuestions.map((q, i) => (i === index ? { ...q, value } : q))
     );
   };
 
   const handleLabelChange = (index, value) => {
-    setImageLabels(prevLabels =>
+    setImageLabels((prevLabels) =>
       prevLabels.map((label, i) => (i === index ? { ...label, value } : label))
     );
   };
@@ -269,81 +263,77 @@ const LabelingInterface = () => {
     /* End ImageDisplay functions */
   }
 
-
-
-
-    // use effect for current image change
-    useEffect(() => {
-      // axios get request for specific image with http://localhost:3001/answer/:imageid
-      const fetchLabels = async () => {
-        try {
-          const response = await axios.get(`http://localhost:3001/api/labels/answer/${currentImage._id}`, {
+  // use effect for current image change
+  useEffect(() => {
+    // axios get request for specific image with http://localhost:3001/answer/:imageid
+    const fetchLabels = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3001/api/labels/answer/${currentImage._id}`,
+          {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
-          });
-          console.log("Fetched labels:", response.data);
-          // Handle the response data as needed
-        } catch (error) {
-          console.error("Error fetching labels:", error);
-        }
-      };
-    
-      if (currentImage && currentImage._id) {
-        fetchLabels();
+          }
+        );
+        console.log("Fetched labels:", response.data);
+        // Handle the response data as needed
+      } catch (error) {
+        console.error("Error fetching labels:", error);
       }
-    }, [currentImage]);
-  
-    // use effect for current image again
-    useEffect(() => {
-      // post in this template 
-      //{
-      //  "schemaId": "6758800360e976ca83deca28",
-      //  "ownerId" : "6758b5c75ff5138a73dccec4",
-      //  "answers": [
-      //    {
-      //      "field": "date2911",
-      //      "value": "lmao"
-      //    },
-      //    {
-      //      "field": "lblq1149",
-      //      "value": "31"
-      //    }
-      //  ]
-      //}
+    };
 
-      const saveLabels = async () => {
-        try {
-          const answers = imageLabels.map(label => ({
-            field: label.labelQuestion,
-            value: label.value
-          }));
-          console.log("Answers:", answers);
-          const response = await axios.post(
-            `http://localhost:3001/api/labels/answer`,
-            {
-              schemaId: imageLabelsId,
-              ownerId: currentImage._id,
-              answers: answers
+    if (currentImage && currentImage._id) {
+      fetchLabels();
+    }
+  }, [currentImage]);
+
+  // use effect for current image again
+  useEffect(() => {
+    // post in this template
+    //{
+    //  "schemaId": "6758800360e976ca83deca28",
+    //  "ownerId" : "6758b5c75ff5138a73dccec4",
+    //  "answers": [
+    //    {
+    //      "field": "date2911",
+    //      "value": "lmao"
+    //    },
+    //    {
+    //      "field": "lblq1149",
+    //      "value": "31"
+    //    }
+    //  ]
+    //}
+
+    const saveLabels = async () => {
+      try {
+        const answers = imageLabels.map((label) => ({
+          field: label.labelQuestion,
+          value: label.value,
+        }));
+        console.log("Answers:", answers);
+        const response = await axios.post(
+          `http://localhost:3001/api/labels/answer`,
+          {
+            schemaId: imageLabelsId,
+            ownerId: currentImage._id,
+            answers: answers,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            }
-          );
-          console.log("Labels saved:", response.data);
-          
-        } catch (error) {
-          console.error("Error saving labels:", error);
-        }
+          }
+        );
+        console.log("Labels saved:", response.data);
+      } catch (error) {
+        console.error("Error saving labels:", error);
       }
-  
-      
-  
-      saveLabels();
-  
-    }, [currentImage]);
+    };
+
+    saveLabels();
+  }, [currentImage]);
 
   return (
     <div
@@ -455,43 +445,48 @@ const LabelingInterface = () => {
       </div>
 
       {/* Patient Info Sidebar */}
-      <div className='max-h-[calc(100vh_-_90px)] overflow-y-auto bg-white rounded-[10px] shadow-lg p-5 w-[300px]'>
-    <h3 className='text-[1.2rem] text-primary mb-4 text-center'>Patient Labels</h3>
-    {questions.map((question, index) => (
-      <label key={index} className='flex flex-col mb-4 text-sm text-gray-700'>
-        {question.labelQuestion}:
-        {question.labelType === 'text' ? (
-          <input
-            type='text'
-            value={question.value}
-            onChange={e => handleQuestionChange(index, e.target.value)}
-            className='mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none'
-            placeholder='Enter text here'
-          />
-        ) : question.labelType === 'int' ? (
-          <input
-            type='number'
-            value={question.value}
-            onChange={e => handleQuestionChange(index, e.target.value)}
-            className='mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none'
-            placeholder='Enter a number'
-          />
-        ) : question.labelType === 'dropdown' ? (
-          <select
-            value={question.value}
-            onChange={e => handleQuestionChange(index, e.target.value)}
-            className='mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none'
+      <div className="max-h-[calc(100vh_-_90px)] overflow-y-auto bg-white rounded-[10px] shadow-lg p-5 w-[300px]">
+        <h3 className="text-[1.2rem] text-primary mb-4 text-center">
+          Patient Labels
+        </h3>
+        {questions.map((question, index) => (
+          <label
+            key={index}
+            className="flex flex-col mb-4 text-sm text-gray-700"
           >
-            {question.labelOptions.map(option => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-        ) : null}
-      </label>
-    ))}
-  </div>
+            {question.labelQuestion}:
+            {question.labelType === "text" ? (
+              <input
+                type="text"
+                value={question.value}
+                onChange={(e) => handleQuestionChange(index, e.target.value)}
+                className="mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
+                placeholder="Enter text here"
+              />
+            ) : question.labelType === "int" ? (
+              <input
+                type="number"
+                value={question.value}
+                onChange={(e) => handleQuestionChange(index, e.target.value)}
+                className="mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
+                placeholder="Enter a number"
+              />
+            ) : question.labelType === "dropdown" ? (
+              <select
+                value={question.value}
+                onChange={(e) => handleQuestionChange(index, e.target.value)}
+                className="mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
+              >
+                {question.labelOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            ) : null}
+          </label>
+        ))}
+      </div>
 
       {/* Image Display */}
       <div className="relative bg-white rounded-[10px] shadow-lg p-5 flex flex-col items-center justify-center overflow-hidden max-h-[calc(100vh_-_90px)]">
@@ -536,34 +531,36 @@ const LabelingInterface = () => {
 
       {/* Image Labels Sidebar */}
       <div className="max-h-[calc(100vh_-_90px)] overflow-y-auto bg-white rounded-[10px] shadow-lg p-5 w-[320px]">
-    <h3 className="text-[1.2rem] text-primary mb-4 text-center">Image Labels</h3>
-    {imageLabels.map((label, index) => (
-      <label key={index} className="block mb-5 text-sm text-gray-700">
-        {label.labelQuestion}
-        {label.labelType === "dropdown" ? (
-          <select
-            value={label.value}
-            onChange={e => handleLabelChange(index, e.target.value)}
-            className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
-          >
-            {label.labelOptions.map(option => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-        ) : (
-          <input
-            type="text"
-            placeholder="Enter details"
-            value={label.value}
-            onChange={e => handleLabelChange(index, e.target.value)}
-            className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
-          />
-        )}
-      </label>
-    ))}
-  </div>
+        <h3 className="text-[1.2rem] text-primary mb-4 text-center">
+          Image Labels
+        </h3>
+        {imageLabels.map((label, index) => (
+          <label key={index} className="block mb-5 text-sm text-gray-700">
+            {label.labelQuestion}
+            {label.labelType === "dropdown" ? (
+              <select
+                value={label.value}
+                onChange={(e) => handleLabelChange(index, e.target.value)}
+                className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
+              >
+                {label.labelOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                type="text"
+                placeholder="Enter details"
+                value={label.value}
+                onChange={(e) => handleLabelChange(index, e.target.value)}
+                className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
+              />
+            )}
+          </label>
+        ))}
+      </div>
     </div>
   );
 };
