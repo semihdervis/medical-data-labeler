@@ -1,13 +1,16 @@
 const Image = require('../models/ImageModel');
 const LabelAnswer = require('../models/LabelAnswersModel');
+const labelController = require('./labelController');
 const fs = require('fs');
 const path = require('path');
+
 
 // Controller methods
 exports.uploadImage = async (req, res) => {
   try {
     const { name, uploader, projectId, patientId } = req.body;
     const { filename, path: tempFilepath } = req.file;
+    
 
     console.log('Uploading image:', { name, uploader, projectId, patientId, filename, tempFilepath });
 
@@ -27,9 +30,24 @@ exports.uploadImage = async (req, res) => {
     const newFilepath = path.join(path.dirname(tempFilepath), newFilename);
     fs.renameSync(tempFilepath, newFilepath);
 
+
+
     // Update the image entry with the final filepath
     newImage.filepath = path.join('projects', projectId, patientId, newFilename).replace(/\\/g, '/');
     await newImage.save();
+
+    // get schema for this project
+    const result = await labelController.getLabelSchemaByProjectIdService(projectId);
+    const [patientSchema, imageSchema] = result.data;
+
+    const emptyArray = [];
+
+    // create answer document for this image
+    const newAnswer = await labelController.createLabelAnswerService(
+      imageSchema._id, // Pass the ObjectId of the image schema
+      projectId,
+      []
+    );
 
     console.log('Image uploaded and filepath updated successfully:', newImage);
     res.status(201).json(newImage);

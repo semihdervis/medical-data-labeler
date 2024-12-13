@@ -14,7 +14,8 @@ function Patients ({ patients, setPatients, patientService }) {
   const [selectedPatientId, setSelectedPatientId] = useState(null)
   const [images, setImages] = useState([])
   const [imageUrls, setImageUrls] = useState({})
-
+  
+  
   useEffect(() => {
     const fetchImages = async () => {
       if (selectedPatientId) {
@@ -109,41 +110,45 @@ function Patients ({ patients, setPatients, patientService }) {
   }
 
   const handleImageUpload = event => {
-    const files = Array.from(event.target.files)
-
-    const formData = new FormData()
-    formData.append('uploader', localStorage.getItem('email'))
-    console.log('test:', localStorage.getItem('email'))
-    formData.append('projectId', id)
-    formData.append('patientId', selectedPatientId)
-    files.forEach(file => formData.append('images', file))
-    patientService.uploadImages(formData)
-
+    const files = Array.from(event.target.files);
+  
     // Generate local preview URLs for new images
     const newImages = files.map(file => {
-      const localUrl = URL.createObjectURL(file)
+      const localUrl = URL.createObjectURL(file);
+      const formData = new FormData();
+      formData.append('name', file.name);
+      formData.append('uploader', localStorage.getItem('email'));
+      formData.append('projectId', id);
+      formData.append('patientId', selectedPatientId);
+      formData.append('image', file);
+  
+      const requestId = patientService.uploadImage(formData, id, selectedPatientId);
+  
       return {
-        _id: `temp-${Date.now()}`, // Temporary ID for unsaved images
+        _id: requestId,
         name: file.name,
-        localUrl, // Local preview URL
-        file, // Original file object for upload
-        isUnsaved: true // Flag indicating this image is unsaved
-      }
-    })
-
-    // generate request to upload images
-
-    setImages(prevImages => [...prevImages, ...newImages])
-  }
-
+        localUrl,
+        file,
+        isUnsaved: true
+      };
+    });
+  
+    setImages(prevImages => [...prevImages, ...newImages]);
+  };
   const handleRemoveImage = imageId => {
     setImages(prevImages => prevImages.filter(image => image._id !== imageId))
 
     // If it's an already uploaded image, queue it for deletion
     if (!imageId.startsWith('temp-')) {
-      patientService.addToQueue(() =>
-        patientService.removeImage(id, selectedPatientId, imageId)
-      )
+      
+      patientService.removeImage(id, selectedPatientId, imageId)
+      
+    }
+    else {
+      // dequeue the image from the queue
+      // const image = images.find(image => image._id === imageId)
+      patientService.removeImageFromQueue(imageId)
+
     }
   }
 

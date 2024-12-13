@@ -4,12 +4,31 @@ const API_BASE_URL = 'http://localhost:3001'
 class PatientService {
   constructor () {
     this.requestQueue = []
+    this.imageQueue = new Map()
     this.isProcessing = false
   }
-  async queueRequest (requestFn) {
+  async handleImmediate (requestFn) {
     return new Promise((resolve, reject) => {
       this.requestQueue.push({ requestFn, resolve, reject })
       this.processQueue()
+    })
+  }
+
+
+
+  removeFromImageQueue (requestId) {
+    return this.imageQueue.delete(requestId)
+  }
+
+  getQueuedUploads () {
+    return Array.from(this.imageQueue.entries()).map(([id, data]) => ({
+      ...data
+    }))
+  }
+
+  addToQueue (requestFn) {
+    return new Promise((resolve, reject) => {
+      this.requestQueue.push({ requestFn, resolve, reject })
     })
   }
   async processQueue () {
@@ -25,15 +44,11 @@ class PatientService {
         reject(error)
       }
     }
+
     this.isProcessing = false
   }
 
   // New method to add requests to the queue
-  addToQueue (requestFn) {
-    return new Promise((resolve, reject) => {
-      this.requestQueue.push({ requestFn, resolve, reject })
-    })
-  }
 
   // Method to manually trigger processing of the queue
   async sendRequests () {
@@ -44,13 +59,24 @@ class PatientService {
 
     while (this.requestQueue.length > 0) {
       console.log('Processing request: ', this.requestQueue[0])
-      const { requestFn, resolve, reject } = this.requestQueue.shift()
+      const { requestFn } = this.requestQueue.shift()
       try {
         const result = await requestFn()
-        resolve(result)
+        console.log('Request successful:', result)
       } catch (error) {
-        reject(error)
+        console.error('Error processing request:', error)
         allSuccessful = false
+      }
+    }
+
+    const imageQueueEntries = Array.from(this.imageQueue.entries())
+    for (const [imageId, { requestFn }] of imageQueueEntries) {
+      try {
+        const result = await requestFn()
+        
+        this.imageQueue.delete(imageId)
+      } catch (error) {
+        console.error('Error processing image request:', error)
       }
     }
 
@@ -58,9 +84,9 @@ class PatientService {
     return allSuccessful
   }
 
-  // Existing methods now use addToQueue instead of queueRequest
+  // Existing methods now use addToQueue instead of handleImmediate
   getPatients (projectId) {
-    return this.queueRequest(() =>
+    return this.handleImmediate(() =>
       axios.get(`${API_BASE_URL}/api/patients/${projectId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -91,7 +117,7 @@ class PatientService {
 
   // Images API methods
   async getPatientImages (projectId, patientId) {
-    return this.queueRequest(() =>
+    return this.handleImmediate(() =>
       axios.get(`${API_BASE_URL}/api/images/${projectId}/${patientId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -101,7 +127,7 @@ class PatientService {
   }
 
   async getImageUrl (imagePath) {
-    return this.queueRequest(() =>
+    return this.handleImmediate(() =>
       axios.get(`${API_BASE_URL}/${imagePath}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -111,15 +137,53 @@ class PatientService {
     )
   }
 
-  uploadImages (formData) {
-    return this.addToQueue(() =>
-      axios.post(`${API_BASE_URL}/api/images/upload-multiple`, formData, {
+  addToImageQueue(formData, projectId, patientId) {
+    if (!projectId || !patientId) {
+      throw new Error('Project ID and Patient ID are required');
+    }
+  
+    const requestId = `img-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    
+    const requestFn = () => 
+      axios.post(`${API_BASE_URL}/api/images/upload`, formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'multipart/form-data'
         }
-      })
-    )
+      });
+  
+    this.imageQueue.set(requestId, {
+      requestFn,
+      formData,
+      status: 'pending',
+    });
+  
+    return requestId;
+  }
+
+  // Update uploadImage method
+  uploadImage(formData, projectId, patientId) {
+    return this.addToImageQueue(formData, projectId, patientId);
+  }
+
+  async removeImageFromQueue (requestId) {
+    try {
+      // Find the queued request
+      const queuedRequest = this.imageQueue.get(requestId)
+
+      if (!queuedRequest) {
+        console.warn(`Request with ID ${requestId} not found in queue`)
+        return false
+      }
+
+      // Remove from queue
+      this.imageQueue.delete(requestId)
+
+      return true
+    } catch (error) {
+      console.error('Error removing image from queue:', error)
+      throw error
+    }
   }
 
   async removeImage (projectId, patientId, imageId) {

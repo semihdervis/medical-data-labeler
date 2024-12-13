@@ -13,6 +13,10 @@ const imageSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
   projectId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Project',
