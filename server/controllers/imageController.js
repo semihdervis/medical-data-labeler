@@ -45,11 +45,13 @@ exports.uploadImage = async (req, res) => {
     // create answer document for this image
     const newAnswer = await labelController.createLabelAnswerService(
       imageSchema._id, // Pass the ObjectId of the image schema
-      projectId,
+      newImage._id, // Pass the ObjectId of the image
       []
     );
 
-    console.log('Image uploaded and filepath updated successfully:', newImage);
+    console.log('newanswer', newAnswer);
+
+    //console.log('Image uploaded and filepath updated successfully:', newImage);
     res.status(201).json(newImage);
   } catch (error) {
     console.error('Error uploading image:', error);

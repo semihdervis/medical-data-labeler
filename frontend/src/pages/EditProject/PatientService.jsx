@@ -5,6 +5,7 @@ class PatientService {
   constructor () {
     this.requestQueue = []
     this.imageQueue = new Map()
+    this.patientQueue = new Map()
     this.isProcessing = false
   }
   async handleImmediate (requestFn) {
@@ -105,15 +106,6 @@ class PatientService {
     )
   }
 
-  removePatient (projectId, patientId) {
-    return this.addToQueue(() =>
-      axios.delete(`${API_BASE_URL}/api/patients/${projectId}/${patientId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      })
-    )
-  }
 
   // Images API methods
   async getPatientImages (projectId, patientId) {
@@ -135,6 +127,29 @@ class PatientService {
         responseType: 'blob'
       })
     )
+  }
+
+  addToPatientQueue(formData, projectId) {
+    if (!projectId) {
+      throw new Error('Project ID is required');
+    }
+  
+    const requestId = `patient-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    
+    const requestFn = () => 
+      axios.post(`${API_BASE_URL}/api/patients`, newPatient, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+  
+    this.patientQueue.set(requestId, {
+      requestFn,
+      formData,
+      status: 'pending',
+    });
+  
+    return requestId;
   }
 
   addToImageQueue(formData, projectId, patientId) {
@@ -166,6 +181,26 @@ class PatientService {
     return this.addToImageQueue(formData, projectId, patientId);
   }
 
+  async removePatientFromQueue (requestId) {
+    try {
+      // Find the queued request
+      const queuedRequest = this.patientQueue.get(requestId)
+
+      if (!queuedRequest) {
+        console.warn(`Request with ID ${requestId} not found in queue`)
+        return false
+      }
+
+      // Remove from queue
+      this.patientQueue.delete(requestId)
+
+      return true
+    } catch (error) {
+      console.error('Error removing image from queue:', error)
+      throw error
+    }
+  }
+
   async removeImageFromQueue (requestId) {
     try {
       // Find the queued request
@@ -184,6 +219,17 @@ class PatientService {
       console.error('Error removing image from queue:', error)
       throw error
     }
+  } 
+
+  
+  removePatient (projectId, patientId) {
+    return this.addToQueue(() =>
+      axios.delete(`${API_BASE_URL}/api/patients/${projectId}/${patientId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+    )
   }
 
   async removeImage (projectId, patientId, imageId) {

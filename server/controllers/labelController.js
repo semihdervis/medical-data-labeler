@@ -171,6 +171,7 @@ const createLabelAnswerService = async (schemaId, ownerId, answers) => {
     }
 
     const labelAnswer = new LabelAnswer({ ownerId, labelData: answers });
+    console.log(labelAnswer);
     await labelAnswer.save();
     return { data: labelAnswer };
   } catch (error) {
