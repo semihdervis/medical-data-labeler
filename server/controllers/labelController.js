@@ -37,9 +37,25 @@ exports.getAllLabelSchemas = async (req, res) => {
 
 exports.getLabelSchemaByProjectId = async (req, res) => {
   try {
-    const labelSchemas = await LabelSchema.find({ projectId: req.params.id });
+    const { id } = req.params;
+    const result = await getLabelSchemaByProjectIdService(id);
+    
+    if (result.error) {
+      return res.status(result.status).json({ message: result.error });
+    }
+
+    res.status(200).json(result.data);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Service function version
+const getLabelSchemaByProjectIdService = async (projectId) => {
+  try {
+    const labelSchemas = await LabelSchema.find({ projectId });
     if (!labelSchemas || labelSchemas.length !== 2) {
-      return res.status(404).json({ message: 'Label schema not found or incorrect number of schemas' });
+      return { error: 'Label schema not found or incorrect number of schemas', status: 404 };
     }
 
     // Ensure the first element is the patient schema and the second is the image schema
@@ -47,14 +63,16 @@ exports.getLabelSchemaByProjectId = async (req, res) => {
     const imageSchema = labelSchemas.find(schema => schema.type === 'image');
 
     if (!patientSchema || !imageSchema) {
-      return res.status(400).json({ message: 'Schemas are not correctly ordered or missing' });
+      return { error: 'Schemas are not correctly ordered or missing', status: 400 };
     }
 
-    res.status(200).json([patientSchema, imageSchema]);
+    return { data: [patientSchema, imageSchema] };
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return { error: error.message, status: 500 };
   }
 };
+
+exports.getLabelSchemaByProjectIdService = getLabelSchemaByProjectIdService;
 
 
 // Get a label schema by ID
@@ -101,51 +119,66 @@ exports.deleteLabelSchema = async (req, res) => {
   }
 }
 
+// HTTP endpoint version
 exports.createLabelAnswer = async (req, res) => {
   try {
     const { schemaId, ownerId, answers } = req.body;
-
-    // Fetch the label schema
-    const labelSchema = await LabelSchema.findById(schemaId);
-    if (!labelSchema) {
-      return res.status(404).json({ message: 'Label schema not found' });
-    }
-
-    // Fetch the owner document (either image or patient)
-    let ownerDocument = await Image.findById(ownerId);
-    if (!ownerDocument) {
-      ownerDocument = await Patient.findById(ownerId);
-    }
-    if (!ownerDocument) {
-      return res.status(404).json({ message: 'Owner document not found' });
-    }
-
-    // Check if the project ID matches
-    const projId = ownerDocument.projectId;
-    const labelProjId = labelSchema.projectId;
-    if (projId.toString() !== labelProjId.toString()) {
-      return res.status(400).json({ message: 'Project ID does not match' });
-    }
-
+    const result = await createLabelAnswerService(schemaId, ownerId, answers);
     
-    // Validate the label answer
-    const schemaFields = labelSchema.labelData.map(field => field.labelQuestion);
-    const answerFields = answers.map(answer => answer.field);
-
-    console.log(schemaFields);
-    const isValid = answerFields.every(field => schemaFields.includes(field));
-    if (!isValid) {
-      return res.status(400).json({ message: 'Label answer does not match the label schema' });
+    if (result.error) {
+      return res.status(result.status).json({ message: result.error });
     }
-
-    const labelAnswer = new LabelAnswer({ ownerId, labelData: answers });
-    await labelAnswer.save();
-    res.status(201).json(labelAnswer);
+    
+    res.status(201).json(result.data);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
   }
 };
+
+// Service function version
+const createLabelAnswerService = async (schemaId, ownerId, answers) => {
+  try {
+    // Fetch the label schema
+    const labelSchema = await LabelSchema.findById(schemaId);
+    if (!labelSchema) {
+      return { error: 'Label schema not found', status: 404 };
+    }
+
+    // Fetch the owner document
+    let ownerDocument = await Image.findById(ownerId);
+    if (!ownerDocument) {
+      ownerDocument = await Patient.findById(ownerId);
+    }
+    if (!ownerDocument) {
+      return { error: 'Owner document not found', status: 404 };
+    }
+
+    // Check project ID match
+    const projId = ownerDocument.projectId;
+    const labelProjId = labelSchema.projectId;
+    if (projId.toString() !== labelProjId.toString()) {
+      return { error: 'Project ID does not match', status: 400 };
+    }
+
+    // Validate answers
+    const schemaFields = labelSchema.labelData.map(field => field.labelQuestion);
+    const answerFields = answers.map(answer => answer.field);
+
+    const isValid = answerFields.every(field => schemaFields.includes(field));
+    if (!isValid) {
+      return { error: 'Label answer does not match the label schema', status: 400 };
+    }
+
+    const labelAnswer = new LabelAnswer({ ownerId, labelData: answers });
+    await labelAnswer.save();
+    return { data: labelAnswer };
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.createLabelAnswerService = createLabelAnswerService;
 
 // Get all label answers
 exports.getAllLabelAnswers = async (req, res) => {
@@ -161,7 +194,7 @@ exports.getAllLabelAnswers = async (req, res) => {
 exports.getLabelAnswerById = async (req, res) => {
   try {
     //const labelAnswer = await LabelAnswer.findById(req.params.id)
-    const labelAnswer = await LabelAnswer.find({ ownerId: req.params.id })
+    const labelAnswer = await LabelAnswer.findOne({ ownerId: req.params.id })
     if (!labelAnswer) {
       return res.status(404).json({ message: 'Label answer not found' })
     }
