@@ -121,6 +121,8 @@ const LabelingInterface = () => {
   const handleNextImage = () => {
     if (images.length === 0) return;
 
+    updateImageLabels();
+
     const nextIndex = (currentImageIndex + 1) % images.length;
     setCurrentImageIndex(nextIndex);
     setCurrentImage(images[nextIndex]);
@@ -244,9 +246,9 @@ const LabelingInterface = () => {
 
   // variable for current image answers id
   const [currentImageAnswersId, setCurrentImageAnswersId] = useState("");
-
   const updateImageLabels = async () => {
     try {
+      console.log("Image labels before update:", imageLabels);
       const answers = imageLabels.map((label) => ({
         field: label.labelQuestion,
         value: label.value,
@@ -257,7 +259,7 @@ const LabelingInterface = () => {
         {
           schemaId: imageLabelsId,
           ownerId: currentImage._id,
-          answers: answers,
+          labelData: answers,
         },
         {
           headers: {
