@@ -28,6 +28,7 @@ function AdminProjectPage () {
   const [currentProject, setCurrentProject] = useState(null)
   const [patientSchemaId, setPatientSchemaId] = useState(null)
   const [imageSchemaId, setImageSchemaId] = useState(null)
+  const token = localStorage.getItem('token')
 
   useEffect(() => {
     const fetchProject = async () => {
