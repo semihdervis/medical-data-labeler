@@ -242,6 +242,89 @@ const LabelingInterface = () => {
     /* End PatientInfoSidebar functions */
   }
 
+  // variable for current image answers id
+  const [currentImageAnswersId, setCurrentImageAnswersId] = useState("");
+
+  const updateImageLabels = async () => {
+    try {
+      const answers = imageLabels.map((label) => ({
+        field: label.labelQuestion,
+        value: label.value,
+      }));
+      console.log("Answers:", answers);
+      const response = await axios.put(
+        `http://localhost:3001/api/labels/answer/${currentImageAnswersId}`,
+        {
+          schemaId: imageLabelsId,
+          ownerId: currentImage._id,
+          answers: answers,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      console.log("Labels saved:", response.data);
+    } catch (error) {
+      console.error("Error saving labels:", error);
+    }
+  };
+
+  // use effect for current image change
+  useEffect(() => {
+
+    // axios get request for specific image with http://localhost:3001/answer/:imageid
+    const fetchLabels = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3001/api/labels/answer/${currentImage._id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        console.log("Response:", response.data.labelData);
+
+        setCurrentImageAnswersId(response.data._id);
+        console.log("Current Image Answers ID:", currentImageAnswersId);
+
+        // change field to labelQuestion
+
+        const updatedImageLabels = response.data.labelData.map((label) => {
+          const { field, ...rest } = label;
+          return {
+            ...rest,
+            labelQuestion: field,
+          };
+        });
+
+        console.log("Updated image labels:", updatedImageLabels);
+
+        // change imageLabels to updatedImageLabels with matching LabelQuestion and assign updatedImageLabels to imageLabels
+
+        setImageLabels((prevLabels) =>
+          prevLabels.map((label) => {
+            const updatedLabel = updatedImageLabels.find(
+              (ulabel) => ulabel.labelQuestion === label.labelQuestion
+            );
+            return updatedLabel ? updatedLabel : label;
+          })
+        );
+
+        // Handle the response data as needed
+      } catch (error) {
+        console.error("Error fetching labels:", error);
+
+      }
+    };
+
+    if (currentImage && currentImage._id) {
+      fetchLabels();
+    }
+
+  }, [currentImage]);
 
 
 
