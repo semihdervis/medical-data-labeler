@@ -244,7 +244,7 @@ function Patients ({ patients, setPatients, patientService }) {
 
         {selectedPatient && (
           <div className='flex flex-col flex-grow'>
-            <div className='h-64 overflow-y-auto mt-4'>
+            <div className='h-[390px] overflow-y-auto mt-4'>
               {images.length > 0 ? (
                 images.map(image => (
                   <div

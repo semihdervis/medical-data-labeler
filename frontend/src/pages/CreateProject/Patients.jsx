@@ -185,7 +185,7 @@ function Patients() {
 
   {selectedPatient && (
     <div className="flex flex-col flex-grow">
-      <div className="h-64 overflow-y-auto mb-3">
+      <div className="h-[390px] overflow-y-auto mb-3">
         {selectedPatient.images.length > 0 ? (
           selectedPatient.images.map((image) => (
             <div
