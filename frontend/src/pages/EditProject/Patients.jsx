@@ -14,8 +14,7 @@ function Patients ({ patients, setPatients, patientService }) {
   const [selectedPatientId, setSelectedPatientId] = useState(null)
   const [images, setImages] = useState([])
   const [imageUrls, setImageUrls] = useState({})
-  
-  
+
   useEffect(() => {
     const fetchImages = async () => {
       if (selectedPatientId) {
@@ -55,9 +54,9 @@ function Patients ({ patients, setPatients, patientService }) {
       name: `Patient${patients.length + 1}`,
       age: '0',
       gender: 'null'
-    };
+    }
 
-    const requestId = patientService.addToPatientQueue(newPatient, id);
+    const requestId = patientService.addToPatientQueue(newPatient, id)
 
     setPatients(prevPatients => [
       ...prevPatients,
@@ -66,21 +65,23 @@ function Patients ({ patients, setPatients, patientService }) {
         ...newPatient,
         isUnsaved: true
       }
-    ]);
-  };
+    ])
+  }
 
-  const handleRemovePatient = (patientId) => {
+  const handleRemovePatient = patientId => {
     // Queue the patient removal request
-    patientService.removePatient(id, patientId);
+    patientService.removePatient(id, patientId)
 
     // Update the local state
-    setPatients(prevPatients => prevPatients.filter(patient => patient._id !== patientId));
+    setPatients(prevPatients =>
+      prevPatients.filter(patient => patient._id !== patientId)
+    )
     if (selectedPatientId === patientId) {
-      setSelectedPatientId(null);
-      setImages([]);
-      setImageUrls({});
+      setSelectedPatientId(null)
+      setImages([])
+      setImageUrls({})
     }
-  };
+  }
 
   const handleImportPatients = event => {
     const file = event.target.files[0]
@@ -114,36 +115,40 @@ function Patients ({ patients, setPatients, patientService }) {
   }
 
   const handleImageUpload = event => {
-    const files = Array.from(event.target.files);
-  
+    const files = Array.from(event.target.files)
+
     // Generate local preview URLs for new images
     const newImages = files.map(file => {
-      const localUrl = URL.createObjectURL(file);
-      const formData = new FormData();
-      formData.append('name', file.name);
-      formData.append('uploader', localStorage.getItem('email'));
-      formData.append('projectId', id);
-      formData.append('patientId', selectedPatientId);
-      formData.append('image', file);
-  
-      const requestId = patientService.uploadImage(formData, id, selectedPatientId);
-  
+      const localUrl = URL.createObjectURL(file)
+      const formData = new FormData()
+      formData.append('name', file.name)
+      formData.append('uploader', localStorage.getItem('email'))
+      formData.append('projectId', id)
+      formData.append('patientId', selectedPatientId)
+      formData.append('image', file)
+
+      const requestId = patientService.uploadImage(
+        formData,
+        id,
+        selectedPatientId
+      )
+
       return {
         _id: requestId,
         name: file.name,
         localUrl,
         file,
         isUnsaved: true
-      };
-    });
-  
-    setImages(prevImages => [...prevImages, ...newImages]);
-  };
+      }
+    })
+
+    setImages(prevImages => [...prevImages, ...newImages])
+  }
   const handleRemoveImage = imageId => {
     setImages(prevImages => prevImages.filter(image => image._id !== imageId))
 
     // If it's an already uploaded image, queue it for deletion
-   patientService.removeImage(id, selectedPatientId, imageId)
+    patientService.removeImage(id, selectedPatientId, imageId)
   }
 
   const filteredPatients = patients.filter(patient =>
@@ -229,64 +234,63 @@ function Patients ({ patients, setPatients, patientService }) {
         </label>
       </section>
 
-     {/* Patient Images Container */}
-<section className='bg-white rounded-lg p-5 shadow-md w-96 flex flex-col'>
-  <h3 className='text-primary text-lg font-bold mb-4'>
-    {selectedPatient
-      ? `${selectedPatient.name} Images`
-      : 'Select a Patient'}
-  </h3>
+      {/* Patient Images Container */}
+      <section className='bg-white rounded-lg p-5 shadow-md w-96 flex flex-col'>
+        <h3 className='text-primary text-lg font-bold mb-4'>
+          {selectedPatient
+            ? `${selectedPatient.name} Images`
+            : 'Select a Patient'}
+        </h3>
 
-  {selectedPatient && (
-    <div className='flex flex-col flex-grow'>
-      <div className='h-64 overflow-y-auto mt-4'>
-        {images.length > 0 ? (
-          images.map(image => (
-            <div
-            key={image._id}
-            className="flex items-center justify-between bg-gray-50 p-3 mb-3 rounded-md shadow-sm"
-          >
-              <img
-                src={image.localUrl || imageUrls[image._id]}
-                alt={image.name}
-                className='w-16 h-16 rounded-md object-cover'
-              />
-              <div className="flex-grow px-3 min-w-0">
-                <p className="truncate text-gray-700">{image.name}</p>
-              </div>              
-              {/* Remove Button */}
-              <button
-                className="flex-shrink-0 bg-red-600 text-white p-2 w-10 h-10 rounded-md hover:bg-red-700 transition flex items-center justify-center"
-                onClick={() => handleRemoveImage(image._id)}
-              >
-                <img src={removeIcon} alt='Remove' className='w-5 h-5' />
-              </button>
+        {selectedPatient && (
+          <div className='flex flex-col flex-grow'>
+            <div className='h-64 overflow-y-auto mt-4'>
+              {images.length > 0 ? (
+                images.map(image => (
+                  <div
+                    key={image._id}
+                    className='flex items-center justify-between bg-gray-50 p-3 mb-3 rounded-md shadow-sm'
+                  >
+                    <img
+                      src={image.localUrl || imageUrls[image._id]}
+                      alt={image.name}
+                      className='w-16 h-16 rounded-md object-cover'
+                    />
+                    <div className='flex-grow px-3 min-w-0'>
+                      <p className='truncate text-gray-700'>{image.name}</p>
+                    </div>
+                    {/* Remove Button */}
+                    <button
+                      className='flex-shrink-0 bg-red-600 text-white p-2 w-10 h-10 rounded-md hover:bg-red-700 transition flex items-center justify-center'
+                      onClick={() => handleRemoveImage(image._id)}
+                    >
+                      <img src={removeIcon} alt='Remove' className='w-5 h-5' />
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <p className='text-gray-500'>No images uploaded.</p>
+              )}
             </div>
-          ))
-        ) : (
-          <p className='text-gray-500'>No images uploaded.</p>
+
+            <input
+              type='file'
+              ref={imageInputRef}
+              className='hidden'
+              accept='image/*'
+              multiple
+              onChange={handleImageUpload}
+            />
+            <label
+              onClick={() => imageInputRef.current.click()}
+              className='flex items-center justify-center gap-2 bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition mt-auto cursor-pointer'
+            >
+              Upload Images
+              <img src={fileIcon} alt='Upload' className='w-4 h-4' />
+            </label>
+          </div>
         )}
-      </div>
-
-      <input
-        type='file'
-        ref={imageInputRef}
-        className='hidden'
-        accept='image/*'
-        multiple
-        onChange={handleImageUpload}
-      />
-      <label
-        onClick={() => imageInputRef.current.click()}
-        className='flex items-center justify-center gap-2 bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition mt-auto cursor-pointer'
-      >
-        Upload Images
-        <img src={fileIcon} alt='Upload' className='w-4 h-4' />
-      </label>
-    </div>
-  )}
-</section>
-
+      </section>
     </div>
   )
 }

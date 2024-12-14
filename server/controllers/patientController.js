@@ -6,6 +6,7 @@ const Patient = require('../models/PatientModel')
 const Image = require('../models/ImageModel')
 const LabelAnswer = require('../models/LabelAnswersModel')
 const imageController = require('./imageController')
+const labelController = require('./labelController')
 
 // Function to create a folder for the patient
 const createFolder = (projectId, patientId) => {
@@ -50,6 +51,28 @@ exports.addPatient = async (req, res) => {
     // Create folder for the new patient
     createFolder(projectId, newPatient._id)
 
+    // Get schema for this project
+    const result = await labelController.getLabelSchemaByProjectIdService(
+      projectId
+    )
+    const [patientSchema, imageSchema] = result.data
+
+    const defaultAnswers = patientSchema.labelData.map(label => {
+      return {
+        field: label.labelQuestion,
+        value: label.labelType === 'dropdown' ? label.labelOptions[0] : '' // if dropdown, then first option, if text or number, then empty string
+      }
+    })
+
+    // Create answer document for this patient
+    const newAnswer = await labelController.createLabelAnswerService(
+      patientSchema._id, // Pass the ObjectId of the patient schema
+      newPatient._id, // Pass the ObjectId of the patient
+      defaultAnswers
+    )
+
+    console.log('newAnswer', newAnswer)
+
     res.status(201).json(newPatient)
   } catch (error) {
     console.error('Error adding patient:', error)
@@ -63,7 +86,7 @@ exports.addPatient = async (req, res) => {
 exports.getPatientsList = async (req, res) => {
   try {
     const { id } = req.params
-    const patients = await Patient.find({ projectId: id}, 'name') // Only select the 'name' field
+    const patients = await Patient.find({ projectId: id }, 'name') // Only select the 'name' field
     res.status(200).json(patients)
   } catch (error) {
     res.status(500).json({ message: error.message })
