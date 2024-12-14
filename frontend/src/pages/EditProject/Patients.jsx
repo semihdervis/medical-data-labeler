@@ -49,34 +49,38 @@ function Patients ({ patients, setPatients, patientService }) {
     setImageUrls(urls)
   }
 
-  const handleAddPatient = async () => {
+  const handleAddPatient = () => {
     const newPatient = {
       projectId: id,
       name: `Patient${patients.length + 1}`,
       age: '0',
       gender: 'null'
-    }
-    try {
-      const response = await patientService.addPatient(newPatient)
-      setPatients([...patients, response.data])
-    } catch (error) {
-      console.error('Error adding patient:', error)
-    }
-  }
+    };
 
-  const handleRemovePatient = async patientId => {
-    try {
-      await patientService.removePatient(id, patientId)
-      setPatients(patients.filter(patient => patient._id !== patientId))
-      if (selectedPatientId === patientId) {
-        setSelectedPatientId(null)
-        setImages([])
-        setImageUrls({})
+    const requestId = patientService.addToPatientQueue(newPatient, id);
+
+    setPatients(prevPatients => [
+      ...prevPatients,
+      {
+        _id: requestId,
+        ...newPatient,
+        isUnsaved: true
       }
-    } catch (error) {
-      console.error('Error removing patient:', error)
+    ]);
+  };
+
+  const handleRemovePatient = (patientId) => {
+    // Queue the patient removal request
+    patientService.removePatient(id, patientId);
+
+    // Update the local state
+    setPatients(prevPatients => prevPatients.filter(patient => patient._id !== patientId));
+    if (selectedPatientId === patientId) {
+      setSelectedPatientId(null);
+      setImages([]);
+      setImageUrls({});
     }
-  }
+  };
 
   const handleImportPatients = event => {
     const file = event.target.files[0]
@@ -139,17 +143,7 @@ function Patients ({ patients, setPatients, patientService }) {
     setImages(prevImages => prevImages.filter(image => image._id !== imageId))
 
     // If it's an already uploaded image, queue it for deletion
-    if (!imageId.startsWith('temp-')) {
-      
-      patientService.removeImage(id, selectedPatientId, imageId)
-      
-    }
-    else {
-      // dequeue the image from the queue
-      // const image = images.find(image => image._id === imageId)
-      patientService.removeImageFromQueue(imageId)
-
-    }
+   patientService.removeImage(id, selectedPatientId, imageId)
   }
 
   const filteredPatients = patients.filter(patient =>
