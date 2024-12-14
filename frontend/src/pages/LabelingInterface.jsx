@@ -402,7 +402,7 @@ const LabelingInterface = () => {
 
       {/* Patient List Sidebar */}
       <div
-        className={`max-h-[calc(100vh_-_90px)] overflow-y-auto bg-white rounded-[10px] shadow-custom p-[20px] w-[200px] mt-[60px] fixed left-[-200px] h-screen transition-transform duration-300 ease-in-out ${
+        className={`max-h-[calc(100vh_-_100px)] overflow-y-auto bg-white rounded-[10px] shadow-custom p-[20px] w-[200px] mt-[60px] fixed left-[-200px] h-screen transition-transform duration-300 ease-in-out ${
           isSidebarOpen ? "translate-x-[220px]" : ""
         }`}
       >
@@ -464,7 +464,7 @@ const LabelingInterface = () => {
       </div>
           
       {/* Patient Info Sidebar */}
-      <div className="max-h-[calc(100vh_-_100px)] h-[800px] overflow-y-auto bg-white rounded-[10px] mt-[60px] shadow-custom p-5 w-[300px]">
+      <div className="max-h-[calc(100vh_-_100px)] overflow-y-auto bg-white rounded-[10px] mt-[60px] shadow-custom p-5 w-[300px]">
         <h3 className="text-[1.2rem] text-primary mb-4 text-center">
           Patient Labels
         </h3>
@@ -508,7 +508,7 @@ const LabelingInterface = () => {
       </div>
 
       {/* Image Display */}
-      <div className="relative bg-white rounded-[10px] shadow-custom p-5 flex flex-col items-center justify-center overflow-hidden mt-[60px] max-h-[calc(100vh_-_100px)] min-w-[500px] h-screen">
+      <div className="relative bg-white rounded-[10px] shadow-custom p-5 flex flex-col items-center justify-center overflow-hidden mt-[60px] max-h-[calc(100vh_-_100px)] min-w-[500px]">
         {currentImage && (
           <img
             src={currentImage.authenticatedUrl}
@@ -549,7 +549,7 @@ const LabelingInterface = () => {
       </div>
 
 {/* Image Labels Sidebar */}
-<div className="max-h-[calc(100vh_-_90px)] overflow-y-auto bg-white rounded-[10px] shadow-custom p-5 w-[320px] mt-[60px] fixed right-[20px] h-screen">
+<div className="max-h-[calc(100vh_-_100px)] overflow-y-auto bg-white rounded-[10px] shadow-custom p-5 w-[320px] mt-[60px] fixed right-[20px] h-screen">
   <h3 className="text-[1.2rem] text-primary mb-4 text-center">
     Image Labels
   </h3>
