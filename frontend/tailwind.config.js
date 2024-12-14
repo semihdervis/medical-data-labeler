@@ -11,6 +11,9 @@ export default {
         secondary: "#303f9f",
         negative: "#d32f2f",
       },
+      boxShadow: {
+        'custom': '4px 4px 12px rgba(0, 0, 0, 0.1)', // Custom shadow
+      },
     },
   },
   plugins: [],
