@@ -6,6 +6,7 @@ import saveIcon from "./icons/save.png";
 import sorticon from "./icons/sort_icon.png";
 import previousIcon from "./icons/previous.png";
 import nextIcon from "./icons/next.png";
+import { use } from "react";
 
 const LabelingInterface = () => {
   const navigate = useNavigate();
@@ -133,6 +134,8 @@ const LabelingInterface = () => {
 
   const handlePreviousImage = () => {
     if (images.length === 0) return;
+
+    updateImageLabels();
 
     const previousIndex =
       (currentImageIndex - 1 + images.length) % images.length;
@@ -337,6 +340,9 @@ const LabelingInterface = () => {
 
   }, [currentImage]);
 
+  useEffect(() => {
+    updateImageLabels();
+  }, [selectedPatient]);
 
 
   return (
@@ -364,6 +370,7 @@ const LabelingInterface = () => {
             className="flex items-center justify-center mr-[10px] bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded-md"
            // if admin navigate admin else navigate doctor
            onClick={() => {
+            updateImageLabels();
             if (isAdmin) {
               navigate(`/admin`);
             } else {
