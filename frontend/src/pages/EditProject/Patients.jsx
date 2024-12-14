@@ -261,7 +261,7 @@ function Patients ({ patients, setPatients, patientService }) {
                     </div>
                     {/* Remove Button */}
                     <button
-                      className='flex-shrink-0 bg-red-600 text-white p-2 w-10 h-10 rounded-md hover:bg-red-700 transition flex items-center justify-center'
+                      className='flex-shrink-0 bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition flex items-center justify-center'
                       onClick={() => handleRemoveImage(image._id)}
                     >
                       <img src={removeIcon} alt='Remove' className='w-5 h-5' />
