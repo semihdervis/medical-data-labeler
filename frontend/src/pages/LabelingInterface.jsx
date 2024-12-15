@@ -89,6 +89,7 @@ const LabelingInterface = () => {
   }, [selectedPatient, projectId]);
   const handleSave = () => {
     alert("Changes saved!");
+    updatePersonLabels();
   };
 
   const fetchImageWithAuth = async (imagePath) => {
@@ -252,6 +253,8 @@ const LabelingInterface = () => {
 
   // variable for current image answers id
   const [currentImageAnswersId, setCurrentImageAnswersId] = useState("");
+  const [currentPersonAnswersId, setCurrentPersonAnswersId] = useState("");
+  
   const updateImageLabels = async () => {
     try {
       console.log("Image labels before update:", imageLabels);
@@ -278,6 +281,35 @@ const LabelingInterface = () => {
       console.error("Error saving labels:", error);
     }
   };
+
+
+  const updatePersonLabels = async () => {
+    try {
+      console.log("Person labels before update:", personLabels);
+      const answers = personLabels.map((label) => ({
+        field: label.labelQuestion,
+        value: label.value,
+      }));
+      console.log("Answers:", answers);
+      const response = await axios.put(
+        `http://localhost:3001/api/labels/answer/${currentPersonAnswersId}`,
+        {
+          schemaId: personLabelsId,
+          ownerId: selectedPatient._id,
+          labelData: answers,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      console.log("Labels saved:", response.data);
+    } catch (error) {
+      console.error("Error saving labels:", error);
+    }
+  };
+  
 
   // use effect for current image change
   useEffect(() => {
@@ -342,12 +374,67 @@ const LabelingInterface = () => {
 
   useEffect(() => {
     updateImageLabels();
+
+    // console log selectedPatient
+    console.log("Selected Patient:", selectedPatient);
+    
+    // get personalbels for selected patient
+    const fetchPersonLabels = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3001/api/labels/answer/${selectedPatient._id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        console.log("Person Labels:", response.data.labelData);
+
+        setCurrentPersonAnswersId(response.data._id);
+
+        // change field to labelQuestion
+        const updatedPersonLabels = response.data.labelData.map((label) => {
+          const { field, ...rest } = label;
+          return {
+            ...rest,
+            labelQuestion: field,
+          };
+        });
+
+        console.log("Updated person labels:", updatedPersonLabels);
+
+        // change personLabels to updatedPersonLabels with matching LabelQuestion and assign updatedPersonLabels to personLabels
+        setPersonLabels((prevLabels) =>
+          prevLabels.map((label) => {
+            const updatedLabel = updatedPersonLabels.find(
+              (ulabel) => ulabel.labelQuestion === label.labelQuestion
+            );
+            return updatedLabel ? { ...label, ...updatedLabel } : label;
+          })
+        );
+
+        console.log("3. Person Labels:", personLabels);
+
+        // Handle the response data as needed
+      } catch (error) {
+        console.error("Error fetching labels:", error);
+      }
+    }
+
+    fetchPersonLabels();
+
   }, [selectedPatient]);
+
+  // use effect for person labels change
+  useEffect(() => {
+    console.log("Person labels changed:", personLabels);
+  }, [personLabels]);
 
 
   return (
     <div
-      className={` flex gap-[15px] p-[20px] min-h-screen transition-all duration-300 ease-in-out ${
+      className={`mt-[60px] flex gap-[15px] p-[20px] min-h-screen transition-all duration-300 ease-in-out ${
         isSidebarOpen ? "ml-[215px]" : ""
       } flex-row`}
     >
@@ -402,7 +489,7 @@ const LabelingInterface = () => {
 
       {/* Patient List Sidebar */}
       <div
-        className={`max-h-[calc(100vh_-_100px)] overflow-y-auto bg-white rounded-[10px] shadow-custom p-[20px] w-[200px] mt-[60px] fixed left-[-200px] h-screen transition-transform duration-300 ease-in-out ${
+        className={`max-h-[calc(100vh_-_90px)] overflow-y-auto bg-white rounded-[10px] shadow-[0_4px_12px_rgba(0,0,0,0.1)] p-[20px] w-[200px] fixed left-[-200px] h-screen transition-transform duration-300 ease-in-out ${
           isSidebarOpen ? "translate-x-[220px]" : ""
         }`}
       >
@@ -462,9 +549,9 @@ const LabelingInterface = () => {
           ))}
         </ul>
       </div>
-          
+
       {/* Patient Info Sidebar */}
-      <div className="max-h-[calc(100vh_-_100px)] overflow-y-auto bg-white rounded-[10px] mt-[60px] shadow-custom p-5 w-[300px]">
+      <div className="max-h-[calc(100vh_-_90px)] overflow-y-auto bg-white rounded-[10px] shadow-lg p-5 w-[300px]">
         <h3 className="text-[1.2rem] text-primary mb-4 text-center">
           Patient Labels
         </h3>
@@ -508,7 +595,7 @@ const LabelingInterface = () => {
       </div>
 
       {/* Image Display */}
-      <div className="relative bg-white rounded-[10px] shadow-custom p-5 flex flex-col items-center justify-center overflow-hidden mt-[60px] max-h-[calc(100vh_-_100px)] min-w-[500px]">
+      <div className="relative bg-white rounded-[10px] shadow-lg p-5 flex flex-col items-center justify-center overflow-hidden max-h-[calc(100vh_-_90px)]">
         {currentImage && (
           <img
             src={currentImage.authenticatedUrl}
@@ -549,7 +636,7 @@ const LabelingInterface = () => {
       </div>
 
 {/* Image Labels Sidebar */}
-<div className="max-h-[calc(100vh_-_100px)] overflow-y-auto bg-white rounded-[10px] shadow-custom p-5 w-[320px] mt-[60px] fixed right-[20px] h-screen">
+<div className="max-h-[calc(100vh_-_90px)] overflow-y-auto bg-white rounded-[10px] shadow-lg p-5 w-[320px]">
   <h3 className="text-[1.2rem] text-primary mb-4 text-center">
     Image Labels
   </h3>
