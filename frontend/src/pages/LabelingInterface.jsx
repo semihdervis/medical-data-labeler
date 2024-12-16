@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import backArrow from "./icons/back_arrow.png";
@@ -8,6 +8,31 @@ import previousIcon from "./icons/previous.png";
 import nextIcon from "./icons/next.png";
  
 const LabelingInterface = () => {
+
+  //additional stuff for sort option pop ups
+  const popupRef = useRef(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (popupRef.current && !popupRef.current.contains(event.target)) {
+        setShowSortOptions(false); // Close the popup if clicked outside
+      }
+    };
+
+    // Add the event listener
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    // Cleanup the event listener on unmount
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []); 
+
+    const handleSortButtonClick = () => {
+    // Toggle the popup on button click
+    setShowSortOptions((prev) => !prev);
+  };
+  
   const navigate = useNavigate();
   const { projectId } = useParams();
   const isAdmin = localStorage.getItem("role") === "admin";
@@ -336,139 +361,201 @@ const LabelingInterface = () => {
       </div>
  
       <div className="flex w-full gap-[15px]">
-        {/* Patient List Sidebar */}
-        <div className={`max-h-[calc(100vh_-_100px)] overflow-y-auto bg-white rounded-[10px] shadow-custom p-[20px] mt-[60px] w-[200px] fixed left-[-200px] h-screen transition-transform duration-300 ease-in-out ${
+      {/* Patient List Sidebar */}
+      <div
+        className={`max-h-[calc(100vh_-_100px)] overflow-visible bg-white rounded-[10px] shadow-custom p-[20px] mt-[60px] w-[200px] fixed left-[-200px] h-screen transition-transform duration-300 ease-in-out ${
           isSidebarOpen ? "translate-x-[220px]" : ""
-        }`}>
-          <h3 className="text-[1.2rem] text-primary mb-[15px] text-center">
-            Patients
-          </h3>
- 
-          <div className="flex items-center mb-[10px]">
-            <input
-              type="text"
-              placeholder="Search patients..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md"
-            />
-            <div className="relative inline-block ml-2">
-              <button
-                className="p-0 bg-white transition-transform duration-200 hover:scale-110"
-                onClick={() => setShowSortOptions(!showSortOptions)}
-              >
-                <img src={sorticon} alt="Sort" className="w-5 h-5" />
-              </button>
-              {showSortOptions && (
-                <div className="absolute top-full left-0 bg-white rounded-md p-2 z-10 shadow-lg">
-                  <button
-                    className="block my-1 px-2 py-1 bg-primary text-white rounded-md hover:bg-secondary"
-                    onClick={() => {
-                      setSortOrder("asc");
-                      setShowSortOptions(false);
-                    }}
-                  >
-                    Ascending ID
-                  </button>
-                  <button
-                    className="block my-1 px-2 py-1 bg-primary text-white rounded-md hover:bg-secondary"
-                    onClick={() => {
-                      setSortOrder("desc");
-                      setShowSortOptions(false);
-                    }}
-                  >
-                    Descending ID
-                  </button>
-                </div>
-              )}
-            </div>
+        }`}
+      >
+        <h3 className="text-[1.2rem] text-primary mb-[15px] text-center">
+          Patients
+        </h3>
+
+        <div className="flex items-center mb-[10px]">
+          <input
+            type="text"
+            placeholder="Search patients..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded-md"
+          />
+          <div className="relative inline-block ml-2">
+            <button
+              className="p-0 bg-white transition-transform duration-200 hover:scale-110"
+              onClick={() => setShowSortOptions((prev) => !prev)}
+            >
+              <img src={sorticon} alt="Sort" className="w-5 h-5" />
+            </button>
+            {showSortOptions && (
+              <div  ref={popupRef}
+              className="absolute top-full left-0 bg-white rounded-md  p-2 z-10 shadow-lg">
+                <button
+                  className="block my-1 px-2 py-1 bg-primary text-white rounded-md hover:bg-secondary"
+                  onClick={() => {
+                    setSortOrder("asc");
+                    setShowSortOptions(false);
+                  }}
+                >
+                  Ascending ID
+                </button>
+                <button
+                  className="block my-1 px-2 py-1 bg-primary text-white rounded-md hover:bg-secondary"
+                  onClick={() => {
+                    setSortOrder("desc");
+                    setShowSortOptions(false);
+                  }}
+                >
+                  Descending ID
+                </button>
+              </div>
+            )}
           </div>
- 
-          <ul className="list-none p-0">
-            {filteredAndSortedPatients.map((patient) => (
-              <li
-                key={patient._id}
-                onClick={() => handleSelectPatient(patient)}
-                className="p-3 mb-2 cursor-pointer rounded-lg transition-all duration-300 text-center bg-gray-300 hover:bg-gray-400 hover:shadow-md"
-              >
-                {patient.name}
-              </li>
-            ))}
-          </ul>
         </div>
- 
-{/* Patient Info Sidebar */}
-<div className="max-h-[calc(100vh_-_100px)] mt-[60px] overflow-y-auto bg-white rounded-[10px] shadow-custom p-5 w-[300px]">
-          <h3 className="text-[1.2rem] text-primary mb-4 text-center">
-            Patient Labels
-          </h3>
-          {personLabels.map((label, index) => (
-            <label key={index} className="flex flex-col mb-4 text-sm text-gray-700">
-              {label.labelQuestion}:
-              {renderLabelInput(label, index, handleLabelChange(setPersonLabels))}
-            </label>
+
+        <ul className="list-none p-0">
+          {sortedPatients.map((patient, index) => (
+            <li
+              key={patient.id || index} // Use patient.id if available, otherwise use index
+              onClick={() => handleClick(patient)}
+              className="p-3 mb-2 cursor-pointer rounded-lg transition-all duration-300 text-center bg-gray-300 hover:bg-gray-400 hover:shadow-md"
+            >
+              {patient.name}
+            </li>
           ))}
+        </ul>
+      </div>
+
+      {/* Patient Info Sidebar */}
+      <div className="max-h-[calc(100vh_-_100px)]  mt-[60px] overflow-y-auto bg-white rounded-[10px] shadow-custom p-5 w-[300px]">
+        <h3 className="text-[1.2rem] text-primary mb-4 text-center">
+          Patient Labels
+        </h3>
+        {personLabels.map((question, index) => (
+          <label
+            key={index}
+            className="flex flex-col mb-4 text-sm text-gray-700"
+          >
+            {question.labelQuestion}:
+            {question.labelType === "text" ? (
+              <input
+                type="text"
+                value={question.value}
+                onChange={(e) => handlePersonLabelChange(index, e.target.value)}
+                className="mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
+                placeholder="Enter text here"
+              />
+            ) : question.labelType === "int" ? (
+              <input
+                type="number"
+                value={question.value}
+                onChange={(e) => handlePersonLabelChange(index, e.target.value)}
+                className="mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
+                placeholder="Enter a number"
+              />
+            ) : question.labelType === "dropdown" ? (
+              <select
+                value={question.value}
+                onChange={(e) => handlePersonLabelChange(index, e.target.value)}
+                className="mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
+              >
+                {question.labelOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            ) : null}
+          </label>
+        ))}
+      </div>
+
+      <div className="flex-grow flex flex-col gap-[15px]">
+      {/* Image Display */}
+      <div className="relative bg-white rounded-[10px] shadow-custom mt-[60px] p-5 flex flex-col items-center justify-center overflow-hidden h-[calc(100vh_-_100px)]">
+  {currentImage && (
+    <img
+      src={currentImage.authenticatedUrl}
+      alt="Patient Medical"
+      onClick={() => setIsModalOpen(true)}
+      className="max-w-full max-h-[80vh] rounded-md mb-4 mt-5"
+    />
+  )}
+  {/* Buttons container repositioned to bottom */}
+  <div className="absolute bottom-10 left-0 right-0 flex justify-center items-center gap-40">
+    <button
+      onClick={handlePreviousImage}
+      className="p-0 bg-white transition-transform duration-300 hover:scale-110"
+    >
+      <img src={previousIcon} alt="Previous" className="w-5 h-5" />
+    </button>
+    <button
+      onClick={handleNextImage}
+      className="p-0 bg-white transition-transform duration-300 hover:scale-110"
+    >
+      <img src={nextIcon} alt="Next" className="w-5 h-5" />
+    </button>
+  </div>
+</div>
+
         </div>
- 
-        <div className="flex-grow flex flex-col gap-[15px]">
-          {/* Image Display */}
-          <div className="relative bg-white rounded-[10px] shadow-custom mt-[60px] p-5 flex flex-col items-center justify-center overflow-hidden h-[calc(100vh_-_100px)]">
-            {currentImage && (
+
+        {isModalOpen && currentImage && (
+          <div
+            className="fixed top-0 left-0 w-screen h-screen bg-[rgba(0,0,0,0.7)] flex items-center justify-center z-50 oveflow-auto"
+            onClick={() => setIsModalOpen(false)}
+          >
+            <div className=" max-h-[95vh] overflow-auto">
               <img
                 src={currentImage.authenticatedUrl}
-                alt="Patient Medical"
-                onClick={() => setIsModalOpen(true)}
-                className="max-w-full max-h-[80vh] rounded-md mb-4 mt-5 cursor-pointer"
+                alt="Enlarged View"
+                className="w-full h-auto rounded-lg"
               />
-            )}
-            <div className="flex justify-around items-center w-full mt-5">
-              <button
-                onClick={() => handleImageNavigation('previous')}
-                className="p-0 bg-white transition-transform duration-300 hover:scale-110"
-                disabled={!currentImage}
-              >
-                <img src={previousIcon} alt="Previous" className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => handleImageNavigation('next')}
-                className="p-0 bg-white transition-transform duration-300 hover:scale-110"
-                disabled={!currentImage}
-              >
-                <img src={nextIcon} alt="Next" className="w-5 h-5" />
-              </button>
             </div>
           </div>
-        </div>
- 
-        {/* Image Labels Sidebar */}
-        <div className="max-h-[calc(100vh_-_100px)] overflow-y-auto bg-white rounded-[10px] shadow-custom mt-[60px] p-5 w-[320px]">
-          <h3 className="text-[1.2rem] text-primary mb-4 text-center">
-            Image Labels
-          </h3>
-          {imageLabels.map((label, index) => (
-            <label key={index} className="block mb-5 text-sm text-gray-700">
-              {label.labelQuestion}
-              {renderLabelInput(label, index, handleLabelChange(setImageLabels))}
-            </label>
-          ))}
-        </div>
+        )}
       </div>
- 
-      {/* Modal for enlarged image view */}
-      {isModalOpen && currentImage && (
-        <div
-          className="fixed top-0 left-0 w-screen h-screen bg-[rgba(0,0,0,0.7)] flex items-center justify-center z-50"
-          onClick={() => setIsModalOpen(false)}
+
+{/* Image Labels Sidebar */}
+<div className="max-h-[calc(100vh_-_100px)] overflow-y-auto bg-white rounded-[10px] shadow-custom mt-[60px] p-5 w-[320px]">
+  <h3 className="text-[1.2rem] text-primary mb-4 text-center">
+    Image Labels
+  </h3>
+  {imageLabels.map((label, index) => (
+    <label key={index} className="block mb-5 text-sm text-gray-700">
+      {label.labelQuestion}
+      {label.labelType === "dropdown" ? (
+        <select
+          value={label.value}
+          onChange={(e) => handleImageLabelChange(index, e.target.value)}
+          className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
         >
-          <div className="max-w-[95vw] max-h-[95vh] overflow-hidden">
-            <img
-              src={currentImage.authenticatedUrl}
-              alt="Enlarged View"
-              className="w-full h-auto rounded-lg"
-            />
-          </div>
-        </div>
+          {label.labelOptions.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+      ) : label.labelType === "int" ? (
+        <input
+          type="number"
+          placeholder="Enter a number"
+          value={label.value}
+          onChange={(e) => handleImageLabelChange(index, e.target.value)}
+          className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
+        />
+      ) : (
+        <input
+          type="text"
+          placeholder="Enter details"
+          value={label.value}
+          onChange={(e) => handleImageLabelChange(index, e.target.value)}
+          className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
+        />
       )}
+    </label>
+  ))}
+</div>
+
     </div>
   );
 };
