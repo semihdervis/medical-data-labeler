@@ -119,16 +119,26 @@ const deleteImage = async (imageId) => {
       throw new Error('Image not found');
     }
 
-    // Delete the image file from the filesystem
-    fs.unlinkSync(path.join(__dirname, '..', image.filepath));
+    const imagePath = path.join(__dirname, '../uploads', image.filepath);
 
-    // Delete the image entry from the database
+    // Check if the image file exists on disk
+    if (fs.existsSync(imagePath)) {
+      // Delete the image file from disk
+      fs.unlinkSync(imagePath);
+    } else {
+      console.warn(`Image file not found on disk: ${imagePath}`);
+    }
+
+    // Delete the image document from the database
     await Image.findByIdAndDelete(imageId);
 
-    return { message: 'Image deleted successfully' };
+    // Delete the associated label answers
+    await LabelAnswer.deleteMany({ ownerId: imageId });
+
+    return { success: true, message: 'Image deleted successfully' };
   } catch (error) {
-    console.error(`Error deleting image: ${error.message}`);
-    throw new Error(`Error deleting image: ${error.message}`);
+    console.error('Error deleting image:', error);
+    return { success: false, message: error.message };
   }
 };
 

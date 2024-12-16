@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import backArrow from "./icons/back_arrow.png";
@@ -6,34 +6,47 @@ import saveIcon from "./icons/save.png";
 import sorticon from "./icons/sort_icon.png";
 import previousIcon from "./icons/previous.png";
 import nextIcon from "./icons/next.png";
-import { use } from "react";
-
+ 
 const LabelingInterface = () => {
   const navigate = useNavigate();
-  
-  // Check if user is admin
-  const isAdmin = localStorage.getItem("role") === "admin";
   const { projectId } = useParams();
+  const isAdmin = localStorage.getItem("role") === "admin";
+ 
+  // Core state management
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [showSortOptions, setShowSortOptions] = useState(false);
+ 
+  // Data state
   const [patients, setPatients] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState(null);
-
-  // New state for comprehensive image management
   const [images, setImages] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [currentImage, setCurrentImage] = useState(null);
-
+ 
+  // Labels state
+  const [personLabels, setPersonLabels] = useState([]);
+  const [imageLabels, setImageLabels] = useState([]);
+  const [personLabelsId, setPersonLabelsId] = useState("");
+  const [imageLabelsId, setImageLabelsId] = useState("");
+  const [currentImageAnswersId, setCurrentImageAnswersId] = useState("");
+  const [currentPersonAnswersId, setCurrentPersonAnswersId] = useState("");
+ 
+  // API configuration
+  const API_BASE_URL = "http://localhost:3001";
+  const getAuthHeaders = () => ({
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+  });
+ 
+  // Fetch patients data
   useEffect(() => {
     const fetchPatients = async () => {
       try {
         const response = await axios.get(
-          `/api/patients/namelist/${projectId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
+          `${API_BASE_URL}/api/patients/namelist/${projectId}`,
+          getAuthHeaders()
         );
         setPatients(response.data);
         if (response.data.length > 0) {
@@ -43,407 +56,253 @@ const LabelingInterface = () => {
         console.error("Error fetching patients:", error);
       }
     };
-
+ 
     fetchPatients();
   }, [projectId]);
+ 
+  // Fetch images when patient changes
   useEffect(() => {
     const fetchImages = async () => {
-      if (selectedPatient && selectedPatient._id) {
-        try {
-          const response = await axios.get(
-            `/api/images/${projectId}/${selectedPatient._id}`,
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            }
-          );
-
-          // Fetch authenticated image URLs
-          const imagePromises = response.data.map(async (image) => {
-            const imageUrl = await fetchImageWithAuth(image.filepath);
-            return {
-              ...image,
-              authenticatedUrl: imageUrl,
-            };
-          });
-
-          const processedImages = await Promise.all(imagePromises);
-
-          setImages(processedImages);
-
-          // Set first image if available
-          if (processedImages.length > 0) {
-            setCurrentImageIndex(0);
-            setCurrentImage(processedImages[0]);
-          }
-        } catch (error) {
-          console.error("Error fetching images:", error);
+      if (!selectedPatient?._id) return;
+ 
+      try {
+        const response = await axios.get(
+          `${API_BASE_URL}/api/images/${projectId}/${selectedPatient._id}`,
+          getAuthHeaders()
+        );
+ 
+        const imagePromises = response.data.map(async (image) => {
+          const imageUrl = await fetchImageWithAuth(image.filepath);
+          return { ...image, authenticatedUrl: imageUrl };
+        });
+ 
+        const processedImages = await Promise.all(imagePromises);
+        setImages(processedImages);
+ 
+        if (processedImages.length > 0) {
+          setCurrentImageIndex(0);
+          setCurrentImage(processedImages[0]);
         }
+      } catch (error) {
+        console.error("Error fetching images:", error);
       }
     };
-
-    if (selectedPatient) {
-      fetchImages();
-    }
+ 
+    fetchImages();
   }, [selectedPatient, projectId]);
-  const handleSave = () => {
-    alert("Changes saved!");
-    updatePersonLabels();
-  };
-
+ 
+  // Fetch label schemas
+  useEffect(() => {
+    const fetchLabelSchemas = async () => {
+      try {
+        const response = await axios.get(
+          `${API_BASE_URL}/api/labels/schema/project/${projectId}`,
+          getAuthHeaders()
+        );
+        const [patientSchema, imageSchema] = response.data;
+ 
+        const initializeLabels = (schema) => schema.labelData.map(label => ({
+          ...label,
+          value: ""
+        }));
+ 
+        setPersonLabels(initializeLabels(patientSchema));
+        setImageLabels(initializeLabels(imageSchema));
+        setPersonLabelsId(patientSchema._id);
+        setImageLabelsId(imageSchema._id);
+      } catch (error) {
+        console.error("Error fetching label schemas:", error);
+      }
+    };
+ 
+    fetchLabelSchemas();
+  }, [projectId]);
+ 
+  // Fetch image answers when current image changes
+  useEffect(() => {
+    const fetchImageAnswers = async () => {
+      if (!currentImage?._id) return;
+ 
+      try {
+        const response = await axios.get(
+          `${API_BASE_URL}/api/labels/answer/${currentImage._id}`,
+          getAuthHeaders()
+        );
+ 
+        setCurrentImageAnswersId(response.data._id);
+       
+        const updatedLabels = response.data.labelData.map(({ field, ...rest }) => ({
+          ...rest,
+          labelQuestion: field
+        }));
+ 
+        setImageLabels(prevLabels =>
+          prevLabels.map(label => {
+            const updatedLabel = updatedLabels.find(
+              ul => ul.labelQuestion === label.labelQuestion
+            );
+            return updatedLabel ? { ...label, ...updatedLabel } : label;
+          })
+        );
+      } catch (error) {
+        console.error("Error fetching image labels:", error);
+      }
+    };
+ 
+    fetchImageAnswers();
+  }, [currentImage]);
+ 
+  // Fetch person answers when selected patient changes
+  useEffect(() => {
+    const fetchPersonAnswers = async () => {
+      if (!selectedPatient?._id) return;
+ 
+      try {
+        const response = await axios.get(
+          `${API_BASE_URL}/api/labels/answer/${selectedPatient._id}`,
+          getAuthHeaders()
+        );
+ 
+        setCurrentPersonAnswersId(response.data._id);
+ 
+        const updatedLabels = response.data.labelData.map(({ field, ...rest }) => ({
+          ...rest,
+          labelQuestion: field
+        }));
+ 
+        setPersonLabels(prevLabels =>
+          prevLabels.map(label => {
+            const updatedLabel = updatedLabels.find(
+              ul => ul.labelQuestion === label.labelQuestion
+            );
+            return updatedLabel ? { ...label, ...updatedLabel } : label;
+          })
+        );
+      } catch (error) {
+        console.error("Error fetching person labels:", error);
+      }
+    };
+ 
+    fetchPersonAnswers();
+  }, [selectedPatient]);
+ 
+  // Utility functions
   const fetchImageWithAuth = async (imagePath) => {
     try {
-      const response = await axios.get(`http://localhost:3001/${imagePath}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        responseType: "blob",
-      });
+      const response = await axios.get(
+        `${API_BASE_URL}/${imagePath}`,
+        { ...getAuthHeaders(), responseType: "blob" }
+      );
       return URL.createObjectURL(response.data);
     } catch (error) {
       console.error("Error fetching image:", error);
       return null;
     }
   };
-
-  // Ensure selectedImage is set when selectedPatient changes
-  useEffect(() => {
-    // If the selectedPatient has images, set the first image
-    if (
-      selectedPatient &&
-      selectedPatient.images &&
-      selectedPatient.images.length > 0
-    ) {
-      setSelectedImage(selectedPatient.images[0]);
+ 
+  const updateLabels = async (answersId, schemaId, ownerId, labelData) => {
+    try {
+      console.log("Updating labels:", ownerId, schemaId, labelData);
+      await axios.put(
+        `${API_BASE_URL}/api/labels/answer/${ownerId}`,
+        {
+          schemaId,
+          ownerId,
+          labelData: labelData.map(label => ({
+            field: label.labelQuestion,
+            value: label.value
+          }))
+        },
+        getAuthHeaders()
+      );
+    } catch (error) {
+      console.error("Error updating labels:", error);
     }
-  }, [selectedPatient]);
-
-  const handleSelectPatient = (patient) => {
-    updatePersonLabels();
+  };
+ 
+  // Event handlers
+  const handleSave = async () => {
+    await Promise.all([
+      updateLabels(currentImageAnswersId, imageLabelsId, currentImage._id, imageLabels),
+      updateLabels(currentPersonAnswersId, personLabelsId, selectedPatient._id, personLabels)
+    ]);
+    //alert("Changes saved successfully!");
+  };
+ 
+  const handleSelectPatient = async (patient) => {
+    if (currentImage) {
+      await updateLabels(currentImageAnswersId, imageLabelsId, currentImage._id, imageLabels);
+    }
+    handleSave();
     setSelectedPatient(patient);
   };
-
-  const handleNextImage = () => {
+ 
+  const handleImageNavigation = async (direction) => {
     if (images.length === 0) return;
-
-    updateImageLabels();
-
-    const nextIndex = (currentImageIndex + 1) % images.length;
-    setCurrentImageIndex(nextIndex);
-    setCurrentImage(images[nextIndex]);
+ 
+    await updateLabels(currentImageAnswersId, imageLabelsId, currentImage._id, imageLabels);
+ 
+    const newIndex = direction === 'next'
+      ? (currentImageIndex + 1) % images.length
+      : (currentImageIndex - 1 + images.length) % images.length;
+ 
+    setCurrentImageIndex(newIndex);
+    setCurrentImage(images[newIndex]);
   };
-
-  const handlePreviousImage = () => {
-    if (images.length === 0) return;
-
-    updateImageLabels();
-
-    const previousIndex =
-      (currentImageIndex - 1 + images.length) % images.length;
-    setCurrentImageIndex(previousIndex);
-    setCurrentImage(images[previousIndex]);
-  };
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
-  {
-    /* PatientListSidebar functions */
-  }
-
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortOrder, setSortOrder] = useState("asc"); // Default sort order
-  const [showSortOptions, setShowSortOptions] = useState(false); // State for showing sort options
-
-  // Filter patients based on the search term
-  const filteredPatients = patients.filter((patient) =>
-    patient.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  // Sort patients based on ID
-  const sortedPatients = filteredPatients.sort((a, b) => {
-    return sortOrder === "asc"
-      ? a._id.localeCompare(b._id)
-      : b._id.localeCompare(a._id);
-  });
-
-  const handleClick = (patient) => {
-    console.log("Patient selected:", patient); // Log selected patient object
-    handleSelectPatient(patient);
-  };
-
-  {
-    /* End PatientListSidebar functions */
-  }
-
-  {
-    /* PatientInfoSidebar functions */
-  }
-
-  const [personLabels, setPersonLabels] = useState([]);
-  const [imageLabels, setImageLabels] = useState([]);
-  const [personLabelsId, setPersonLabelsId] = useState("");
-  const [imageLabelsId, setImageLabelsId] = useState("");
-
-  useEffect(() => {
-    const fetchLabels = async () => {
-      try {
-        console.log("project id", projectId);
-        const response = await axios.get(
-          `/api/labels/schema/project/${projectId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        const [patientSchema, imageSchema] = response.data;
-
-        // Add value property to each person label
-        const updatedPersonLabels = patientSchema.labelData.map((label) => ({
-          ...label,
-          value: "", // Default value, you can change it as needed
-        }));
-
-        const updatedImageLabels = imageSchema.labelData.map((label) => ({
-          ...label,
-          value: "", // Default value, you can change it as needed
-        }));
-
-        setPersonLabels(updatedPersonLabels);
-        setImageLabels(updatedImageLabels);
-        console.log("person schema id", patientSchema._id);
-        console.log("image schema id", imageSchema._id);
-        setPersonLabelsId(patientSchema._id);
-        setImageLabelsId(imageSchema._id);
-        console.log("image labels", imageLabels);
-        console.log("person labels", personLabels);
-      } catch (error) {
-        console.error("Error fetching labels:", error);
-      }
-    };
-
-    fetchLabels();
-  }, [projectId]);
-
-  useEffect(() => {
-    console.log("Image labels:", imageLabels);
-  }, [imageLabels]);
-
-  useEffect(() => {
-    console.log("Person labels:", personLabels);
-  }, [personLabels]);
-
-  const handlePersonLabelChange = (index, value) => {
-    setPersonLabels((prevQuestions) =>
-      prevQuestions.map((q, i) => (i === index ? { ...q, value } : q))
+ 
+  const handleLabelChange = (labelSetter) => (index, value) => {
+    labelSetter(prevLabels =>
+      prevLabels.map((label, i) =>
+        i === index ? { ...label, value } : label
+      )
     );
   };
-
-  const handleImageLabelChange = (index, value) => {
-    setImageLabels((prevLabels) =>
-      prevLabels.map((label, i) => (i === index ? { ...label, value } : label))
+ 
+  // Filter and sort patients
+  const filteredAndSortedPatients = patients
+    .filter(patient =>
+      patient.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) =>
+      sortOrder === "asc"
+        ? a._id.localeCompare(b._id)
+        : b._id.localeCompare(a._id)
     );
-  };
-
-  {
-    /* End PatientInfoSidebar functions */
-  }
-
-  // variable for current image answers id
-  const [currentImageAnswersId, setCurrentImageAnswersId] = useState("");
-  const [currentPersonAnswersId, setCurrentPersonAnswersId] = useState("");
-  
-  const updateImageLabels = async () => {
-    try {
-      console.log("Image labels before update:", imageLabels);
-      const answers = imageLabels.map((label) => ({
-        field: label.labelQuestion,
-        value: label.value,
-      }));
-      console.log("Answers:", answers);
-      const response = await axios.put(
-        `http://localhost:3001/api/labels/answer/${currentImageAnswersId}`,
-        {
-          schemaId: imageLabelsId,
-          ownerId: currentImage._id,
-          labelData: answers,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      console.log("Labels saved:", response.data);
-    } catch (error) {
-      console.error("Error saving labels:", error);
-    }
-  };
-
-
-  const updatePersonLabels = async () => {
-    try {
-      console.log("Person labels before update:", personLabels);
-      const answers = personLabels.map((label) => ({
-        field: label.labelQuestion,
-        value: label.value,
-      }));
-      console.log("Answers:", answers);
-      const response = await axios.put(
-        `http://localhost:3001/api/labels/answer/${currentPersonAnswersId}`,
-        {
-          schemaId: personLabelsId,
-          ownerId: selectedPatient._id,
-          labelData: answers,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      console.log("Labels saved:", response.data);
-    } catch (error) {
-      console.error("Error saving labels:", error);
-    }
-  };
-  
-
-  // use effect for current image change
-  useEffect(() => {
-
-    // print current image id
-    
-    // axios get request for specific image with http://localhost:3001/answer/:imageid
-    const fetchLabels = async () => {
-      try {
-        console.log("Current Image ID:", currentImage._id);
-        const response = await axios.get(
-          `http://localhost:3001/api/labels/answer/${currentImage._id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        console.log("Response:", response.data.labelData);
-
-        setCurrentImageAnswersId(response.data._id);
-        console.log("Current Image Answers ID:", currentImageAnswersId);
-
-        // change field to labelQuestion
-
-        // print previous image labels 
-        console.log("Previous image labels:", imageLabels);
-
-        const updatedImageLabels = response.data.labelData.map((label) => {
-          const { field, ...rest } = label;
-          return {
-            ...rest,
-            labelQuestion: field,
-          };
-        });
-
-        console.log("Updated image labels:", updatedImageLabels);
-
-        // change imageLabels to updatedImageLabels with matching LabelQuestion and assign updatedImageLabels to imageLabels
-
-        setImageLabels((prevLabels) =>
-          prevLabels.map((label) => {
-            const updatedLabel = updatedImageLabels.find(
-              (ulabel) => ulabel.labelQuestion === label.labelQuestion
-            );
-            return updatedLabel ? { ...label, ...updatedLabel } : label;
-          })
-        );
-
-        // Handle the response data as needed
-      } catch (error) {
-        console.error("Error fetching labels:", error);
-
-      }
+ 
+  // Render label input
+  const renderLabelInput = (label, index, handleChange) => {
+    const commonProps = {
+      value: label.value,
+      onChange: (e) => handleChange(index, e.target.value),
+      className: "mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
     };
-
-    if (currentImage && currentImage._id) {
-      fetchLabels();
-    }
-
-  }, [currentImage]);
-
-  useEffect(() => {
-    updateImageLabels();
-
-    // console log selectedPatient
-    console.log("Selected Patient:", selectedPatient);
-    
-    // get personalbels for selected patient
-    const fetchPersonLabels = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3001/api/labels/answer/${selectedPatient._id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
+ 
+    switch (label.labelType) {
+      case "dropdown":
+        return (
+          <select {...commonProps}>
+            <option value="">Select an option</option>
+            {label.labelOptions.map(option => (
+              <option key={option} value={option}>{option}</option>
+            ))}
+          </select>
         );
-        console.log("Person Labels:", response.data.labelData);
-
-        setCurrentPersonAnswersId(response.data._id);
-
-        // change field to labelQuestion
-        const updatedPersonLabels = response.data.labelData.map((label) => {
-          const { field, ...rest } = label;
-          return {
-            ...rest,
-            labelQuestion: field,
-          };
-        });
-
-        console.log("Updated person labels:", updatedPersonLabels);
-
-        // change personLabels to updatedPersonLabels with matching LabelQuestion and assign updatedPersonLabels to personLabels
-        setPersonLabels((prevLabels) =>
-          prevLabels.map((label) => {
-            const updatedLabel = updatedPersonLabels.find(
-              (ulabel) => ulabel.labelQuestion === label.labelQuestion
-            );
-            return updatedLabel ? { ...label, ...updatedLabel } : label;
-          })
-        );
-
-        console.log("3. Person Labels:", personLabels);
-
-        // Handle the response data as needed
-      } catch (error) {
-        console.error("Error fetching labels:", error);
-      }
+      case "int":
+        return <input type="number" placeholder="Enter a number" {...commonProps} />;
+      default:
+        return <input type="text" placeholder="Enter text" {...commonProps} />;
     }
-
-    fetchPersonLabels();
-
-  }, [selectedPatient]);
-
-  // use effect for person labels change
-  useEffect(() => {
-    console.log("Person labels changed:", personLabels);
-  }, [personLabels]);
-
-
+  };
+ 
   return (
-    <div
-      className={` flex gap-[15px] p-[20px] min-h-screen transition-all duration-300 ease-in-out ${
-        isSidebarOpen ? "ml-[215px]" : ""
-      } flex-row`}
-    >
+    <div className={`flex gap-[15px] p-[20px] min-h-screen transition-all duration-300 ease-in-out ${
+      isSidebarOpen ? "ml-[215px]" : ""
+    } flex-row`}>
       {/* Top Bar */}
       <div className="flex justify-between items-center h-[60px] bg-white rounded-[10px] shadow-[4px_4px_12px_rgba(0,0,0,0.1)] fixed top-0 left-0 right-[20px] mt-[10px] ml-[20px] w-[calc(100%-40px)] z-50">
         <button
           className="bg-primary ml-[30px] rounded-md border-none cursor-pointer p-[5px] transition-transform duration-200 hover:scale-110"
-          onClick={toggleSidebar}
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -453,239 +312,165 @@ const LabelingInterface = () => {
             <path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z" />
           </svg>
         </button>
+       
         <div className="flex">
           <button
             className="flex items-center justify-center mr-[10px] bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded-md"
-           // if admin navigate admin else navigate doctor
-           onClick={() => {
-            updateImageLabels();
-            updatePersonLabels();
-            if (isAdmin) {
-              navigate(`/admin`);
-            } else {
-              navigate(`/doctor`);
-            }
-          }}
-
+            onClick={() => {
+              handleSave();
+              navigate(isAdmin ? '/admin' : '/doctor');
+            }}
           >
-            <img
-              src={backArrow}
-              alt="Back Arrow"
-              className="w-[20px] h-[20px] mr-[3px]"
-            />
+            <img src={backArrow} alt="Back" className="w-[20px] h-[20px] mr-[3px]" />
             Back to Dashboard
           </button>
+         
           <button
             className="flex items-center justify-center mr-[30px] ml-[10px] bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded-md"
             onClick={handleSave}
           >
-            <img
-              src={saveIcon}
-              alt="Save"
-              className="w-[20px] h-[20px] mr-[3px]"
-            />
+            <img src={saveIcon} alt="Save" className="w-[20px] h-[20px] mr-[3px]" />
             Save
           </button>
         </div>
       </div>
-
+ 
       <div className="flex w-full gap-[15px]">
-      {/* Patient List Sidebar */}
-      <div
-        className={`max-h-[calc(100vh_-_100px)] overflow-y-auto bg-white rounded-[10px] shadow-custom p-[20px] mt-[60px] w-[200px] fixed left-[-200px] h-screen transition-transform duration-300 ease-in-out ${
+        {/* Patient List Sidebar */}
+        <div className={`max-h-[calc(100vh_-_100px)] overflow-y-auto bg-white rounded-[10px] shadow-custom p-[20px] mt-[60px] w-[200px] fixed left-[-200px] h-screen transition-transform duration-300 ease-in-out ${
           isSidebarOpen ? "translate-x-[220px]" : ""
-        }`}
-      >
-        <h3 className="text-[1.2rem] text-primary mb-[15px] text-center">
-          Patients
-        </h3>
-
-        <div className="flex items-center mb-[10px]">
-          <input
-            type="text"
-            placeholder="Search patients..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-md"
-          />
-          <div className="relative inline-block ml-2">
-            <button
-              className="p-0 bg-white transition-transform duration-200 hover:scale-110"
-              onClick={() => setShowSortOptions((prev) => !prev)}
-            >
-              <img src={sorticon} alt="Sort" className="w-5 h-5" />
-            </button>
-            {showSortOptions && (
-              <div className="absolute top-full left-0 bg-white rounded-md p-2 z-10 shadow-lg">
-                <button
-                  className="block my-1 px-2 py-1 bg-primary text-white rounded-md hover:bg-secondary"
-                  onClick={() => {
-                    setSortOrder("asc");
-                    setShowSortOptions(false);
-                  }}
-                >
-                  Ascending ID
-                </button>
-                <button
-                  className="block my-1 px-2 py-1 bg-primary text-white rounded-md hover:bg-secondary"
-                  onClick={() => {
-                    setSortOrder("desc");
-                    setShowSortOptions(false);
-                  }}
-                >
-                  Descending ID
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <ul className="list-none p-0">
-          {sortedPatients.map((patient, index) => (
-            <li
-              key={patient.id || index} // Use patient.id if available, otherwise use index
-              onClick={() => handleClick(patient)}
-              className="p-3 mb-2 cursor-pointer rounded-lg transition-all duration-300 text-center bg-gray-300 hover:bg-gray-400 hover:shadow-md"
-            >
-              {patient.name}
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Patient Info Sidebar */}
-      <div className="max-h-[calc(100vh_-_100px)]  mt-[60px] overflow-y-auto bg-white rounded-[10px] shadow-custom p-5 w-[300px]">
-        <h3 className="text-[1.2rem] text-primary mb-4 text-center">
-          Patient Labels
-        </h3>
-        {personLabels.map((question, index) => (
-          <label
-            key={index}
-            className="flex flex-col mb-4 text-sm text-gray-700"
-          >
-            {question.labelQuestion}:
-            {question.labelType === "text" ? (
-              <input
-                type="text"
-                value={question.value}
-                onChange={(e) => handlePersonLabelChange(index, e.target.value)}
-                className="mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
-                placeholder="Enter text here"
-              />
-            ) : question.labelType === "int" ? (
-              <input
-                type="number"
-                value={question.value}
-                onChange={(e) => handlePersonLabelChange(index, e.target.value)}
-                className="mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
-                placeholder="Enter a number"
-              />
-            ) : question.labelType === "dropdown" ? (
-              <select
-                value={question.value}
-                onChange={(e) => handlePersonLabelChange(index, e.target.value)}
-                className="mt-1 p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
+        }`}>
+          <h3 className="text-[1.2rem] text-primary mb-[15px] text-center">
+            Patients
+          </h3>
+ 
+          <div className="flex items-center mb-[10px]">
+            <input
+              type="text"
+              placeholder="Search patients..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-md"
+            />
+            <div className="relative inline-block ml-2">
+              <button
+                className="p-0 bg-white transition-transform duration-200 hover:scale-110"
+                onClick={() => setShowSortOptions(!showSortOptions)}
               >
-                {question.labelOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            ) : null}
-          </label>
-        ))}
-      </div>
-
-      <div className="flex-grow flex flex-col gap-[15px]">
-      {/* Image Display */}
-      <div className="relative bg-white rounded-[10px] shadow-custom mt-[60px] p-5 flex flex-col items-center justify-center overflow-hidden h-[calc(100vh_-_100px)]">
-  {currentImage && (
-    <img
-      src={currentImage.authenticatedUrl}
-      alt="Patient Medical"
-      onClick={() => setIsModalOpen(true)}
-      className="max-w-full max-h-[80vh] rounded-md mb-4 mt-5"
-    />
-  )}
-  {/* Buttons container repositioned to bottom */}
-  <div className="absolute bottom-5 left-0 right-0 flex justify-center items-center gap-60">
-    <button
-      onClick={handlePreviousImage}
-      className="p-0 bg-white transition-transform duration-300 hover:scale-110"
-    >
-      <img src={previousIcon} alt="Previous" className="w-5 h-5" />
-    </button>
-    <button
-      onClick={handleNextImage}
-      className="p-0 bg-white transition-transform duration-300 hover:scale-110"
-    >
-      <img src={nextIcon} alt="Next" className="w-5 h-5" />
-    </button>
-  </div>
-</div>
-
-        </div>
-
-        {isModalOpen && currentImage && (
-          <div
-            className="fixed top-0 left-0 w-screen h-screen bg-[rgba(0,0,0,0.7)] flex items-center justify-center z-50"
-            onClick={() => setIsModalOpen(false)}
-          >
-            <div className="max-w-[95vw] max-h-[95vh] overflow-hidden">
-              <img
-                src={currentImage.authenticatedUrl}
-                alt="Enlarged View"
-                className="w-full h-auto rounded-lg"
-              />
+                <img src={sorticon} alt="Sort" className="w-5 h-5" />
+              </button>
+              {showSortOptions && (
+                <div className="absolute top-full left-0 bg-white rounded-md p-2 z-10 shadow-lg">
+                  <button
+                    className="block my-1 px-2 py-1 bg-primary text-white rounded-md hover:bg-secondary"
+                    onClick={() => {
+                      setSortOrder("asc");
+                      setShowSortOptions(false);
+                    }}
+                  >
+                    Ascending ID
+                  </button>
+                  <button
+                    className="block my-1 px-2 py-1 bg-primary text-white rounded-md hover:bg-secondary"
+                    onClick={() => {
+                      setSortOrder("desc");
+                      setShowSortOptions(false);
+                    }}
+                  >
+                    Descending ID
+                  </button>
+                </div>
+              )}
             </div>
           </div>
-        )}
-      </div>
-
-{/* Image Labels Sidebar */}
-<div className="max-h-[calc(100vh_-_100px)] overflow-y-auto bg-white rounded-[10px] shadow-custom mt-[60px] p-5 w-[320px]">
-  <h3 className="text-[1.2rem] text-primary mb-4 text-center">
-    Image Labels
-  </h3>
-  {imageLabels.map((label, index) => (
-    <label key={index} className="block mb-5 text-sm text-gray-700">
-      {label.labelQuestion}
-      {label.labelType === "dropdown" ? (
-        <select
-          value={label.value}
-          onChange={(e) => handleImageLabelChange(index, e.target.value)}
-          className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
-        >
-          {label.labelOptions.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
+ 
+          <ul className="list-none p-0">
+            {filteredAndSortedPatients.map((patient) => (
+              <li
+                key={patient._id}
+                onClick={() => handleSelectPatient(patient)}
+                className="p-3 mb-2 cursor-pointer rounded-lg transition-all duration-300 text-center bg-gray-300 hover:bg-gray-400 hover:shadow-md"
+              >
+                {patient.name}
+              </li>
+            ))}
+          </ul>
+        </div>
+ 
+{/* Patient Info Sidebar */}
+<div className="max-h-[calc(100vh_-_100px)] mt-[60px] overflow-y-auto bg-white rounded-[10px] shadow-custom p-5 w-[300px]">
+          <h3 className="text-[1.2rem] text-primary mb-4 text-center">
+            Patient Labels
+          </h3>
+          {personLabels.map((label, index) => (
+            <label key={index} className="flex flex-col mb-4 text-sm text-gray-700">
+              {label.labelQuestion}:
+              {renderLabelInput(label, index, handleLabelChange(setPersonLabels))}
+            </label>
           ))}
-        </select>
-      ) : label.labelType === "int" ? (
-        <input
-          type="number"
-          placeholder="Enter a number"
-          value={label.value}
-          onChange={(e) => handleImageLabelChange(index, e.target.value)}
-          className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
-        />
-      ) : (
-        <input
-          type="text"
-          placeholder="Enter details"
-          value={label.value}
-          onChange={(e) => handleImageLabelChange(index, e.target.value)}
-          className="mt-1 w-full p-2 text-base border border-gray-300 rounded-md focus:border-primary outline-none"
-        />
+        </div>
+ 
+        <div className="flex-grow flex flex-col gap-[15px]">
+          {/* Image Display */}
+          <div className="relative bg-white rounded-[10px] shadow-custom mt-[60px] p-5 flex flex-col items-center justify-center overflow-hidden h-[calc(100vh_-_100px)]">
+            {currentImage && (
+              <img
+                src={currentImage.authenticatedUrl}
+                alt="Patient Medical"
+                onClick={() => setIsModalOpen(true)}
+                className="max-w-full max-h-[80vh] rounded-md mb-4 mt-5 cursor-pointer"
+              />
+            )}
+            <div className="flex justify-around items-center w-full mt-5">
+              <button
+                onClick={() => handleImageNavigation('previous')}
+                className="p-0 bg-white transition-transform duration-300 hover:scale-110"
+                disabled={!currentImage}
+              >
+                <img src={previousIcon} alt="Previous" className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => handleImageNavigation('next')}
+                className="p-0 bg-white transition-transform duration-300 hover:scale-110"
+                disabled={!currentImage}
+              >
+                <img src={nextIcon} alt="Next" className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        </div>
+ 
+        {/* Image Labels Sidebar */}
+        <div className="max-h-[calc(100vh_-_100px)] overflow-y-auto bg-white rounded-[10px] shadow-custom mt-[60px] p-5 w-[320px]">
+          <h3 className="text-[1.2rem] text-primary mb-4 text-center">
+            Image Labels
+          </h3>
+          {imageLabels.map((label, index) => (
+            <label key={index} className="block mb-5 text-sm text-gray-700">
+              {label.labelQuestion}
+              {renderLabelInput(label, index, handleLabelChange(setImageLabels))}
+            </label>
+          ))}
+        </div>
+      </div>
+ 
+      {/* Modal for enlarged image view */}
+      {isModalOpen && currentImage && (
+        <div
+          className="fixed top-0 left-0 w-screen h-screen bg-[rgba(0,0,0,0.7)] flex items-center justify-center z-50"
+          onClick={() => setIsModalOpen(false)}
+        >
+          <div className="max-w-[95vw] max-h-[95vh] overflow-hidden">
+            <img
+              src={currentImage.authenticatedUrl}
+              alt="Enlarged View"
+              className="w-full h-auto rounded-lg"
+            />
+          </div>
+        </div>
       )}
-    </label>
-  ))}
-</div>
-
     </div>
   );
 };
-
+ 
 export default LabelingInterface;

@@ -208,12 +208,15 @@ exports.getLabelAnswerById = async (req, res) => {
 // Update a label answer
 exports.updateLabelAnswer = async (req, res) => {
   try {
-    const updatedLabelAnswer = await LabelAnswer.findByIdAndUpdate(
-      req.params.id,
+    const updatedLabelAnswer = await LabelAnswer.findOneAndUpdate(
+      { ownerId: req.params.ownerId },
       req.body,
       { new: true }
-    )
+    );
+    
     if (!updatedLabelAnswer) {
+      console.log("Err:" +req.params.id)
+      console.log(updatedLabelAnswer)
       return res.status(404).json({ message: 'Label answer not found' })
     }
     res.status(200).json(updatedLabelAnswer)

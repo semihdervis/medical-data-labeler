@@ -88,7 +88,7 @@ router.post('/answer', authenticate, labelController.createLabelAnswer)
 
 router.get('/answer', authenticate, labelController.getAllLabelAnswers)
 router.get('/answer/:id', authenticate, labelController.getLabelAnswerById)
-router.put('/answer/:id', authenticate, labelController.updateLabelAnswer)
+router.put('/answer/:ownerId', authenticate, labelController.updateLabelAnswer)
 router.delete('/answer/:id', authenticate, labelController.deleteLabelAnswer)
 
 module.exports = router
