@@ -228,24 +228,6 @@ class PatientService {
     }
   }
 
-  removePatient (projectId, patientId) {
-    // if in the queue, remove it from the queue, if not queue it for removal
-    if (this.patientQueue.has(patientId)) {
-      this.removePatientFromQueue(patientId)
-    } else {
-      this.removePatientService(projectId, patientId)
-    }
-  }
-
-  removeImage (projectId, patientId, imageId) {
-    // if in the queue, remove it from the queue, if not queue it for removal
-    if (this.imageQueue.has(imageId)) {
-      this.removeImageFromQueue(imageId)
-    } else {
-      removeImageService(projectId, patientId, imageId)
-    }
-  }
-
   async removePatientService (projectId, patientId) {
     return this.addToQueue(() =>
       axios.delete(`${API_BASE_URL}/api/patients/${projectId}/${patientId}`, {
@@ -254,6 +236,15 @@ class PatientService {
         }
       })
     )
+  }
+
+  removePatient (projectId, patientId) {
+    // if in the queue, remove it from the queue, if not queue it for removal
+    if (this.patientQueue.has(patientId)) {
+      this.removePatientFromQueue(patientId)
+    } else {
+      this.removePatientService(projectId, patientId)
+    }
   }
 
   async removeImageService (projectId, patientId, imageId) {
@@ -267,6 +258,15 @@ class PatientService {
         }
       )
     )
+  }
+
+  removeImage (projectId, patientId, imageId) {
+    // if in the queue, remove it from the queue, if not queue it for removal
+    if (this.imageQueue.has(imageId)) {
+      this.removeImageFromQueue(imageId)
+    } else {
+      this.removeImageService(projectId, patientId, imageId)
+    }
   }
 }
 
