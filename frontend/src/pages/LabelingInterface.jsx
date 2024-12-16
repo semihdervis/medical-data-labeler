@@ -120,6 +120,7 @@ const LabelingInterface = () => {
   }, [selectedPatient]);
 
   const handleSelectPatient = (patient) => {
+    updatePersonLabels();
     setSelectedPatient(patient);
   };
 
@@ -458,6 +459,7 @@ const LabelingInterface = () => {
            // if admin navigate admin else navigate doctor
            onClick={() => {
             updateImageLabels();
+            updatePersonLabels();
             if (isAdmin) {
               navigate(`/admin`);
             } else {
