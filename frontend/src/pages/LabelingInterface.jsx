@@ -444,7 +444,7 @@ const LabelingInterface = () => {
                 className="max-w-full max-h-[80vh] rounded-md mb-4 mt-5 cursor-pointer"
               />
             )}
-            <div className="flex justify-around items-center w-full mt-5">
+            <div className="absolute bottom-10 left-0 right-0 flex justify-center items-center gap-40">
               <button
                 onClick={() => handleImageNavigation('previous')}
                 className="p-0 bg-white transition-transform duration-300 hover:scale-110"
