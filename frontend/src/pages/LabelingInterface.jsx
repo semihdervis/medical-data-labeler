@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import backArrow from "./icons/back_arrow.png";
+import saveIcon from "./icons/save.png";
 import sorticon from "./icons/sort_icon.png";
 import previousIcon from "./icons/previous.png";
 import nextIcon from "./icons/next.png";
@@ -86,6 +87,10 @@ const LabelingInterface = () => {
       fetchImages();
     }
   }, [selectedPatient, projectId]);
+  const handleSave = () => {
+    alert("Changes saved!");
+    updatePersonLabels();
+  };
 
   const fetchImageWithAuth = async (imagePath) => {
     try {
@@ -469,6 +474,17 @@ const LabelingInterface = () => {
               className="w-[20px] h-[20px] mr-[3px]"
             />
             Back to Dashboard
+          </button>
+          <button
+            className="flex items-center justify-center mr-[30px] ml-[10px] bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded-md"
+            onClick={handleSave}
+          >
+            <img
+              src={saveIcon}
+              alt="Save"
+              className="w-[20px] h-[20px] mr-[3px]"
+            />
+            Save
           </button>
         </div>
       </div>
