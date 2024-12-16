@@ -43,7 +43,8 @@ function PersonLabels({ personLabels, setPersonLabels }) {
               }}
               className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
             />
-            <select
+             <div className="flex gap-2 items-center">
+             <select
               value={label.labelType}
               onChange={(e) => {
                 const newLabels = [...personLabels];
@@ -60,16 +61,10 @@ function PersonLabels({ personLabels, setPersonLabels }) {
               <option value="dropdown">Dropdown</option>
               <option value="slider">Slider</option>
             </select>
-            <button
-              className="bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition"
-              onClick={() => handleRemovePersonLabel(index)}
-            >
-              <img src={removeIcon} alt="Remove" className="w-5 h-5" />
-            </button>
-          </div>
 
-          {/* Options section toggle */}
-          {label.labelType === "dropdown" && (
+
+{/* Options section toggle */}
+{label.labelType === "dropdown" && (
             <div>
               <button
                 className="bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition"
@@ -136,8 +131,20 @@ function PersonLabels({ personLabels, setPersonLabels }) {
               )}
             </div>
           )}
+
+<button
+              className="bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition"
+              onClick={() => handleRemovePersonLabel(index)}
+            >
+              <img src={removeIcon} alt="Remove" className="w-5 h-5" />
+            </button>
         </div>
-      ))}
+             </div>
+            
+            
+          </div>
+
+    ))}
       <button
         className="bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition w-full mt-3"
         onClick={handleAddPersonLabel}
