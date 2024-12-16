@@ -600,29 +600,31 @@ const LabelingInterface = () => {
       <div className="flex-grow flex flex-col gap-[15px]">
       {/* Image Display */}
       <div className="relative bg-white rounded-[10px] shadow-custom mt-[60px] p-5 flex flex-col items-center justify-center overflow-hidden h-[calc(100vh_-_100px)]">
-        {currentImage && (
-          <img
-            src={currentImage.authenticatedUrl}
-            alt="Patient Medical"
-            onClick={() => setIsModalOpen(true)}
-            className="max-w-full max-h-[80vh] rounded-md mb-4 mt-5"
-          />
-        )}
-        <div className="flex justify-around items-center w-full mt-5">
-          <button
-            onClick={handlePreviousImage}
-            className="p-0 bg-white transition-transform duration-300 hover:scale-110"
-          >
-            <img src={previousIcon} alt="Previous" className="w-5 h-5" />
-          </button>
-          <button
-            onClick={handleNextImage}
-            className="p-0 bg-white transition-transform duration-300 hover:scale-110"
-          >
-            <img src={nextIcon} alt="Next" className="w-5 h-5" />
-          </button>
-        </div>
-        </div>
+  {currentImage && (
+    <img
+      src={currentImage.authenticatedUrl}
+      alt="Patient Medical"
+      onClick={() => setIsModalOpen(true)}
+      className="max-w-full max-h-[80vh] rounded-md mb-4 mt-5"
+    />
+  )}
+  {/* Buttons container repositioned to bottom */}
+  <div className="absolute bottom-5 left-0 right-0 flex justify-center items-center gap-60">
+    <button
+      onClick={handlePreviousImage}
+      className="p-0 bg-white transition-transform duration-300 hover:scale-110"
+    >
+      <img src={previousIcon} alt="Previous" className="w-5 h-5" />
+    </button>
+    <button
+      onClick={handleNextImage}
+      className="p-0 bg-white transition-transform duration-300 hover:scale-110"
+    >
+      <img src={nextIcon} alt="Next" className="w-5 h-5" />
+    </button>
+  </div>
+</div>
+
         </div>
 
         {isModalOpen && currentImage && (
