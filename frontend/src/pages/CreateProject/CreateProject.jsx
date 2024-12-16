@@ -118,7 +118,7 @@ function CreateProject () {
           }
         }
       )
-
+      /*
       const assignedResponse = await axios.put(
         `/api/projects/${id}/update-assigns`,
         {
@@ -129,7 +129,7 @@ function CreateProject () {
             Authorization: `Bearer ${token}`
           }
         }
-      )
+      )*/
 
       console.table('Image labels bound to project:', imageLabelResponse.data)
       console.table(
