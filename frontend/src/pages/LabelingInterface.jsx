@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, {useRef, useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import backArrow from "./icons/back_arrow.png";
@@ -39,6 +39,25 @@ const LabelingInterface = () => {
   const getAuthHeaders = () => ({
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
   });
+  //additional stuff for sort option pop ups
+  const popupRef = useRef(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (popupRef.current && !popupRef.current.contains(event.target)) {
+        setShowSortOptions(false); // Close the popup if clicked outside
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []); 
+
+    const handleSortButtonClick = () => {
+    setShowSortOptions((prev) => !prev);
+  }; 
  
   // Fetch patients data
   useEffect(() => {
@@ -292,6 +311,9 @@ const LabelingInterface = () => {
       default:
         return <input type="text" placeholder="Enter text" {...commonProps} />;
     }
+
+
+
   };
  
   return (
@@ -337,7 +359,7 @@ const LabelingInterface = () => {
  
       <div className="flex w-full gap-[15px]">
         {/* Patient List Sidebar */}
-        <div className={`max-h-[calc(100vh_-_100px)] overflow-y-auto bg-white rounded-[10px] shadow-custom p-[20px] mt-[60px] w-[200px] fixed left-[-200px] h-screen transition-transform duration-300 ease-in-out ${
+        <div className={`max-h-[calc(100vh_-_100px)] overflow-visible bg-white rounded-[10px] shadow-custom p-[20px] mt-[60px] w-[200px] fixed left-[-200px] h-screen transition-transform duration-300 ease-in-out ${
           isSidebarOpen ? "translate-x-[220px]" : ""
         }`}>
           <h3 className="text-[1.2rem] text-primary mb-[15px] text-center">
@@ -360,7 +382,8 @@ const LabelingInterface = () => {
                 <img src={sorticon} alt="Sort" className="w-5 h-5" />
               </button>
               {showSortOptions && (
-                <div className="absolute top-full left-0 bg-white rounded-md p-2 z-10 shadow-lg">
+                <div ref={popupRef}
+                className="absolute top-full left-0 bg-white rounded-md p-2 z-10 shadow-lg">
                   <button
                     className="block my-1 px-2 py-1 bg-primary text-white rounded-md hover:bg-secondary"
                     onClick={() => {
@@ -460,7 +483,7 @@ const LabelingInterface = () => {
           className="fixed top-0 left-0 w-screen h-screen bg-[rgba(0,0,0,0.7)] flex items-center justify-center z-50"
           onClick={() => setIsModalOpen(false)}
         >
-          <div className="max-w-[95vw] max-h-[95vh] overflow-hidden">
+          <div className="max-w-[95vw] max-h-[95vh] overflow-auto">
             <img
               src={currentImage.authenticatedUrl}
               alt="Enlarged View"
