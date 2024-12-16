@@ -9,11 +9,12 @@ const checkAdmin = require('../middlewares/checkAdmin');
 
 
 // log every request to the console
+/*
 router.use((req, res, next) => {
   console.log(`Request: ${req.method} ${req.originalUrl}`);
   next();
 });
-
+*/
 // Set up multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -48,6 +49,6 @@ router.post(
   imageController.uploadMultipleImages
 );
 
-router.get('/:projectId/:patientId', authenticate, checkAdmin, imageController.getImagesByProjectAndPatient);
+router.get('/:projectId/:patientId', authenticate, imageController.getImagesByProjectAndPatient);
 router.delete('/:projectId/:patientId/:imageId', authenticate, checkAdmin, imageController.deleteImageWithRequest);
 module.exports = router;

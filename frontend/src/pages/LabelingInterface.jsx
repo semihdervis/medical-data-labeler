@@ -11,6 +11,7 @@ const LabelingInterface = () => {
   const navigate = useNavigate();
   const { projectId } = useParams();
   const isAdmin = localStorage.getItem("role") === "admin";
+  const projects = JSON.parse(localStorage.getItem("projects"));
  
   // Core state management
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -85,9 +86,11 @@ const LabelingInterface = () => {
       if (!selectedPatient?._id) return;
  
       try {
+        console .log("fetching images for patient", projects);
         const response = await axios.get(
           `${API_BASE_URL}/api/images/${projectId}/${selectedPatient._id}`,
-          getAuthHeaders()
+          
+          getAuthHeaders(), 
         );
  
         const imagePromises = response.data.map(async (image) => {
@@ -209,8 +212,13 @@ const LabelingInterface = () => {
   const fetchImageWithAuth = async (imagePath) => {
     try {
       const response = await axios.get(
-        `${API_BASE_URL}/${imagePath}`,
-        { ...getAuthHeaders(), responseType: "blob" }
+        `${API_BASE_URL}/${imagePath}?projects=${projects.join(",")}`, // Send projects as query parameters
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+          responseType: 'blob',
+        }
       );
       return URL.createObjectURL(response.data);
     } catch (error) {
@@ -218,6 +226,7 @@ const LabelingInterface = () => {
       return null;
     }
   };
+  
  
   const updateLabels = async (answersId, schemaId, ownerId, labelData) => {
     try {

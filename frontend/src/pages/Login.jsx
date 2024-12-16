@@ -11,11 +11,14 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       const response = await axios.post('/api/auth/login', { email, password });
-      const { token, isAdmin } = response.data;
+      const { token, isAdmin, projects} = response.data;
+      
+      
 
       // Store the token and role in local storage
       localStorage.setItem('token', token);
       localStorage.setItem('role', isAdmin ? 'admin' : 'doctor');
+      localStorage.setItem('projects', JSON.stringify(projects));
 
       // Clear error and navigate to the appropriate dashboard
       setError('');

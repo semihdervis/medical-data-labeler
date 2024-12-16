@@ -4,12 +4,13 @@ const labelController = require('../controllers/labelController')
 const authenticate = require('../middlewares/authenticate')
 const checkAdmin = require('../middlewares/checkAdmin')
 
-
 // log all requests
+/*
 router.use((req, res, next) => {
   console.log('Label request made: ', req.method, req.path)
   next()
 })
+  */
 
 // Label Schema Routes
 router.post(
@@ -43,7 +44,11 @@ router.delete(
   labelController.deleteLabelSchema
 )
 
-router.get('/schema/project/:id/', authenticate, labelController.getLabelSchemaByProjectId)
+router.get(
+  '/schema/project/:id/',
+  authenticate,
+  labelController.getLabelSchemaByProjectId
+)
 /*
 {
   "projectId": "6729224313e018e76715f7e0",
@@ -61,11 +66,8 @@ router.get('/schema/project/:id/', authenticate, labelController.getLabelSchemaB
   ]
 } */
 
-
-
 // Label Answer Routes
 router.post('/answer', authenticate, labelController.createLabelAnswer)
-
 
 /*
 
@@ -84,7 +86,6 @@ router.post('/answer', authenticate, labelController.createLabelAnswer)
 }
 
 */
-
 
 router.get('/answer', authenticate, labelController.getAllLabelAnswers)
 router.get('/answer/:id', authenticate, labelController.getLabelAnswerById)
