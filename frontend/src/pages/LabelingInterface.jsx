@@ -657,10 +657,10 @@ const LabelingInterface = () => {
 
         {isModalOpen && currentImage && (
           <div
-            className="fixed top-0 left-0 w-screen h-screen bg-[rgba(0,0,0,0.7)] flex items-center justify-center z-50"
+            className="fixed top-0 left-0 w-screen h-screen bg-[rgba(0,0,0,0.7)] flex items-center justify-center z-50 oveflow-auto"
             onClick={() => setIsModalOpen(false)}
           >
-            <div className="max-w-[95vw] max-h-[95vh] overflow-hidden">
+            <div className=" max-h-[95vh] overflow-auto">
               <img
                 src={currentImage.authenticatedUrl}
                 alt="Enlarged View"
