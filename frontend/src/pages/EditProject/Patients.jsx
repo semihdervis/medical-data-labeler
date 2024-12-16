@@ -19,19 +19,21 @@ function Patients ({ patients, setPatients, patientService }) {
     const fetchImages = async () => {
       console.log('selectedPatientId', selectedPatientId)
       // if patient id starts with patient, it is a new patient, so no need to fetch images
-      if (selectedPatientId && selectedPatientId.startsWith('patient')) {
-        setImages([])
-        setImageUrls({})
-      } else {
-        try {
-          const response = await patientService.getPatientImages(
-            id,
-            selectedPatientId
-          )
-          setImages(response.data)
-          fetchImageUrls(response.data)
-        } catch (error) {
-          console.error('Error fetching images:', error)
+      if (selectedPatientId) {
+        if (selectedPatientId.startsWith('patient')) {
+          setImages([])
+          setImageUrls({})
+        } else {
+          try {
+            const response = await patientService.getPatientImages(
+              id,
+              selectedPatientId
+            )
+            setImages(response.data)
+            fetchImageUrls(response.data)
+          } catch (error) {
+            console.error('Error fetching images:', error)
+          }
         }
       }
     }
