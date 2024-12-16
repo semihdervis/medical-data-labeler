@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import removeIcon from "../icons/remove.png";
 import addIcon from "../icons/add.png";
 
@@ -24,11 +24,27 @@ function ImageLabels({ imageLabels, setImageLabels }) {
     }
   };
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        isOptionsVisible !== null &&
+        dropdownRefs.current[isOptionsVisible] &&
+        !dropdownRefs.current[isOptionsVisible].contains(event.target)
+      ) {
+        setIsOptionsVisible(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOptionsVisible]);
+
   return (
     <section className="bg-white rounded-lg p-5 shadow-md w-full max-w-xl">
-      <h3 className="text-primary text-lg font-bold mb-4">
-        Image-Related Labels
-      </h3>
+      <h3 className="text-primary text-lg font-bold mb-4">Image-Related Labels</h3>
       {imageLabels.map((label, index) => (
         <div key={index} className="flex flex-col gap-4 mb-6">
           <div className="flex gap-4 items-start">
@@ -78,29 +94,26 @@ function ImageLabels({ imageLabels, setImageLabels }) {
 
           {/* Options section toggle */}
           {label.labelType === "dropdown" && isOptionsVisible === index && (
-            <div className="absolute bg-gray-50 border border-gray-300 p-4 rounded-md shadow-lg z-50 mt-2">
-              <h4 className="text-primary text-md font-semibold mb-4">
-                Options
-              </h4>
+            <div
+              ref={(el) => (dropdownRefs.current[index] = el)}
+              className="absolute right-56 top-80 bg-gray-50 border border-gray-300 p-4 rounded-md shadow-lg z-50 mt-2"
+            >
+              <h4 className="text-primary text-md font-semibold mb-4">Options</h4>
               {label.labelOptions.map((option, optionIndex) => (
-                <div
-                  key={optionIndex}
-                  className="flex items-center gap-2 mb-2"
-                >
+                <div key={optionIndex} className="flex items-center gap-2 mb-2">
                   <input
                     type="text"
                     value={option}
                     placeholder="Enter option"
                     onChange={(e) => {
                       const newLabels = [...imageLabels];
-                      newLabels[index].labelOptions[optionIndex] =
-                        e.target.value;
+                      newLabels[index].labelOptions[optionIndex] = e.target.value;
                       setImageLabels(newLabels);
                     }}
                     className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                   <button
-                    className="bg-red-600 text-white py-1 px-2 rounded-md hover:bg-red-700 transition"
+                    className="bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition"
                     onClick={() => {
                       const newLabels = [...imageLabels];
                       newLabels[index].labelOptions = newLabels[index].labelOptions.filter(
@@ -109,11 +122,7 @@ function ImageLabels({ imageLabels, setImageLabels }) {
                       setImageLabels(newLabels);
                     }}
                   >
-                    <img
-                      src={removeIcon}
-                      alt="Remove Option"
-                      className="w-4 h-4"
-                    />
+                    <img src={removeIcon} alt="Remove Option" className="w-4 h-4" />
                   </button>
                 </div>
               ))}
@@ -126,7 +135,7 @@ function ImageLabels({ imageLabels, setImageLabels }) {
                   className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 />
                 <button
-                  className="bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition"
+                  className="bg-primary text-white p-2 rounded-md hover:bg-secondary transition"
                   onClick={() => handleAddOption(index)}
                 >
                   <img src={addIcon} alt="Add Option" className="w-4 h-4" />
