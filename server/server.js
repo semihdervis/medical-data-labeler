@@ -55,7 +55,7 @@ const authorize = (req, res, next) => {
     res.status(403).json({ message: 'Access denied' });
   }
 };
-
+  
 
 // Serve static files with authentication and authorization
 app.use('/projects', authenticate, authorize, express.static('projects'))

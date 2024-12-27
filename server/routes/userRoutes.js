@@ -22,6 +22,12 @@ router.put('/:id', authenticate, checkAdmin, userController.updateUser);
 // Delete a user (Admin only)
 router.delete('/:id', authenticate, checkAdmin, userController.deleteUser);
 
+// Forgot password
+router.post('/forgot-password', userController.forgotPassword);
+
+// Reset password
+router.post('/reset-password/:token', userController.resetPassword);
+
 
 
 module.exports = router;
