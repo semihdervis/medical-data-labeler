@@ -1,40 +1,38 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from 'axios';
+import axios from "axios";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('/api/auth/login', { email, password });
-      const { token, isAdmin, projects} = response.data;
-      
-      
+      const response = await axios.post("/api/auth/login", { email, password });
+      const { token, isAdmin, projects } = response.data;
 
       // Store the token and role in local storage
-      localStorage.setItem('token', token);
-      localStorage.setItem('role', isAdmin ? 'admin' : 'doctor');
-      localStorage.setItem('projects', JSON.stringify(projects));
+      localStorage.setItem("token", token);
+      localStorage.setItem("role", isAdmin ? "admin" : "doctor");
+      localStorage.setItem("projects", JSON.stringify(projects));
 
       // Clear error and navigate to the appropriate dashboard
-      setError('');
+      setError("");
       if (isAdmin) {
-        navigate('/admin');
+        navigate("/admin");
       } else {
-        navigate('/doctor');
+        navigate("/doctor");
       }
     } catch (error) {
-      console.error('Login error:', error);
-      setError('Invalid email or password');
+      console.error("Login error:", error);
+      setError("Invalid email or password");
     }
   };
 
   const handleKeyDown = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       handleLogin();
     }
   };
@@ -74,9 +72,15 @@ const Login = () => {
         >
           Don't have an account? Register
         </button>
+        <button
+          onClick={() => navigate("/forgot-password")}
+          className="w-full max-w-xs mt-2 text-sm text-blue-700 underline hover:text-blue-500"
+        >
+          Forgot your password?
+        </button>
       </div>
     </div>
   );
-}
+};
 
 export default Login;

@@ -8,6 +8,7 @@ import LabelingInterface from "./pages/LabelingInterface";
 import AdminProjectPage from "./pages/EditProject/EditProject";
 import CreateProject from "./pages/CreateProject/CreateProject";
 import ProtectedRoute from "./components/ProtectedRoute"; // Import the ProtectedRoute component
+import ForgotPassword from "./pages/ForgotPassword";
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
       <Route path="/label/:projectId" element={<ProtectedRoute element={LabelingInterface} allowedRoles={['admin', 'doctor']} />} /> {/* Updated route */}
       <Route path="/edit/:id" element={<ProtectedRoute element={AdminProjectPage} allowedRoles={['admin']} />} />
       <Route path="/create" element={<ProtectedRoute element={CreateProject} allowedRoles={['admin']} />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
     </Routes>
   );
 };
