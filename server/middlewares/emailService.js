@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer');
+const nodemailer = require('nodemailer')
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -6,7 +6,7 @@ const transporter = nodemailer.createTransport({
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS
   }
-});
+})
 
 const sendEmail = async ({ to, subject, text }) => {
   const mailOptions = {
@@ -14,16 +14,16 @@ const sendEmail = async ({ to, subject, text }) => {
     to,
     subject,
     text
-  };
+  }
 
   try {
-    await transporter.sendMail(mailOptions);
-    console.log('Recovery email sent successfully');
+    await transporter.sendMail(mailOptions)
+    console.log('Recovery email sent successfully')
   } catch (error) {
-    console.error('Error sending recovery email:', error);
+    console.error('Error sending recovery email:', error)
   }
-};
+}
 
 module.exports = {
   sendEmail
-};
+}

@@ -22,16 +22,13 @@ function AssignDoctor ({
         console.error('all:', allDoctors)
         setError(
           'Doctor not found. Please ensure the email is correct and the doctor exists.'
-          
         )
       }
     }
   }
 
   const handleRemoveDoctor = async doctorEmail => {
-    setAssignedDoctors(
-      assignedDoctors.filter(doctor => doctor !== doctorEmail)
-    )
+    setAssignedDoctors(assignedDoctors.filter(doctor => doctor !== doctorEmail))
   }
   /*
    // Add the doctor to the project

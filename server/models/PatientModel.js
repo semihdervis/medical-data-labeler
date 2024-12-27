@@ -1,39 +1,42 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
-const patientSchema = new mongoose.Schema({
+const patientSchema = new mongoose.Schema(
+  {
     name: {
-        type: String,
-        required: true
+      type: String,
+      required: true
     },
     age: {
-        type: Number,
-        required: true
+      type: Number,
+      required: true
     },
     gender: {
-        type: String,
-        required: true
+      type: String,
+      required: true
     },
     contactNumber: {
-        type: String,
-        required: false
+      type: String,
+      required: false
     },
     address: {
-        type: String,
-        required: false
+      type: String,
+      required: false
     },
     medicalHistory: {
-        type: [String],
-        default: []
+      type: [String],
+      default: []
     },
     projectId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Project',
-        required: true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Project',
+      required: true
     }
-}, {
+  },
+  {
     timestamps: true
-});
+  }
+)
 
-const Patient = mongoose.model('Patient', patientSchema);
+const Patient = mongoose.model('Patient', patientSchema)
 
-module.exports = Patient;
+module.exports = Patient

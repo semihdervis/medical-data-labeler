@@ -5,20 +5,19 @@ const authenticate = require('../middlewares/authenticate')
 const checkAdmin = require('../middlewares/checkAdmin') // Import the checkAdmin middleware
 
 // Get all projects
-router.get('/get', authenticate, projectController.getAllProjects);
+router.get('/get', authenticate, projectController.getAllProjects)
 
 // Get project by ID
-router.get('/:id', authenticate, projectController.getProjectById);
+router.get('/:id', authenticate, projectController.getProjectById)
 
 // Create a new project
-router.post('/add', authenticate, projectController.createProject);
+router.post('/add', authenticate, projectController.createProject)
 
 // Update a project
-router.put('/:id', authenticate, projectController.updateProject);
+router.put('/:id', authenticate, projectController.updateProject)
 
 // Delete a project
-router.delete('/:id', authenticate, projectController.deleteProject);
-
+router.delete('/:id', authenticate, projectController.deleteProject)
 
 // Assign a doctor to a project
 router.post(

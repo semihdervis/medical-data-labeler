@@ -5,7 +5,6 @@ const emailService = require('../middlewares/emailService')
 const RecoveryToken = require('../models/RecoveryTokenModel')
 const bcrypt = require('bcryptjs')
 
-
 // Get all users
 exports.getAllUsers = async (req, res) => {
   try {
@@ -79,87 +78,86 @@ exports.deleteUser = async (req, res) => {
   }
 }
 
-
-const validateRecoveryToken = async (token) => {
+const validateRecoveryToken = async token => {
   try {
-    const recoveryToken = await RecoveryToken.findOne({ token });
+    const recoveryToken = await RecoveryToken.findOne({ token })
     if (!recoveryToken) {
-      return { isValid: false, error: 'Invalid or expired token' };
+      return { isValid: false, error: 'Invalid or expired token' }
     }
-    return { isValid: true, userId: recoveryToken.userId };
+    return { isValid: true, userId: recoveryToken.userId }
   } catch (error) {
-    return { isValid: false, error: error.message };
+    return { isValid: false, error: error.message }
   }
-};
+}
 
-const generateRecoveryToken = async (userId) => {
-  let token;
-  let tokenExists = true;
+const generateRecoveryToken = async userId => {
+  let token
+  let tokenExists = true
 
   // Generate a unique 6-digit token
   while (tokenExists) {
-    token = Math.floor(100000 + Math.random() * 900000).toString();
-    tokenExists = await RecoveryToken.findOne({ token });
+    token = Math.floor(100000 + Math.random() * 900000).toString()
+    tokenExists = await RecoveryToken.findOne({ token })
   }
 
   // Create a new recovery token document
   const recoveryToken = new RecoveryToken({
     userId,
     token
-  });
+  })
 
   // Save the token to the database
-  await recoveryToken.save();
+  await recoveryToken.save()
 
-  return token;
-};
+  return token
+}
 
 exports.forgotPassword = async (req, res) => {
-  const { email } = req.body;
+  const { email } = req.body
 
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email })
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: 'User not found' })
     }
 
-    const token = await generateRecoveryToken(user._id);
+    const token = await generateRecoveryToken(user._id)
 
     await emailService.sendEmail({
       to: email,
       subject: 'Password Reset',
       text: `Your recovery token is: ${token}. `
-    });
+    })
 
-    res.status(200).json({ message: 'Password reset token sent to your email' });
+    res.status(200).json({ message: 'Password reset token sent to your email' })
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message })
   }
-};
+}
 
 exports.resetPassword = async (req, res) => {
-  const { token } = req.params;
-  const { newPassword } = req.body;
+  const { token } = req.params
+  const { newPassword } = req.body
 
   try {
-    const { isValid, userId, error } = await validateRecoveryToken(token);
+    const { isValid, userId, error } = await validateRecoveryToken(token)
     if (!isValid) {
-      return res.status(400).json({ message: error });
+      return res.status(400).json({ message: error })
     }
 
-    const user = await User.findById(userId);
+    const user = await User.findById(userId)
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: 'User not found' })
     }
 
-    user.password = newPassword;
-    await user.save();
+    user.password = newPassword
+    await user.save()
 
     // Remove the used recovery token from the database
-    await RecoveryToken.deleteOne({ token });
+    await RecoveryToken.deleteOne({ token })
 
-    res.status(200).json({ message: 'Password reset successful' });
+    res.status(200).json({ message: 'Password reset successful' })
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message })
   }
-};
+}

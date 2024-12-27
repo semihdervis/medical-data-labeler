@@ -37,25 +37,24 @@ app.use('/api/labels', labelRoutes) // Use label routes
 
 // Authorization middleware for static files
 const authorize = (req, res, next) => {
-  const filePath = req.path;
-  const projectId = path.basename(path.dirname(path.dirname(filePath)));
-  const projects = req.query.projects?.split(",") || []; // Get projects from query
+  const filePath = req.path
+  const projectId = path.basename(path.dirname(path.dirname(filePath)))
+  const projects = req.query.projects?.split(',') || [] // Get projects from query
 
-  console.log("req.query.projects", projects);
-  console.log('Projects:', projects, 'Project ID:', projectId);
+  console.log('req.query.projects', projects)
+  console.log('Projects:', projects, 'Project ID:', projectId)
 
   if (
     req.userRole === 'admin' ||
     (Array.isArray(projects) &&
       projects.map(String).includes(String(projectId)))
   ) {
-    console.log('Authorized');
-    next();
+    console.log('Authorized')
+    next()
   } else {
-    res.status(403).json({ message: 'Access denied' });
+    res.status(403).json({ message: 'Access denied' })
   }
-};
-  
+}
 
 // Serve static files with authentication and authorization
 app.use('/projects', authenticate, authorize, express.static('projects'))

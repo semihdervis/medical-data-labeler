@@ -1,32 +1,32 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 const imageSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
+    required: true
   },
   filepath: {
     type: String,
-    required: true,
+    required: true
   },
   uploader: {
     type: String,
-    required: true,
+    required: true
   },
   date: {
     type: Date,
-    default: Date.now,
+    default: Date.now
   },
   projectId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Project',
-    required: true,
+    required: true
   },
   patientId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Patient',
-    required: true,
-  },
-});
+    required: true
+  }
+})
 
-module.exports = mongoose.model('images', imageSchema);
+module.exports = mongoose.model('images', imageSchema)

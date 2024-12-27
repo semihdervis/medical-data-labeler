@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 const recoveryTokenSchema = new mongoose.Schema({
   userId: {
@@ -16,6 +16,6 @@ const recoveryTokenSchema = new mongoose.Schema({
     default: Date.now,
     expires: 3600 // Token expires in 1 hour
   }
-});
+})
 
-module.exports = mongoose.model('RecoveryToken', recoveryTokenSchema);
+module.exports = mongoose.model('RecoveryToken', recoveryTokenSchema)

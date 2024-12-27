@@ -1,9 +1,8 @@
 const LabelSchema = require('../models/LabelSchemaModel')
 const LabelAnswer = require('../models/LabelAnswersModel')
 const Project = require('../models/ProjectModel')
-const Image = require('../models/ImageModel'); // Assuming you have an Image model
-const Patient = require('../models/PatientModel'); // Assuming you have a Patient model
-
+const Image = require('../models/ImageModel') // Assuming you have an Image model
+const Patient = require('../models/PatientModel') // Assuming you have a Patient model
 
 // Create a new label schema
 exports.createLabelSchema = async (req, res) => {
@@ -34,46 +33,50 @@ exports.getAllLabelSchemas = async (req, res) => {
   }
 }
 
-
 exports.getLabelSchemaByProjectId = async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await getLabelSchemaByProjectIdService(id);
-    
+    const { id } = req.params
+    const result = await getLabelSchemaByProjectIdService(id)
+
     if (result.error) {
-      return res.status(result.status).json({ message: result.error });
+      return res.status(result.status).json({ message: result.error })
     }
 
-    res.status(200).json(result.data);
+    res.status(200).json(result.data)
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message })
   }
-};
+}
 
 // Service function version
-const getLabelSchemaByProjectIdService = async (projectId) => {
+const getLabelSchemaByProjectIdService = async projectId => {
   try {
-    const labelSchemas = await LabelSchema.find({ projectId });
+    const labelSchemas = await LabelSchema.find({ projectId })
     if (!labelSchemas || labelSchemas.length !== 2) {
-      return { error: 'Label schema not found or incorrect number of schemas', status: 404 };
+      return {
+        error: 'Label schema not found or incorrect number of schemas',
+        status: 404
+      }
     }
 
     // Ensure the first element is the patient schema and the second is the image schema
-    const patientSchema = labelSchemas.find(schema => schema.type === 'patient');
-    const imageSchema = labelSchemas.find(schema => schema.type === 'image');
+    const patientSchema = labelSchemas.find(schema => schema.type === 'patient')
+    const imageSchema = labelSchemas.find(schema => schema.type === 'image')
 
     if (!patientSchema || !imageSchema) {
-      return { error: 'Schemas are not correctly ordered or missing', status: 400 };
+      return {
+        error: 'Schemas are not correctly ordered or missing',
+        status: 400
+      }
     }
 
-    return { data: [patientSchema, imageSchema] };
+    return { data: [patientSchema, imageSchema] }
   } catch (error) {
-    return { error: error.message, status: 500 };
+    return { error: error.message, status: 500 }
   }
-};
+}
 
-exports.getLabelSchemaByProjectIdService = getLabelSchemaByProjectIdService;
-
+exports.getLabelSchemaByProjectIdService = getLabelSchemaByProjectIdService
 
 // Get a label schema by ID
 exports.getLabelSchemaById = async (req, res) => {
@@ -122,64 +125,67 @@ exports.deleteLabelSchema = async (req, res) => {
 // HTTP endpoint version
 exports.createLabelAnswer = async (req, res) => {
   try {
-    const { schemaId, ownerId, answers } = req.body;
-    const result = await createLabelAnswerService(schemaId, ownerId, answers);
-    
+    const { schemaId, ownerId, answers } = req.body
+    const result = await createLabelAnswerService(schemaId, ownerId, answers)
+
     if (result.error) {
-      return res.status(result.status).json({ message: result.error });
+      return res.status(result.status).json({ message: result.error })
     }
-    
-    res.status(201).json(result.data);
+
+    res.status(201).json(result.data)
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: error.message });
+    console.log(error)
+    res.status(500).json({ message: error.message })
   }
-};
+}
 
 // Service function version
 const createLabelAnswerService = async (schemaId, ownerId, answers) => {
   try {
     // Fetch the label schema
-    const labelSchema = await LabelSchema.findById(schemaId);
+    const labelSchema = await LabelSchema.findById(schemaId)
     if (!labelSchema) {
-      return { error: 'Label schema not found', status: 404 };
+      return { error: 'Label schema not found', status: 404 }
     }
 
     // Fetch the owner document
-    let ownerDocument = await Image.findById(ownerId);
+    let ownerDocument = await Image.findById(ownerId)
     if (!ownerDocument) {
-      ownerDocument = await Patient.findById(ownerId);
+      ownerDocument = await Patient.findById(ownerId)
     }
     if (!ownerDocument) {
-      return { error: 'Owner document not found', status: 404 };
+      return { error: 'Owner document not found', status: 404 }
     }
 
     // Check project ID match
-    const projId = ownerDocument.projectId;
-    const labelProjId = labelSchema.projectId;
+    const projId = ownerDocument.projectId
+    const labelProjId = labelSchema.projectId
     if (projId.toString() !== labelProjId.toString()) {
-      return { error: 'Project ID does not match', status: 400 };
+      return { error: 'Project ID does not match', status: 400 }
     }
 
     // Validate answers
-    const schemaFields = labelSchema.labelData.map(field => field.labelQuestion);
-    const answerFields = answers.map(answer => answer.field);
+    const schemaFields = labelSchema.labelData.map(field => field.labelQuestion)
+    const answerFields = answers.map(answer => answer.field)
 
-    const isValid = answerFields.every(field => schemaFields.includes(field));
+    const isValid = answerFields.every(field => schemaFields.includes(field))
     if (!isValid) {
-      return { error: 'Label answer does not match the label schema', status: 400 };
+      return {
+        error: 'Label answer does not match the label schema',
+        status: 400
+      }
     }
 
-    const labelAnswer = new LabelAnswer({ ownerId, labelData: answers });
-    console.log(labelAnswer);
-    await labelAnswer.save();
-    return { data: labelAnswer };
+    const labelAnswer = new LabelAnswer({ ownerId, labelData: answers })
+    console.log(labelAnswer)
+    await labelAnswer.save()
+    return { data: labelAnswer }
   } catch (error) {
-    throw error;
+    throw error
   }
-};
+}
 
-exports.createLabelAnswerService = createLabelAnswerService;
+exports.createLabelAnswerService = createLabelAnswerService
 
 // Get all label answers
 exports.getAllLabelAnswers = async (req, res) => {
@@ -212,10 +218,10 @@ exports.updateLabelAnswer = async (req, res) => {
       { ownerId: req.params.ownerId },
       req.body,
       { new: true }
-    );
-    
+    )
+
     if (!updatedLabelAnswer) {
-      console.log("Err:" +req.params.id)
+      console.log('Err:' + req.params.id)
       console.log(updatedLabelAnswer)
       return res.status(404).json({ message: 'Label answer not found' })
     }
