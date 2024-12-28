@@ -41,8 +41,8 @@ const ForgotPassword = () => {
     try {
       //await axios.post('/api/auth/reset-password', { email, code, newPassword });
       setError('');
-      setSuccessMessage('Password updated successfully! Redirecting to login...');
-      setTimeout(() => navigate('/'), 3000);
+      alert('Password updated successfully! Redirecting to login...');
+      navigate('/');
     } catch (error) {
       setError('Error resetting password. Please try again.');
     }
