@@ -28,4 +28,7 @@ router.post('/forgot-password', userController.forgotPassword)
 // Reset password
 router.post('/reset-password/:token', userController.resetPassword)
 
+// Verify code
+router.get('/verify-code/:token', userController.verifyCode)
+
 module.exports = router

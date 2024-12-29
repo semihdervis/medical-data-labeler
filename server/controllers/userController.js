@@ -161,3 +161,30 @@ exports.resetPassword = async (req, res) => {
     res.status(500).json({ message: error.message })
   }
 }
+
+exports.verifyCode = async (req, res) => {
+  const { token } = req.params
+  const { email } = req.query
+  const { newPassword } = req.body
+
+  try {
+    const { isValid, userId, error } = await validateRecoveryToken(token)
+    if (!isValid) {
+      return res.status(400).json({ message: error })
+    }
+
+    const user = await User.findById(userId)
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+
+    // if user.email !== email return error
+    if (user.email !== email) {
+      return res.status(400).json({ message: 'Invalid email' })
+    }
+
+    res.status(200).json({ message: 'Code is valid and is for that email.' })
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+}
