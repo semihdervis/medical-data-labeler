@@ -151,19 +151,23 @@ const LabelingInterface = () => {
       const imageLabelsData = allImageLabelsForPatient[ownerId]
 
       if (imageLabelsData) {
-        const updatedLabels = imageLabelsData.map(({ field, ...rest }) => ({
-          ...rest,
-          labelQuestion: field
-        }))
+        console.log('Image labels data:', imageLabelsData)
 
-        setImageLabels(prevLabels =>
-          prevLabels.map(label => {
-            const updatedLabel = updatedLabels.find(
-              ul => ul.labelQuestion === label.labelQuestion
+        setImageLabels(prevLabels => {
+          console.log('Previous Labels:', prevLabels)
+
+          return prevLabels.map(label => {
+            const updatedLabel = imageLabelsData.find(
+              ul => ul.field === label.labelQuestion
             )
-            return updatedLabel ? { ...label, ...updatedLabel } : label
+            console.log('Label:', label)
+            console.log('Updated Label:', updatedLabel)
+
+            return updatedLabel
+              ? { ...label, ...updatedLabel, labelQuestion: updatedLabel.field }
+              : label
           })
-        )
+        })
       }
     }
 
@@ -218,7 +222,7 @@ const LabelingInterface = () => {
 
     fetchPersonAnswers()
   }, [selectedPatient])
-  
+
   // Utility functions
   const fetchImageWithAuth = async imagePath => {
     try {
@@ -253,6 +257,13 @@ const LabelingInterface = () => {
         },
         getAuthHeaders()
       )
+
+      // Update the local state with the new labels
+      setallImageLabelsForPatient(prevLabels => ({
+        ...prevLabels,
+        [ownerId]: labelData
+      }))
+      console.log('Updated labels:', allImageLabelsForPatient)
     } catch (error) {
       console.error('Error updating labels:', error)
     }
@@ -262,16 +273,18 @@ const LabelingInterface = () => {
   const handleSave = async () => {
     await Promise.all([
       updateLabels(
-        currentImageAnswersId,
-        imageLabelsId,
-        currentImage._id,
-        imageLabels
-      ),
-      updateLabels(
         currentPersonAnswersId,
         personLabelsId,
         selectedPatient._id,
         personLabels
+      ),
+      ...Object.keys(allImageLabelsForPatient).map(ownerId =>
+        updateLabels(
+          currentImageAnswersId,
+          imageLabelsId,
+          ownerId,
+          allImageLabelsForPatient[ownerId]
+        )
       )
     ])
     //alert("Changes saved successfully!");
