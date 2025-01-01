@@ -30,8 +30,15 @@ const patientSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Project',
       required: true
+    },
+    completionRate: {
+      type: Number,
+      default: 0,
+      min: [0, 'Completion rate cannot be less than 0'],
+      max: [100, 'Completion rate cannot be more than 100']
     }
   },
+
   {
     timestamps: true
   }

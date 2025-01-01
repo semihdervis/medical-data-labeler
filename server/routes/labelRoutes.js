@@ -91,5 +91,10 @@ router.get('/answer', authenticate, labelController.getAllLabelAnswers)
 router.get('/answer/:id', authenticate, labelController.getLabelAnswerById)
 router.put('/answer/:ownerId', authenticate, labelController.updateLabelAnswer)
 router.delete('/answer/:id', authenticate, labelController.deleteLabelAnswer)
+router.get(
+  '/answer/getForPatient/:patientId',
+  authenticate,
+  labelController.getForPatient
+)
 
 module.exports = router

@@ -128,6 +128,10 @@ exports.updatePatient = async (req, res) => {
     if (!updatedPatient) {
       return res.status(404).json({ message: 'Patient not found' })
     }
+    // calculate completion rate based on the number of fields filled
+  
+
+
     res.status(200).json(updatedPatient)
   } catch (error) {
     res.status(500).json({ message: error.message })

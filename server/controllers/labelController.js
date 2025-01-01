@@ -244,3 +244,19 @@ exports.deleteLabelAnswer = async (req, res) => {
     res.status(500).json({ message: error.message })
   }
 }
+
+exports.getForPatient = async (req, res) => {
+  try {
+    const { patientId } = req.params
+    const images = await Image.find({ patientId })
+    const labelAnswers = []
+    for (const image of images) {
+      const labelAnswer = await LabelAnswer.find({ ownerId: image._id })
+      labelAnswers.push(labelAnswer)
+    }
+
+    res.status(200).json(labelAnswers)
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+}

@@ -12,6 +12,12 @@ const projectSchema = new mongoose.Schema({
   creationDate: {
     type: Date,
     default: Date.now
+  },
+  completionRate: {
+    type: Number,
+    default: 0,
+    min: [0, 'Completion rate cannot be less than 0'],
+    max: [100, 'Completion rate cannot be more than 100']
   }
 })
 
