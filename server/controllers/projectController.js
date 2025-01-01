@@ -242,3 +242,96 @@ exports.updateAssigns = async (req, res) => {
       .json({ message: 'Internal server error', error: error.message })
   }
 }
+
+
+
+
+  /*
+    This function exports a project's data to a zip file
+    and sends the file to the client for download
+    format is as follows:
+    - project
+    - patients.csv
+      - patient1
+        - data.csv
+        - image1.jpg
+        - image2.jpg
+      - patient2
+        - data.csv
+        - image1.jpg
+        - image2.jpg
+    
+    */
+
+   // copy project data to a temporary directory
+   // rename the project folder to the project name
+   // rename all patient folders to the patient name
+   // rename all image files to the image name
+   // while renaming patients, create a CSV file using projects patient schema and patient data, create a csv file with each patient is an entry
+    // while renaming images, create a CSV file for each patient with each image as an entry
+
+
+exports.exportProject = async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.projectId)
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' })
+    }
+
+    const zip = new JSZip()
+
+    // Add project data to the zip
+    zip.file('project.json', JSON.stringify(project))
+
+    // Fetch patients and their images
+    const patients = await Patient.find({ projectId: req.params.projectId })
+    const patientData = []
+    for (const patient of patients) {
+      const patientFolder = zip.folder(patient.name)
+      const images = await Image.find({ patientId: patient._id })
+
+      /* Add patient data to CSV
+      patientData.push({
+        id: patient._id,
+        name: patient.name,
+        ...patient.toObject()
+      })*/
+     // TODO: Patient data will be label answers
+
+      // Add images to the patient's folder
+      const imageData = []
+      for (const image of images) {
+        const imagePath = path.join(__dirname, '../uploads', image.filename)
+        const imageContent = fs.readFileSync(imagePath)
+        patientFolder.file(image.filename, imageContent)
+
+        // Add image data to CSV
+        imageData.push({
+          id: image._id,
+          name: image.name,
+          filename: image.filename,
+          ...image.toObject()
+        })
+      }
+
+      // Create CSV for images
+      const imageCsv = new Parser().parse(imageData)
+      patientFolder.file('images.csv', imageCsv)
+    }
+
+    // Create CSV for patients
+    const patientCsv = new Parser().parse(patientData)
+    zip.file('patients.csv', patientCsv)
+
+    // Generate the zip file
+    const zipContent = await zip.generateAsync({ type: 'nodebuffer' })
+
+    // Send the zip file to the client
+    res.set('Content-Type', 'application/zip')
+    res.set('Content-Disposition', `attachment; filename=${project.name}.zip`)
+    res.send(zipContent)
+  } catch (error) {
+    console.error('Error exporting project:', error)
+    res.status(500).json({ message: 'Internal server error', error: error.message })
+  }
+}

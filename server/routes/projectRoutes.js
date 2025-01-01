@@ -42,4 +42,12 @@ router.put(
   projectController.updateAssigns
 )
 
+// export project
+router.post(
+  '/:projectId/export',
+  authenticate,
+  checkAdmin,
+  projectController.exportProject
+)
+
 module.exports = router
