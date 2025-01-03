@@ -49,7 +49,7 @@ const ForgotPassword = () => {
       setError('');
       setSuccessMessage('Password reset successful. Redirecting to login...');
       setTimeout(() => {
-        navigate('/login');
+        navigate('/');
       }, 3000);
     } catch (error) {
       setError('Error resetting the password. Please try again.');
@@ -73,6 +73,7 @@ const ForgotPassword = () => {
               placeholder='Enter your email'
               value={email}
               onChange={e => setEmail(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSendCode()}
               className='w-full p-2 mb-4 text-base border rounded border-gray-300'
             />
             {error && <p className='text-red-600 text-sm mb-3'>{error}</p>}
@@ -99,6 +100,7 @@ const ForgotPassword = () => {
               placeholder='Enter the code sent to your email'
               value={recoveryToken}
               onChange={(e) => setRecoveryToken(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleVerifyCode()}
               className='w-full p-2 mb-4 text-base border rounded border-gray-300'
             />
             {error && <p className='text-red-600 text-sm mb-3'>{error}</p>}
@@ -125,6 +127,7 @@ const ForgotPassword = () => {
               placeholder='New Password'
               value={newPassword}
               onChange={e => setNewPassword(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleResetPassword()}
               className='w-full p-2 mb-4 text-base border rounded border-gray-300'
             />
             <input
@@ -132,6 +135,7 @@ const ForgotPassword = () => {
               placeholder='Confirm New Password'
               value={confirmPassword}
               onChange={e => setConfirmPassword(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleResetPassword()}
               className='w-full p-2 mb-4 text-base border rounded border-gray-300'
             />
             {error && <p className='text-red-600 text-sm mb-3'>{error}</p>}
@@ -148,7 +152,7 @@ const ForgotPassword = () => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ForgotPassword
+export default ForgotPassword;
