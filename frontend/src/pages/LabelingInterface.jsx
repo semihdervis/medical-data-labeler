@@ -105,6 +105,8 @@ const LabelingInterface = () => {
         if (processedImages.length > 0) {
           setCurrentImageIndex(0)
           setCurrentImage(processedImages[0])
+        } else {
+          setCurrentImage(null)
         }
       } catch (error) {
         console.error('Error fetching images:', error)
@@ -168,6 +170,14 @@ const LabelingInterface = () => {
               : label
           })
         })
+      } else {
+        // Initialize with empty data if no image labels data
+        setImageLabels(prevLabels =>
+          prevLabels.map(label => ({
+            ...label,
+            value: ''
+          }))
+        )
       }
     }
 

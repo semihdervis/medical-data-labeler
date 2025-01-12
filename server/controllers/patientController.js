@@ -128,9 +128,20 @@ exports.updatePatient = async (req, res) => {
     if (!updatedPatient) {
       return res.status(404).json({ message: 'Patient not found' })
     }
-    // calculate completion rate based on the number of fields filled
-  
+    // calculate completion rate based on the number of fields filled in answers of images
+    const images = await Image.find({ patientId: patient._id })
+    const labelAnswers = []
 
+    for (const image of images) {
+      const imageLabelAnswers = await LabelAnswer.findOne({
+        ownerId: image._id
+      })
+      if (imageLabelAnswers) {
+        labelAnswers.push(imageLabelAnswers)
+      }
+    }
+    const completionRate = labelAnswers.length / (images.length * updatedPatient.labelData.length)
+    console.log('completionRate', completionRate)
 
     res.status(200).json(updatedPatient)
   } catch (error) {
