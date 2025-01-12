@@ -30,7 +30,6 @@ const LabelingInterface = () => {
   // Labels state
   const [personLabels, setPersonLabels] = useState([])
   const [imageLabels, setImageLabels] = useState([])
-  const [allImageLabelsForPatient, setallImageLabelsForPatient] = useState({})
   const [personLabelsId, setPersonLabelsId] = useState('')
   const [imageLabelsId, setImageLabelsId] = useState('')
   const [currentImageAnswersId, setCurrentImageAnswersId] = useState('')
@@ -105,8 +104,6 @@ const LabelingInterface = () => {
         if (processedImages.length > 0) {
           setCurrentImageIndex(0)
           setCurrentImage(processedImages[0])
-        } else {
-          setCurrentImage(null)
         }
       } catch (error) {
         console.error('Error fetching images:', error)
@@ -149,40 +146,36 @@ const LabelingInterface = () => {
     const fetchImageAnswers = async () => {
       if (!currentImage?._id) return
 
-      const ownerId = currentImage._id
-      const imageLabelsData = allImageLabelsForPatient[ownerId]
-
-      if (imageLabelsData) {
-        console.log('Image labels data:', imageLabelsData)
-
-        setImageLabels(prevLabels => {
-          console.log('Previous Labels:', prevLabels)
-
-          return prevLabels.map(label => {
-            const updatedLabel = imageLabelsData.find(
-              ul => ul.field === label.labelQuestion
-            )
-            console.log('Label:', label)
-            console.log('Updated Label:', updatedLabel)
-
-            return updatedLabel
-              ? { ...label, ...updatedLabel, labelQuestion: updatedLabel.field }
-              : label
-          })
-        })
-      } else {
-        // Initialize with empty data if no image labels data
-        setImageLabels(prevLabels =>
-          prevLabels.map(label => ({
-            ...label,
-            value: ''
-          }))
+      try {
+        const response = await axios.get(
+          `${API_BASE_URL}/api/labels/answer/${currentImage._id}`,
+          getAuthHeaders()
         )
+
+        setCurrentImageAnswersId(response.data._id)
+
+        const updatedLabels = response.data.labelData.map(
+          ({ field, ...rest }) => ({
+            ...rest,
+            labelQuestion: field
+          })
+        )
+
+        setImageLabels(prevLabels =>
+          prevLabels.map(label => {
+            const updatedLabel = updatedLabels.find(
+              ul => ul.labelQuestion === label.labelQuestion
+            )
+            return updatedLabel ? { ...label, ...updatedLabel } : label
+          })
+        )
+      } catch (error) {
+        console.error('Error fetching image labels:', error)
       }
     }
 
     fetchImageAnswers()
-  }, [currentImage, allImageLabelsForPatient])
+  }, [currentImage])
 
   // Fetch person answers when selected patient changes
   useEffect(() => {
@@ -212,19 +205,6 @@ const LabelingInterface = () => {
             return updatedLabel ? { ...label, ...updatedLabel } : label
           })
         )
-
-        // since we have a patient now, we can fetch all image labels for this patient
-        const response2 = await axios.get(
-          `${API_BASE_URL}/api/labels/answer/getForPatient/${selectedPatient._id}`,
-          getAuthHeaders()
-        )
-        // fill the map with ownerId as key and labelData as value
-        const allImageLabels = response2.data.flat().reduce((acc, image) => {
-          acc[image.ownerId] = image.labelData
-          return acc
-        }, {})
-        setallImageLabelsForPatient(allImageLabels)
-        console.log('allImageLabelsForPatient', allImageLabels)
       } catch (error) {
         console.error('Error fetching person labels:', error)
       }
@@ -267,13 +247,6 @@ const LabelingInterface = () => {
         },
         getAuthHeaders()
       )
-
-      // Update the local state with the new labels
-      setallImageLabelsForPatient(prevLabels => ({
-        ...prevLabels,
-        [ownerId]: labelData
-      }))
-      console.log('Updated labels:', allImageLabelsForPatient)
     } catch (error) {
       console.error('Error updating labels:', error)
     }
@@ -283,18 +256,16 @@ const LabelingInterface = () => {
   const handleSave = async () => {
     await Promise.all([
       updateLabels(
+        currentImageAnswersId,
+        imageLabelsId,
+        currentImage._id,
+        imageLabels
+      ),
+      updateLabels(
         currentPersonAnswersId,
         personLabelsId,
         selectedPatient._id,
         personLabels
-      ),
-      ...Object.keys(allImageLabelsForPatient).map(ownerId =>
-        updateLabels(
-          currentImageAnswersId,
-          imageLabelsId,
-          ownerId,
-          allImageLabelsForPatient[ownerId]
-        )
       )
     ])
     //alert("Changes saved successfully!");

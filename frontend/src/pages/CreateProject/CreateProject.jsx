@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios' // For API calls
 import ProjectDescription from './ProjectDescription'
 import logoutIcon from '../icons/logout.png'
-const token = localStorage.getItem('token') // Retrieve the token from local storage
+//const token = localStorage.getItem('token') // Retrieve the token from local storage
 import saveIcon from '../icons/save.png'
 
 function CreateProject () {
@@ -19,8 +19,15 @@ function CreateProject () {
     { name: 'Is infection visible?', type: 'dropdown', options: ['Yes', 'No'] }
   ])
 
+  const token = localStorage.getItem('token') // Retrieve the token from local storage
+  console.log('Token in create:', token) // Log the token
+
   const [activeButton, setActiveButton] = useState('description')
   const [projectName, setProjectName] = useState('Respiratory Health Project')
+
+  if (!token) {
+    token = localStorage.getItem('token')
+  }
 
   const handleLogout = () => {
     navigate('/')
@@ -122,7 +129,6 @@ function CreateProject () {
 
   return (
     <div className='flex h-screen bg-gray-100 admin-project-page'>
-
       <div className='flex-1 p-5 overflow-y-auto flex justify-center items-center'>
         <div className='flex justify-between items-center h-12 bg-primary rounded-lg shadow-md fixed top-0 left-[5px] right-[5px] mt-2.5 ml-1.25 px-4 w-[calc(100%-10px)] z-[1000]'>
           <button

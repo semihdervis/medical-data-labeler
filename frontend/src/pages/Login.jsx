@@ -15,6 +15,7 @@ const Login = () => {
 
       // Store the token and role in local storage
       localStorage.setItem('token', token)
+      console.log("token in login: " + token);
       localStorage.setItem('role', isAdmin ? 'admin' : 'doctor')
       localStorage.setItem('projects', JSON.stringify(projects))
 
