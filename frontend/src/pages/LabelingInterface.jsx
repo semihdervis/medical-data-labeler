@@ -34,6 +34,8 @@ const LabelingInterface = () => {
   const [imageLabelsId, setImageLabelsId] = useState('')
   const [currentImageAnswersId, setCurrentImageAnswersId] = useState('')
   const [currentPersonAnswersId, setCurrentPersonAnswersId] = useState('')
+  const [isSaving, setIsSaving] = useState(false)
+  const [isFetching, setIsFetching] = useState(false)
 
   // API configuration
   const API_BASE_URL = 'http://localhost:3001'
@@ -63,6 +65,7 @@ const LabelingInterface = () => {
   // Fetch patients data
   useEffect(() => {
     const fetchPatients = async () => {
+      setIsFetching(true)
       try {
         const response = await axios.get(
           `${API_BASE_URL}/api/patients/namelist/${projectId}`,
@@ -74,6 +77,8 @@ const LabelingInterface = () => {
         }
       } catch (error) {
         console.error('Error fetching patients:', error)
+      } finally {
+        setIsFetching(false)
       }
     }
 
@@ -85,11 +90,11 @@ const LabelingInterface = () => {
     const fetchImages = async () => {
       if (!selectedPatient?._id) return
 
+      setIsFetching(true)
       try {
         console.log('fetching images for patient', projects)
         const response = await axios.get(
           `${API_BASE_URL}/api/images/${projectId}/${selectedPatient._id}`,
-
           getAuthHeaders()
         )
 
@@ -107,6 +112,8 @@ const LabelingInterface = () => {
         }
       } catch (error) {
         console.error('Error fetching images:', error)
+      } finally {
+        setIsFetching(false)
       }
     }
 
@@ -116,6 +123,7 @@ const LabelingInterface = () => {
   // Fetch label schemas
   useEffect(() => {
     const fetchLabelSchemas = async () => {
+      setIsFetching(true)
       try {
         const response = await axios.get(
           `${API_BASE_URL}/api/labels/schema/project/${projectId}`,
@@ -135,6 +143,8 @@ const LabelingInterface = () => {
         setImageLabelsId(imageSchema._id)
       } catch (error) {
         console.error('Error fetching label schemas:', error)
+      } finally {
+        setIsFetching(false)
       }
     }
 
@@ -146,6 +156,7 @@ const LabelingInterface = () => {
     const fetchImageAnswers = async () => {
       if (!currentImage?._id) return
 
+      setIsFetching(true)
       try {
         const response = await axios.get(
           `${API_BASE_URL}/api/labels/answer/${currentImage._id}`,
@@ -171,6 +182,8 @@ const LabelingInterface = () => {
         )
       } catch (error) {
         console.error('Error fetching image labels:', error)
+      } finally {
+        setIsFetching(false)
       }
     }
 
@@ -182,6 +195,7 @@ const LabelingInterface = () => {
     const fetchPersonAnswers = async () => {
       if (!selectedPatient?._id) return
 
+      setIsFetching(true)
       try {
         const response = await axios.get(
           `${API_BASE_URL}/api/labels/answer/${selectedPatient._id}`,
@@ -207,6 +221,8 @@ const LabelingInterface = () => {
         )
       } catch (error) {
         console.error('Error fetching person labels:', error)
+      } finally {
+        setIsFetching(false)
       }
     }
 
@@ -215,9 +231,10 @@ const LabelingInterface = () => {
 
   // Utility functions
   const fetchImageWithAuth = async imagePath => {
+    setIsFetching(true)
     try {
       const response = await axios.get(
-        `${API_BASE_URL}/${imagePath}?projects=${projects.join(',')}`, // Send projects as query parameters
+        `${API_BASE_URL}/${imagePath}?projects=${projects.join(',')}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -229,6 +246,8 @@ const LabelingInterface = () => {
     } catch (error) {
       console.error('Error fetching image:', error)
       return null
+    } finally {
+      setIsFetching(false)
     }
   }
 
@@ -249,61 +268,85 @@ const LabelingInterface = () => {
       )
     } catch (error) {
       console.error('Error updating labels:', error)
+      throw error
     }
   }
 
   // Event handlers
   const handleSave = async () => {
-    await Promise.all([
-      updateLabels(
-        currentImageAnswersId,
-        imageLabelsId,
-        currentImage._id,
-        imageLabels
-      ),
-      updateLabels(
-        currentPersonAnswersId,
-        personLabelsId,
-        selectedPatient._id,
-        personLabels
-      )
-    ])
-    //alert("Changes saved successfully!");
+    if (isSaving) return
+    setIsSaving(true)
+    try {
+      await Promise.all([
+        updateLabels(
+          currentImageAnswersId,
+          imageLabelsId,
+          currentImage._id,
+          imageLabels
+        ),
+        updateLabels(
+          currentPersonAnswersId,
+          personLabelsId,
+          selectedPatient._id,
+          personLabels
+        )
+      ])
+    } catch (error) {
+      console.error('Failed to save changes:', error)
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   const handleSelectPatient = async patient => {
-    if (currentImage) {
+    if (isSaving) return
+    setIsSaving(true)
+    try {
+      if (currentImage) {
+        await updateLabels(
+          currentImageAnswersId,
+          imageLabelsId,
+          currentImage._id,
+          imageLabels
+        )
+      }
+      await handleSave()
+      setSelectedPatient(patient)
+    } catch (error) {
+      console.error('Failed to select patient:', error)
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const handleImageNavigation = async direction => {
+    if (images.length === 0 || isSaving) return
+
+    setIsSaving(true)
+    try {
       await updateLabels(
         currentImageAnswersId,
         imageLabelsId,
         currentImage._id,
         imageLabels
       )
+
+      const newIndex =
+        direction === 'next'
+          ? (currentImageIndex + 1) % images.length
+          : (currentImageIndex - 1 + images.length) % images.length
+
+      setCurrentImageIndex(newIndex)
+      setCurrentImage(images[newIndex])
+    } catch (error) {
+      console.error('Failed to navigate images:', error)
+    } finally {
+      setIsSaving(false)
     }
-    handleSave()
-    setSelectedPatient(patient)
-  }
-
-  const handleImageNavigation = async direction => {
-    if (images.length === 0) return
-
-    await updateLabels(
-      currentImageAnswersId,
-      imageLabelsId,
-      currentImage._id,
-      imageLabels
-    )
-
-    const newIndex =
-      direction === 'next'
-        ? (currentImageIndex + 1) % images.length
-        : (currentImageIndex - 1 + images.length) % images.length
-
-    setCurrentImageIndex(newIndex)
-    setCurrentImage(images[newIndex])
   }
 
   const handleLabelChange = labelSetter => (index, value) => {
+    if (isSaving) return
     labelSetter(prevLabels =>
       prevLabels.map((label, i) => (i === index ? { ...label, value } : label))
     )
@@ -354,7 +397,7 @@ const LabelingInterface = () => {
     <div
       className={`flex gap-[15px] p-[20px] min-h-screen transition-all duration-300 ease-in-out ${
         isSidebarOpen ? 'ml-[215px]' : ''
-      } flex-row`}
+      } flex-row ${(isSaving || isFetching) ? 'cursor-wait pointer-events-none opacity-70' : ''}`}
     >
       {/* Top Bar */}
       <div className='flex justify-between items-center h-[60px] bg-white rounded-[10px] shadow-[4px_4px_12px_rgba(0,0,0,0.1)] fixed top-0 left-0 right-[20px] mt-[10px] ml-[20px] w-[calc(100%-40px)] z-50'>
@@ -373,11 +416,12 @@ const LabelingInterface = () => {
 
         <div className='flex'>
           <button
-            className='flex items-center justify-center mr-[10px] bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded-md'
+            className='flex items-center justify-center mr-[10px] bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed'
             onClick={() => {
               handleSave()
               navigate(isAdmin ? '/admin' : '/doctor')
             }}
+            disabled={isSaving || isFetching}
           >
             <img
               src={backArrow}
@@ -388,8 +432,9 @@ const LabelingInterface = () => {
           </button>
 
           <button
-            className='flex items-center justify-center mr-[30px] ml-[10px] bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded-md'
+            className='flex items-center justify-center mr-[30px] ml-[10px] bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed'
             onClick={handleSave}
+            disabled={isSaving || isFetching}
           >
             <img
               src={saveIcon}
@@ -422,8 +467,9 @@ const LabelingInterface = () => {
             />
             <div className='relative inline-block ml-2'>
               <button
-                className='p-0 bg-white transition-transform duration-200 hover:scale-110'
+                className='p-0 bg-white transition-transform duration-200 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed'
                 onClick={() => setShowSortOptions(!showSortOptions)}
+                disabled={isSaving || isFetching}
               >
                 <img src={sorticon} alt='Sort' className='w-5 h-5' />
               </button>
@@ -502,15 +548,15 @@ const LabelingInterface = () => {
             <div className='absolute bottom-10 left-0 right-0 flex justify-center items-center gap-40'>
               <button
                 onClick={() => handleImageNavigation('previous')}
-                className='p-0 bg-white transition-transform duration-300 hover:scale-110'
-                disabled={!currentImage}
+                className='p-0 bg-white transition-transform duration-300 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed'
+                disabled={!currentImage || isSaving || isFetching}
               >
                 <img src={previousIcon} alt='Previous' className='w-5 h-5' />
               </button>
               <button
                 onClick={() => handleImageNavigation('next')}
-                className='p-0 bg-white transition-transform duration-300 hover:scale-110'
-                disabled={!currentImage}
+                className='p-0 bg-white transition-transform duration-300 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed'
+                disabled={!currentImage || isSaving || isFetching}
               >
                 <img src={nextIcon} alt='Next' className='w-5 h-5' />
               </button>
