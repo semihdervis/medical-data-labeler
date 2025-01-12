@@ -3,6 +3,8 @@ const router = express.Router()
 const projectController = require('../controllers/projectController')
 const authenticate = require('../middlewares/authenticate')
 const checkAdmin = require('../middlewares/checkAdmin') // Import the checkAdmin middleware
+const multer = require('multer');
+const upload = multer();
 
 // Get all projects
 router.get('/get', authenticate, projectController.getAllProjects)
@@ -48,6 +50,15 @@ router.post(
   authenticate,
   checkAdmin,
   projectController.exportProject
+)
+
+// import project
+router.post(
+  '/:projectId/import',
+  upload.single('file'),
+  authenticate,
+  checkAdmin,
+  projectController.importProject
 )
 
 module.exports = router

@@ -9,6 +9,9 @@ const path = require('path')
 const Image = require('../models/ImageModel')
 const Parser = require('json2csv').Parser
 const LabelAnswers = require('../models/LabelAnswersModel')
+const csv = require('csv-parse/sync')
+const labelController = require('./labelController')
+const util = require('util')
 
 const projectsDir = path.join(__dirname, '../projects') // Define the projects directory
 
@@ -365,3 +368,192 @@ exports.exportProject = async (req, res) => {
       .json({ message: 'Internal server error', error: error.message })
   }
 }
+
+const writeFile = util.promisify(fs.writeFile);
+
+const ensureDirectoryExists = async dir => {
+  if (!fs.existsSync(dir)) {
+    await fs.promises.mkdir(dir, { recursive: true });
+  }
+};
+
+exports.importProject = async (req, res) => {
+  try {
+    const projectId = req.params.projectId;
+    const project = await Project.findById(projectId);
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    // Read the uploaded zip file
+    const zipBuffer = req.file.buffer;
+    const zip = await JSZip.loadAsync(zipBuffer);
+
+    // Track changes for summary
+    const changes = {
+      patientsCreated: 0,
+      patientsUpdated: 0,
+      imagesCreated: 0,
+      imagesUpdated: 0,
+      errors: []
+    };
+
+    // Get schemas
+    const result = await labelController.getLabelSchemaByProjectIdService(projectId);
+    const [patientSchema, imageSchema] = result.data;
+
+    // Read and parse patients.csv
+    let patientsData = [];
+    try {
+      const patientsFile = zip.file('project/patients.csv');
+      if (patientsFile) {
+        const patientsCSV = await patientsFile.async('string');
+        patientsData = csv.parse(patientsCSV, { columns: true });
+      }
+    } catch (err) {
+      changes.errors.push(`Error reading patients.csv: ${err.message}`);
+    }
+
+    // Get all patient folders
+    const patientFolders = new Set(
+      Object.keys(zip.files)
+        .filter(path => path.startsWith('project/') && path.split('/').length >= 2)
+        .map(path => path.split('/')[1])
+        .filter(name => name && name !== 'patients.csv')
+    );
+
+    // Process each patient folder
+    for (const patientName of patientFolders) {
+      try {
+        // Find or create patient
+        let patient = await Patient.findOne({ projectId, name: patientName });
+
+        if (!patient) {
+          // Create new patient
+          patient = new Patient({
+            projectId,
+            name: patientName,
+            age: 0,
+            gender: 'unknown'
+          });
+          await patient.save();
+
+          // Debug: Log the patient ID after saving
+          console.log(`Created new patient: ${patientName}, ID: ${patient._id}`);
+
+          // Create patient directory in the filesystem
+          const patientDir = path.join('projects', projectId.toString(), patient._id.toString());
+          await ensureDirectoryExists(patientDir);
+
+          // Initialize patient label answers
+          const defaultAnswers = patientSchema.labelData.map(label => ({
+            field: label.labelQuestion,
+            value: label.labelType === 'dropdown' ? label.labelOptions[0] : ''
+          }));
+
+          await labelController.createLabelAnswerService(patientSchema._id, patient._id, defaultAnswers);
+          changes.patientsCreated++;
+        } else {
+          // Debug: Log the patient ID if found
+          console.log(`Found existing patient: ${patientName}, ID: ${patient._id}`);
+        }
+
+        // Process patient's data.csv
+        const dataFile = zip.file(`project/${patientName}/data.csv`);
+        if (dataFile) {
+          const dataCSV = await dataFile.async('string');
+          const imageData = csv.parse(dataCSV, { columns: true });
+
+          // Process each image entry
+          for (const row of imageData) {
+            const imageName = row.image_name;
+            if (!imageName) continue;
+
+            // Find or create image
+            let image = await Image.findOne({ patientId: patient._id, name: imageName });
+
+            if (!image) {
+              // Get image file from zip
+              const imageFile = zip.file(`project/${patientName}/${imageName}`);
+              if (!imageFile) {
+                changes.errors.push(`Image file not found: ${imageName}`);
+                continue;
+              }
+
+              // Save image file
+              const imageContent = await imageFile.async('nodebuffer');
+              const patientDir = path.join('projects', projectId.toString(), patient._id.toString());
+
+              // Create image record first to get the image ID
+              image = new Image({
+                projectId,
+                patientId: patient._id,
+                name: imageName,
+                uploader: req.userId,
+                filepath: 'temp' // Temporary, will update after saving the file
+              });
+              await image.save();
+
+              // Debug: Log the image ID after saving
+              console.log(`Created new image: ${imageName}, ID: ${image._id}`);
+
+              // Use returned image ID to save the file with the ID as the filename
+              const imagePath = path.join(patientDir, `${image._id}${path.extname(imageName)}`);
+              await writeFile(imagePath, imageContent);
+
+              // Update the image record with the correct filepath
+              image.filepath = imagePath;
+              await image.save();
+
+              // Initialize image label answers
+              const defaultAnswers = imageSchema.labelData.map(label => ({
+                field: label.labelQuestion,
+                value: label.labelType === 'dropdown' ? label.labelOptions[0] : ''
+              }));
+
+              await labelController.createLabelAnswerService(imageSchema._id, image._id, defaultAnswers);
+              changes.imagesCreated++;
+            } else {
+              // Debug: Log the image ID if found
+              console.log(`Found existing image: ${imageName}, ID: ${image._id}`);
+            }
+
+            // Update image label answers
+            delete row.image_name;
+            const labelData = Object.entries(row).map(([field, value]) => ({ field, value }));
+
+            if (labelData.length > 0) {
+              await LabelAnswers.findOneAndUpdate({ ownerId: image._id }, { labelData }, { upsert: true });
+              changes.imagesUpdated++;
+            }
+          }
+        }
+
+        // Update patient's label answers from patients.csv if available
+        const patientDataRow = patientsData.find(p => p.patient_name === patientName);
+        if (patientDataRow) {
+          delete patientDataRow.patient_name;
+          const labelData = Object.entries(patientDataRow).map(([field, value]) => ({ field, value }));
+
+          if (labelData.length > 0) {
+            await LabelAnswers.findOneAndUpdate({ ownerId: patient._id }, { labelData }, { upsert: true });
+            changes.patientsUpdated++;
+          }
+        }
+      } catch (err) {
+        changes.errors.push(`Error processing patient ${patientName}: ${err.message}`);
+      }
+    }
+
+    res.json({
+      message: 'Project import completed',
+      summary: changes
+    });
+  } catch (error) {
+    console.error('Error importing project:', error);
+    res.status(500).json({
+      message: 'Internal server error',
+      error: error.message
+    });
+  }
+};
