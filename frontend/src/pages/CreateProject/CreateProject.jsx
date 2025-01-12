@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios' // For API calls
-import Sidebar from './Sidebar'
 import ProjectDescription from './ProjectDescription'
-import PersonLabels from './PersonLabels'
-import ImageLabels from './ImageLabels'
-import Patients from './Patients'
-import AssignDoctor from './AssignDoctor'
 import logoutIcon from '../icons/logout.png'
 const token = localStorage.getItem('token') // Retrieve the token from local storage
 import saveIcon from '../icons/save.png'
@@ -23,32 +18,9 @@ function CreateProject () {
   const [imageLabels, setImageLabels] = useState([
     { name: 'Is infection visible?', type: 'dropdown', options: ['Yes', 'No'] }
   ])
-  const [patients, setPatients] = useState([
-    { id: 'Patient001', images: ['img1.jpg', 'img2.jpg'] }
-  ])
-  const [assignedDoctors, setAssignedDoctors] = useState([])
-  const [allDoctors, setAllDoctors] = useState([])
+
   const [activeButton, setActiveButton] = useState('description')
   const [projectName, setProjectName] = useState('Respiratory Health Project')
-
-  useEffect(() => {
-    const fetchAllDoctors = async () => {
-      try {
-        const response = await axios.get('/api/users/doctors', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-        setAllDoctors(response.data);
-        console.log('All doctors:', response.data);
-      } catch (error) {
-        console.error('Error fetching doctors:', error);
-        setError('Error fetching doctors. Please try again.');
-      }
-    };
-
-    fetchAllDoctors();
-  }, [token]);
 
   const handleLogout = () => {
     navigate('/')
@@ -150,7 +122,6 @@ function CreateProject () {
 
   return (
     <div className='flex h-screen bg-gray-100 admin-project-page'>
-      <Sidebar setActiveSection={setActiveSection} />
 
       <div className='flex-1 p-5 overflow-y-auto flex justify-center items-center'>
         <div className='flex justify-between items-center h-12 bg-primary rounded-lg shadow-md fixed top-0 left-[5px] right-[5px] mt-2.5 ml-1.25 px-4 w-[calc(100%-10px)] z-[1000]'>
@@ -195,29 +166,6 @@ function CreateProject () {
             setProjectName={setProjectName}
             projectDescription={projectDescription}
             setProjectDescription={setProjectDescription}
-          />
-        )}
-        {activeSection === 'personLabels' && (
-          <PersonLabels
-            personLabels={personLabels}
-            setPersonLabels={setPersonLabels}
-          />
-        )}
-        {activeSection === 'imageLabels' && (
-          <ImageLabels
-            imageLabels={imageLabels}
-            setImageLabels={setImageLabels}
-          />
-        )}
-        {activeSection === 'patients' && (
-          <Patients patients={patients} setPatients={setPatients} />
-        )}
-        {activeSection === 'assignDoctor' && (
-          <AssignDoctor
-            allDoctors={allDoctors}
-            assignedDoctors={assignedDoctors}
-            setAssignedDoctors={setAssignedDoctors}
-            
           />
         )}
       </div>
