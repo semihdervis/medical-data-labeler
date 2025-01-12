@@ -4,7 +4,11 @@ const User = require('../models/UserModel') // Import the User model
 const patientController = require('./patientController')
 const LabelSchema = require('../models/LabelSchemaModel')
 const fs = require('fs')
+const JSZip = require('jszip')
 const path = require('path')
+const Image = require('../models/ImageModel')
+const Parser = require('json2csv').Parser
+const LabelAnswers = require('../models/LabelAnswersModel')
 
 const projectsDir = path.join(__dirname, '../projects') // Define the projects directory
 
@@ -243,10 +247,7 @@ exports.updateAssigns = async (req, res) => {
   }
 }
 
-
-
-
-  /*
+/*
     This function exports a project's data to a zip file
     and sends the file to the client for download
     format is as follows:
@@ -263,75 +264,104 @@ exports.updateAssigns = async (req, res) => {
     
     */
 
-   // copy project data to a temporary directory
-   // rename the project folder to the project name
-   // rename all patient folders to the patient name
-   // rename all image files to the image name
-   // while renaming patients, create a CSV file using projects patient schema and patient data, create a csv file with each patient is an entry
-    // while renaming images, create a CSV file for each patient with each image as an entry
-
+// copy project data to a temporary directory
+// rename the project folder to the project name
+// rename all patient folders to the patient name
+// rename all image files to the image name
+// while renaming patients, create a CSV file using projects patient schema and patient data, create a csv file with each patient is an entry
+// while renaming images, create a CSV file for each patient with each image as an entry
 
 exports.exportProject = async (req, res) => {
   try {
-    const project = await Project.findById(req.params.projectId)
+    const projectId = req.params.projectId
+    const project = await Project.findById(projectId)
     if (!project) {
       return res.status(404).json({ message: 'Project not found' })
     }
 
     const zip = new JSZip()
+    const projectFolder = zip.folder('project')
 
-    // Add project data to the zip
-    zip.file('project.json', JSON.stringify(project))
+    // Get all patients for the project
+    const patients = await Patient.find({ projectId })
+    const patientsData = []
 
-    // Fetch patients and their images
-    const patients = await Patient.find({ projectId: req.params.projectId })
-    const patientData = []
+    // Process each patient
     for (const patient of patients) {
-      const patientFolder = zip.folder(patient.name)
+      // Create patient folder
+      const patientFolder = projectFolder.folder(patient.name)
+
+      // Get all images for the patient
       const images = await Image.find({ patientId: patient._id })
-
-      /* Add patient data to CSV
-      patientData.push({
-        id: patient._id,
-        name: patient.name,
-        ...patient.toObject()
-      })*/
-     // TODO: Patient data will be label answers
-
-      // Add images to the patient's folder
       const imageData = []
-      for (const image of images) {
-        const imagePath = path.join(__dirname, '../uploads', image.filename)
-        const imageContent = fs.readFileSync(imagePath)
-        patientFolder.file(image.filename, imageContent)
 
-        // Add image data to CSV
-        imageData.push({
-          id: image._id,
-          name: image.name,
-          filename: image.filename,
-          ...image.toObject()
-        })
+      // Process each image
+      for (const image of images) {
+        try {
+          // Read the image file
+          const imageContent = await fs.readFileSync(image.filepath)
+          // Add image to the patient's folder with its original name
+          const imageName = image.name
+          patientFolder.file(imageName, imageContent)
+
+          // Get label answers for this image
+          const imageAnswers = await LabelAnswers.findOne({
+            ownerId: image._id
+          })
+          if (imageAnswers) {
+            // Transform label data into flat structure for CSV
+            const imageRow = {
+              image_name: imageName,
+              ...imageAnswers.labelData.reduce((acc, label) => {
+                acc[label.field] = label.value
+                return acc
+              }, {})
+            }
+            imageData.push(imageRow)
+          }
+        } catch (err) {
+          console.error(`Error processing image ${image.name}:`, err)
+        }
       }
 
-      // Create CSV for images
-      const imageCsv = new Parser().parse(imageData)
-      patientFolder.file('images.csv', imageCsv)
+      // Create and add data.csv for the patient
+      if (imageData.length > 0) {
+        const parser = new Parser()
+        const imageCsv = parser.parse(imageData)
+        patientFolder.file('data.csv', imageCsv)
+      }
+
+      // Collect patient data for main patients.csv
+      const patientAnswers = await LabelAnswers.findOne({
+        ownerId: patient._id
+      })
+      if (patientAnswers) {
+        patientsData.push({
+          patient_name: patient.name,
+          ...patientAnswers.labelData.reduce((acc, label) => {
+            acc[label.field] = label.value
+            return acc
+          }, {})
+        })
+      }
     }
 
-    // Create CSV for patients
-    const patientCsv = new Parser().parse(patientData)
-    zip.file('patients.csv', patientCsv)
+    // Create and add patients.csv
+    if (patientsData.length > 0) {
+      const parser = new Parser()
+      const patientsCsv = parser.parse(patientsData)
+      projectFolder.file('patients.csv', patientsCsv)
+    }
 
-    // Generate the zip file
+    // Generate and send the zip file
     const zipContent = await zip.generateAsync({ type: 'nodebuffer' })
-
-    // Send the zip file to the client
     res.set('Content-Type', 'application/zip')
     res.set('Content-Disposition', `attachment; filename=${project.name}.zip`)
     res.send(zipContent)
   } catch (error) {
     console.error('Error exporting project:', error)
-    res.status(500).json({ message: 'Internal server error', error: error.message })
+    res
+      .status(500)
+      .json({ message: 'Internal server error', error: error.message })
   }
 }
