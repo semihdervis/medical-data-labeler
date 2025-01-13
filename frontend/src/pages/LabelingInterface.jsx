@@ -506,7 +506,9 @@ const LabelingInterface = () => {
               <li
                 key={patient._id}
                 onClick={() => handleSelectPatient(patient)}
-                className='p-3 mb-2 cursor-pointer rounded-lg transition-all duration-300 text-center bg-gray-300 hover:bg-gray-400 hover:shadow-md'
+                className={`p-3 mb-2 cursor-pointer rounded-lg transition-all duration-300 text-center hover:bg-gray-400 hover:shadow-md ${
+                  selectedPatient?._id === patient._id ? 'bg-gray-500 text-white' : 'bg-gray-300'
+                }`}
               >
                 {patient.name}
               </li>
