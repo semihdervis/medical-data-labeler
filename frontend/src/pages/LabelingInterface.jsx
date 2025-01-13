@@ -38,7 +38,7 @@ const LabelingInterface = () => {
   const [isFetching, setIsFetching] = useState(false)
 
   // API configuration
-  const API_BASE_URL = 'http://localhost:3001'
+  const API_BASE_URL = 'https://mdl.segmentationfault.tech:3001'
   const getAuthHeaders = () => ({
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
   })
@@ -68,7 +68,7 @@ const LabelingInterface = () => {
       setIsFetching(true)
       try {
         const response = await axios.get(
-          `${API_BASE_URL}/api/patients/namelist/${projectId}`,
+          `/api/patients/namelist/${projectId}`,
           getAuthHeaders()
         )
         setPatients(response.data)
@@ -94,7 +94,7 @@ const LabelingInterface = () => {
       try {
         console.log('fetching images for patient', projects)
         const response = await axios.get(
-          `${API_BASE_URL}/api/images/${projectId}/${selectedPatient._id}`,
+          `/api/images/${projectId}/${selectedPatient._id}`,
           getAuthHeaders()
         )
 
@@ -126,7 +126,7 @@ const LabelingInterface = () => {
       setIsFetching(true)
       try {
         const response = await axios.get(
-          `${API_BASE_URL}/api/labels/schema/project/${projectId}`,
+          `/api/labels/schema/project/${projectId}`,
           getAuthHeaders()
         )
         const [patientSchema, imageSchema] = response.data
@@ -159,7 +159,7 @@ const LabelingInterface = () => {
       setIsFetching(true)
       try {
         const response = await axios.get(
-          `${API_BASE_URL}/api/labels/answer/${currentImage._id}`,
+          `/api/labels/answer/${currentImage._id}`,
           getAuthHeaders()
         )
 
@@ -198,7 +198,7 @@ const LabelingInterface = () => {
       setIsFetching(true)
       try {
         const response = await axios.get(
-          `${API_BASE_URL}/api/labels/answer/${selectedPatient._id}`,
+          `/api/labels/answer/${selectedPatient._id}`,
           getAuthHeaders()
         )
 
@@ -255,7 +255,7 @@ const LabelingInterface = () => {
     try {
       console.log('Updating labels:', ownerId, schemaId, labelData)
       await axios.put(
-        `${API_BASE_URL}/api/labels/answer/${ownerId}`,
+        `/api/labels/answer/${ownerId}`,
         {
           schemaId,
           ownerId,

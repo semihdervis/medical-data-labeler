@@ -14,14 +14,18 @@ function Patients ({ patients, setPatients, patientService }) {
   const [selectedPatientId, setSelectedPatientId] = useState(null)
   const [images, setImages] = useState([])
   const [imageUrls, setImageUrls] = useState({})
-
+  // Add new state to track pending images per patient
+  const [pendingImages, setPendingImages] = useState({})
+  
   useEffect(() => {
     const fetchImages = async () => {
-      console.log('selectedPatientId', selectedPatientId)
-      // if patient id starts with patient, it is a new patient, so no need to fetch images
       if (selectedPatientId) {
+        // Get any pending images for this patient
+        const patientPendingImages = pendingImages[selectedPatientId] || []
+
         if (selectedPatientId.startsWith('patient')) {
-          setImages([])
+          // For new patients, just show pending images
+          setImages(patientPendingImages)
           setImageUrls({})
         } else {
           try {
@@ -29,7 +33,8 @@ function Patients ({ patients, setPatients, patientService }) {
               id,
               selectedPatientId
             )
-            setImages(response.data)
+            // Combine server images with pending images
+            setImages([...response.data, ...patientPendingImages])
             fetchImageUrls(response.data)
           } catch (error) {
             console.error('Error fetching images:', error)
@@ -39,7 +44,7 @@ function Patients ({ patients, setPatients, patientService }) {
     }
 
     fetchImages()
-  }, [selectedPatientId, id])
+  }, [selectedPatientId, id, pendingImages])
 
   const fetchImageUrls = async images => {
     const urls = {}
@@ -124,7 +129,6 @@ function Patients ({ patients, setPatients, patientService }) {
   const handleImageUpload = event => {
     const files = Array.from(event.target.files)
 
-    // Generate local preview URLs for new images
     const newImages = files.map(file => {
       const localUrl = URL.createObjectURL(file)
       const formData = new FormData()
@@ -149,10 +153,28 @@ function Patients ({ patients, setPatients, patientService }) {
       }
     })
 
+    // Update pending images for this patient
+    setPendingImages(prev => ({
+      ...prev,
+      [selectedPatientId]: [...(prev[selectedPatientId] || []), ...newImages]
+    }))
+
     setImages(prevImages => [...prevImages, ...newImages])
   }
+
   const handleRemoveImage = imageId => {
     setImages(prevImages => prevImages.filter(image => image._id !== imageId))
+
+    // Remove from pending images if present
+    setPendingImages(prev => {
+      const updatedPending = { ...prev }
+      for (const patientId in updatedPending) {
+        updatedPending[patientId] = updatedPending[patientId].filter(
+          img => img._id !== imageId
+        )
+      }
+      return updatedPending
+    })
 
     // If it's an already uploaded image, queue it for deletion
     patientService.removeImage(id, selectedPatientId, imageId)

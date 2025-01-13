@@ -10,6 +10,7 @@ const helpers = require('./utils/helpers')
 const authenticate = require('./middlewares/authenticate')
 const Project = require('./models/ProjectModel')
 const Patient = require('./models/PatientModel')
+const https = require('https');
 
 // Load environment variables from .env file
 dotenv.config()
@@ -145,6 +146,25 @@ const createOrUpdateAdminAccount = async password => {
   }
 }
 
-app.listen(PORT, () => {
+/*app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
-})
+})*/
+
+const isServer = false;
+
+if(isServer){
+  const options = {
+    key: fs.readFileSync('/home/mel/server/privkey.pem'),
+    cert: fs.readFileSync('/home/mel/server/fullchain.pem')
+  };
+  
+  https.createServer(options, app).listen(PORT,'0.0.0.0', () => {
+    console.log(`Server running at https://localhost:${PORT}`);
+  });
+  
+}
+else {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`)
+  })
+}
