@@ -25,10 +25,6 @@ function CreateProject () {
   const [activeButton, setActiveButton] = useState('description')
   const [projectName, setProjectName] = useState('Respiratory Health Project')
 
-  if (!token) {
-    token = localStorage.getItem('token')
-  }
-
   const handleLogout = () => {
     navigate('/')
   }
