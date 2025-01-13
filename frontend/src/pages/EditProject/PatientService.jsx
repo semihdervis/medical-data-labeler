@@ -1,5 +1,5 @@
 import axios from 'axios'
-const API_BASE_URL = 'http://localhost:3001'
+const API_BASE_URL = 'https://mdl.segmentationfault.tech:3001'
 
 class PatientService {
   constructor () {
@@ -100,7 +100,7 @@ class PatientService {
 
   getPatients (projectId) {
     return this.handleImmediate(() =>
-      axios.get(`${API_BASE_URL}/api/patients/${projectId}`, {
+      axios.get(`/api/patients/${projectId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -110,7 +110,7 @@ class PatientService {
 
   addPatient (newPatient) {
     return this.addToQueue(() =>
-      axios.post(`${API_BASE_URL}/api/patients`, newPatient, {
+      axios.post(`/api/patients`, newPatient, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -120,7 +120,7 @@ class PatientService {
 
   async getPatientImages (projectId, patientId) {
     return this.handleImmediate(() =>
-      axios.get(`${API_BASE_URL}/api/images/${projectId}/${patientId}`, {
+      axios.get(`/api/images/${projectId}/${patientId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -149,7 +149,7 @@ class PatientService {
       .substr(2, 9)}`
 
     const requestFn = () =>
-      axios.post(`${API_BASE_URL}/api/patients`, newPatient, {
+      axios.post(`/api/patients`, newPatient, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -174,7 +174,7 @@ class PatientService {
       .substr(2, 9)}`
 
     const requestFn = () =>
-      axios.post(`${API_BASE_URL}/api/images/upload`, formData, {
+      axios.post(`/api/images/upload`, formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'multipart/form-data'
@@ -230,7 +230,7 @@ class PatientService {
 
   async removePatientService (projectId, patientId) {
     return this.addToQueue(() =>
-      axios.delete(`${API_BASE_URL}/api/patients/${projectId}/${patientId}`, {
+      axios.delete(`/api/patients/${projectId}/${patientId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -250,7 +250,7 @@ class PatientService {
   async removeImageService (projectId, patientId, imageId) {
     return this.addToQueue(() =>
       axios.delete(
-        `${API_BASE_URL}/api/images/${projectId}/${patientId}/${imageId}`,
+        `/api/images/${projectId}/${patientId}/${imageId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
