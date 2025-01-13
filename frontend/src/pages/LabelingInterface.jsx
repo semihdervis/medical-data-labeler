@@ -38,7 +38,7 @@ const LabelingInterface = () => {
   const [isFetching, setIsFetching] = useState(false)
 
   // API configuration
-  const API_BASE_URL = 'https://4.251.99.187:3001'
+  const API_BASE_URL = 'https://mdl.segmentationfault.tech:3001'
   const getAuthHeaders = () => ({
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
   })

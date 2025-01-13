@@ -150,11 +150,21 @@ const createOrUpdateAdminAccount = async password => {
   console.log(`Server running on port ${PORT}`)
 })*/
 
-const options = {
-  key: fs.readFileSync('/etc/letsencrypt/live/mdl.segmentationfault.tech/privkey.pem'),
-  cert: fs.readFileSync('/etc/letsencrypt/live/mdl.segmentationfault.tech/fullchain.pem')
-};
+const isServer = false;
 
-https.createServer(options, app).listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running at https://localhost:${PORT}`);
-});
+if(isServer){
+  const options = {
+    key: fs.readFileSync('/home/mel/server/privkey.pem'),
+    cert: fs.readFileSync('/home/mel/server/fullchain.pem')
+  };
+  
+  https.createServer(options, app).listen(PORT,'0.0.0.0', () => {
+    console.log(`Server running at https://localhost:${PORT}`);
+  });
+  
+}
+else {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`)
+  })
+}
