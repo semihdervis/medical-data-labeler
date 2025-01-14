@@ -29,12 +29,10 @@ The **Medical Image Data Labeling Application** is a web-based tool designed to 
 The labeling interface is divided into four main sections:
 
 1. **Leftmost Sidebar – Patient List**:
-
    - Displays a list of patients in the selected project (e.g., Patient001, Patient002).
    - Selecting a patient loads their first image for labeling.
 
 2. **Left Sidebar – Patient Information and Labels**:
-
    - Shows general patient information (e.g., name, age, health background).
    - Enables labeling of patient-specific observations, such as:
      - Name and Surname
@@ -43,7 +41,6 @@ The labeling interface is divided into four main sections:
      - Overall Condition Observed (e.g., “Lung Infection Detected”)
 
 3. **Center Section – Image Display**:
-
    - Prominently displays the selected image for review and annotation.
    - Supports navigation through all images associated with the selected patient.
 
@@ -91,11 +88,11 @@ The labeling interface is divided into four main sections:
 
 ## Installation and Setup
 
-Frontend:
+### Frontend
 
 1. Clone the repository:
    ```bash
-   git clone hhttps://github.com/semihdervis/medical-data-labeler.git
+   git clone https://github.com/semihdervis/medical-data-labeler.git
    ```
 2. Navigate to the project directory:
    ```bash
@@ -105,67 +102,69 @@ Frontend:
    ```bash
    npm install
    ```
-4. Build for production:
+4. Configure `.env`:
+   ```bash
+   VITE_API_BASE_URL_LOCAL=http://localhost:3001
+   VITE_API_BASE_URL_REMOTE=https://yourdomain:3001
+   VITE_SERVER=true
+   ```
+5. Build for production:
    ```bash
    npm run build
    ```
-5. Copy dist folder to relevant place in server using scp:
+6. Copy the `dist` folder to the relevant place on the server using `scp`:
    ```bash
    scp -r -i accesskey.pem C:\Path\to\dist\dist username@ip:/home/username/server/location/
    ```
-6. Give necessary permissions from server terminal (ssh):
+7. Give necessary permissions from the server terminal (SSH):
    ```bash
    sudo chmod -R 755 /home/user/server/location/dist
    sudo chmod 644 /home/user/server/location/dist/index.html
    ```
-7. Create nginx config:
-
+8. Create an Nginx config:
    ```bash
    sudo nano /etc/nginx/sites-available/yourdomain.com
    ```
-
-   ```bash
+   ```nginx
    server {
-    listen 80;
-    server_name yourdomain.com www.yourdomain.com;
+       listen 80;
+       server_name yourdomain.com www.yourdomain.com;
 
-    root /var/www/yourdomain.com;  # Document root for your frontend files (update this path)
+       root /var/www/yourdomain.com;  # Document root for your frontend files (update this path)
 
-    # For the frontend (Vite app)
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
+       # For the frontend (Vite app)
+       location / {
+           try_files $uri $uri/ /index.html;
+       }
 
-    # For the API
-    location /api/ {
-        proxy_pass http://localhost:3001;  # Backend is running on port 3001
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-    }
+       # For the API
+       location /api/ {
+           proxy_pass http://localhost:3001;  # Backend is running on port 3001
+           proxy_http_version 1.1;
+           proxy_set_header Upgrade $http_upgrade;
+           proxy_set_header Connection 'upgrade';
+           proxy_set_header Host $host;
+           proxy_cache_bypass $http_upgrade;
+       }
    }
    ```
-
    ```bash
    sudo ln -s /etc/nginx/sites-available/yourdomain.com /etc/nginx/sites-enabled/
    ```
-
-8. Use certbot to get https access:
+9. Use Certbot to get HTTPS access:
    ```bash
    sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
    ```
-9. Reload nginx:
+10. Reload Nginx:
    ```bash
    sudo systemctl reload nginx
    ```
 
-Backend:
+### Backend
 
 1. From the server, clone the repository:
    ```bash
-   git clone hhttps://github.com/semihdervis/medical-data-labeler.git
+   git clone https://github.com/semihdervis/medical-data-labeler.git
    ```
 2. Navigate to the project directory:
    ```bash
@@ -175,14 +174,12 @@ Backend:
    ```bash
    npm install
    ```
-4. Move files to their relevant places
+4. Move files to their relevant places.
 5. Create a service file:
-
    ```bash
    sudo nano /etc/systemd/system/express-backend.service
    ```
-
-   ```bash
+   ```ini
    [Unit]
    Description=Express Backend Service
    After=network.target
@@ -200,13 +197,22 @@ Backend:
    [Install]
    WantedBy=multi-user.target
    ```
-6. Configure systemd to detect service and run service automatically:
+6. Configure systemd to detect the service and run it automatically:
    ```bash
    sudo systemctl daemon-reload
-   ```
-   ```bash
    sudo systemctl start express-backend
    sudo systemctl enable express-backend
+   ```
+7. Configure the `.env` file:
+   ```bash
+   MONGODB_URI="mongodb+srv://mongourlwithcluster"
+   PORT=3001
+   JWT_SECRET="yourjwtsecrethere"
+
+   SMTP_USER=xxxxx@gmail.com
+   SMTP_PASS=xxxx xxxx xxxx xxxx
+   SMTP_HOST=smtp-relay.gmail.com
+   SMTP_PORT=587
    ```
 
 ## Exported Data Formats
@@ -217,7 +223,3 @@ Backend:
 ## License
 
 This project is licensed under the [GNU License](LICENSE).
-
-```
-
-```
