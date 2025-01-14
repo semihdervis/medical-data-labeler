@@ -33,9 +33,10 @@ function Patients ({ patients, setPatients, patientService }) {
               id,
               selectedPatientId
             )
+            console.log('Patient images:', response)
             // Combine server images with pending images
-            setImages([...response.data, ...patientPendingImages])
-            fetchImageUrls(response.data)
+            setImages([...response, ...patientPendingImages])
+            fetchImageUrls(response)
           } catch (error) {
             console.error('Error fetching images:', error)
           }
