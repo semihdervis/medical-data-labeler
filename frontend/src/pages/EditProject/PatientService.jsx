@@ -87,9 +87,9 @@ class PatientService {
         const realPatientId = patientResponseIds.get(fakePatientId)
         if (realPatientId) {
           formData.set('patientId', realPatientId)
+          const result = await requestFn()
+          
         }
-
-        const result = await requestFn()
         this.imageQueue.delete(imageId)
       } catch (error) {
         console.error('Error processing image request:', error)
