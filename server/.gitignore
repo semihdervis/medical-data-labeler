@@ -15,6 +15,7 @@ benchmarks/graphs
 
 # Server storage
 projects
+backend
 
 # ignore additional files using core.excludesFile
 # https://git-scm.com/docs/gitignore
