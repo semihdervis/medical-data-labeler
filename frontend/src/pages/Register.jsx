@@ -22,6 +22,12 @@ function Register () {
       return
     }
 
+    const passPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/
+    if (!passPattern.test(password)) {
+      setError('Password must be between 6 to 20 characters which contain at least one numeric digit, one uppercase and one lowercase letter.')
+      return
+    }
+    
     if (password !== confirmPassword) {
       setError('Passwords do not match.')
       return
@@ -38,8 +44,12 @@ function Register () {
       alert('Registration successful! Please log in.')
       navigate('/') // Go back to login page after successful registration
     } catch (error) {
-      setError('Registration failed. Please try again.')
-      console.log(error)
+      if (error.response && error.response.status === 409) {
+        setError('Email is already in use. Please use a different email.')
+      } else {
+        setError('Registration failed. Please try again.')
+        console.error('Registration error:', error)
+      }
     } finally {
       setLoading(false)
     }
