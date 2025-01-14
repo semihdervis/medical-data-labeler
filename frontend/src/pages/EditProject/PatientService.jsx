@@ -91,7 +91,10 @@ class PatientService {
       try {
         // Update formData with the real patient ID
         const fakePatientId = formData.get('patientId')
-        const realPatientId = patientResponseIds.get(fakePatientId)
+        console.log('fakePatientId', fakePatientId)
+        const realPatientId = fakePatientId.startsWith('patient-')
+          ? patientResponseIds.get(fakePatientId)
+          : fakePatientId
         if (realPatientId) {
           formData.set('patientId', realPatientId)
           const result = await requestFn()

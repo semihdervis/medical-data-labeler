@@ -118,7 +118,7 @@ function AdminProjectPage () {
         }
       )
       console.log('Project saved', response.data)
-      navigate('/admin')
+      //
     } catch (error) {
       console.error('Error saving project:', error)
     }
@@ -182,6 +182,7 @@ function AdminProjectPage () {
       const allSuccessful = await PatientService.sendRequests()
       if (allSuccessful) {
         console.log('All requests processed successfully')
+        navigate('/admin')
       } else {
         console.error('Some requests failed')
       }
