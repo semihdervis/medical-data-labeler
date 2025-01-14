@@ -2,10 +2,11 @@ import React, { useEffect, useState, useRef } from 'react'
 import JSZip from 'jszip'
 import removeIcon from '../icons/remove.png'
 import fileIcon from '../icons/file.png'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 
 function Patients ({ patients, setPatients, patientService }) {
   const { id } = useParams()
+  const navigate = useNavigate()
   const zipInputRef = useRef(null)
   const imageInputRef = useRef(null)
 
@@ -129,6 +130,7 @@ function Patients ({ patients, setPatients, patientService }) {
           } else {
             alert('ZIP file uploaded successfully without any errors.')
           }
+          navigate('/admin')
         }
       } catch (error) {
         console.error('Error uploading ZIP file:', error)
