@@ -30,44 +30,6 @@ function AssignDoctor ({
   const handleRemoveDoctor = async doctorEmail => {
     setAssignedDoctors(assignedDoctors.filter(doctor => doctor !== doctorEmail))
   }
-  /*
-   // Add the doctor to the project
-        const response = await axios.post(`/api/projects/${projectId}/assign-doctor`, { doctorEmail: doctorEmail }, {// very STRICTLY doctorEmail : doctorEmail, do not ever change it
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-
-        setAssignedDoctors([...assignedDoctors, doctorEmail]);
-        setDoctorEmail("");
-        setError("");
-      } catch (error) {
-        if (error.response && error.response.status === 404) {
-          setError("Doctor not found. Please ensure the email is correct and the doctor exists.");
-        } else {
-          console.error("Error adding doctor:", error);
-          setError("Error adding doctor. Please try again.");
-        }
-      }
-    }
-
-
-     if (doctorEmail && assignedDoctors.includes(doctorEmail)) {
-      try {
-        // Remove the doctor from the project
-        await axios.post(`/api/projects/${projectId}/remove-doctor`, {
-          doctorEmail: doctorEmail
-        }, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-        setAssignedDoctors(assignedDoctors.filter((doctor) => doctor !== doctorEmail));
-      } catch (error) {
-        console.error("Error removing doctor:", error);
-      }
-    }
-  */
 
   return (
     <section className='bg-white rounded-lg p-5 shadow-md w-full max-w-md'>

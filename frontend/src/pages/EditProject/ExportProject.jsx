@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 
-const API_BASE_URL = 'http://localhost:3001'
 
 function ExportProject ({ currentProject }) {
   const [isExporting, setIsExporting] = useState(false)
@@ -10,7 +9,7 @@ function ExportProject ({ currentProject }) {
     try {
       setIsExporting(true)
       const response = await axios({
-        url: `${API_BASE_URL}/api/projects/${currentProject._id}/export`,
+        url: `/api/projects/${currentProject._id}/export`,
         method: 'POST',
         responseType: 'blob',
         headers: {

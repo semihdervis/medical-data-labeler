@@ -38,8 +38,10 @@ const LabelingInterface = () => {
   const [isFetching, setIsFetching] = useState(false)
 
   // API configuration
-  const API_BASE_URL = 'https://mdl.segmentationfault.tech:3001'
-  const getAuthHeaders = () => ({
+  const isServer = import.meta.env.VITE_SERVER === "true";
+  const API_BASE_URL = isServer ? import.meta.env.VITE_API_BASE_URL_REMOTE : import.meta.env.VITE_API_BASE_URL_LOCAL;
+
+const getAuthHeaders = () => ({
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
   })
   //additional stuff for sort option pop ups
