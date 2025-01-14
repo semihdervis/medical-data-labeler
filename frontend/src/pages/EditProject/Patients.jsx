@@ -6,7 +6,6 @@ import { useParams } from 'react-router-dom'
 
 function Patients ({ patients, setPatients, patientService }) {
   const { id } = useParams()
-  const fileInputRef = useRef(null)
   const zipInputRef = useRef(null)
   const imageInputRef = useRef(null)
 
@@ -16,7 +15,7 @@ function Patients ({ patients, setPatients, patientService }) {
   const [imageUrls, setImageUrls] = useState({})
   // Add new state to track pending images per patient
   const [pendingImages, setPendingImages] = useState({})
-  
+
   useEffect(() => {
     const fetchImages = async () => {
       if (selectedPatientId) {
@@ -110,19 +109,31 @@ function Patients ({ patients, setPatients, patientService }) {
   const handleZipUpload = async event => {
     const file = event.target.files[0]
     if (file) {
-      const zip = new JSZip()
-      const loadedZip = await zip.loadAsync(file)
-      const newPatients = []
+      const formData = new FormData()
+      formData.append('file', file)
 
-      for (const filename of Object.keys(loadedZip.files)) {
-        if (filename.endsWith('.json')) {
-          const fileContent = await loadedZip.files[filename].async('string')
-          const patientData = JSON.parse(fileContent)
-          newPatients.push(...patientData)
+      try {
+        const response = await patientService.uploadZip(formData, id)
+        console.log(response)
+        if (response) {
+          console.log('ZIP file uploaded successfully')
+          console.log(response.data.summary)
+
+          const errors = response.data.summary.errors
+          if (errors && errors.length > 0) {
+            const errorMessages = errors.join('\n')
+            alert(
+              'ZIP file uploaded successfully, but there were some errors:\n' +
+                errorMessages
+            )
+          } else {
+            alert('ZIP file uploaded successfully without any errors.')
+          }
         }
+      } catch (error) {
+        console.error('Error uploading ZIP file:', error)
+        alert('Error uploading ZIP file. Please try again.')
       }
-
-      setPatients(prev => [...prev, ...newPatients])
     }
   }
 
@@ -231,21 +242,6 @@ function Patients ({ patients, setPatients, patientService }) {
         >
           Add Patient
         </button>
-
-        <input
-          type='file'
-          ref={fileInputRef}
-          className='hidden'
-          accept='.json'
-          onChange={handleImportPatients}
-        />
-        <label
-          onClick={() => fileInputRef.current.click()}
-          className='flex items-center justify-center gap-2 bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition mt-3 cursor-pointer'
-        >
-          Import Patients
-          <img src={fileIcon} alt='Import' className='w-4 h-4' />
-        </label>
 
         <input
           type='file'

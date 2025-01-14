@@ -1,7 +1,9 @@
 import axios from 'axios'
 
-const isServer = import.meta.env.VITE_SERVER === "true";
-const API_BASE_URL = isServer ? import.meta.env.VITE_API_BASE_URL_REMOTE : import.meta.env.VITE_API_BASE_URL_LOCAL;
+const isServer = import.meta.env.VITE_SERVER === 'true'
+const API_BASE_URL = isServer
+  ? import.meta.env.VITE_API_BASE_URL_REMOTE
+  : import.meta.env.VITE_API_BASE_URL_LOCAL
 
 class PatientService {
   constructor () {
@@ -12,12 +14,12 @@ class PatientService {
     this.deleteQueue = new Set()
   }
 
-  async handleImmediate(requestFn) {
+  async handleImmediate (requestFn) {
     try {
-      const result = await requestFn();
-      return result;
+      const result = await requestFn()
+      return result
     } catch (error) {
-      throw error;
+      throw error
     }
   }
 
@@ -44,7 +46,7 @@ class PatientService {
 
   async processQueue () {
     if (this.isProcessing) return
-
+    let allSuccessful = true
     this.isProcessing = true
     while (this.requestQueue.length > 0) {
       const { requestFn, resolve, reject } = this.requestQueue.shift()
@@ -52,11 +54,14 @@ class PatientService {
         const result = await requestFn()
         resolve(result)
       } catch (error) {
+        console.error('Error processing request:', error)
         reject(error)
+        allSuccessful = false
       }
     }
 
     this.isProcessing = false
+    return allSuccessful
   }
 
   async sendRequests () {
@@ -90,7 +95,6 @@ class PatientService {
         if (realPatientId) {
           formData.set('patientId', realPatientId)
           const result = await requestFn()
-          
         }
         this.imageQueue.delete(imageId)
       } catch (error) {
@@ -100,8 +104,8 @@ class PatientService {
     }
 
     this.isProcessing = false
-    this.processQueue()
-    return allSuccessful
+
+    return this.processQueue()
   }
 
   getPatients (projectId) {
@@ -124,24 +128,39 @@ class PatientService {
     )
   }
 
-  async getPatientImages (projectId, patientId) {
-    try {
-      const response = await axios.get(`/api/images/${projectId}/${patientId}`, {
+  uploadZip (formData, projectId) {
+    return this.handleImmediate(() =>
+      axios.post(`/api/projects/${projectId}/import`, formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       })
-  
+    )
+  }
+
+  async getPatientImages (projectId, patientId) {
+    try {
+      const response = await axios.get(
+        `/api/images/${projectId}/${patientId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      )
+
       if (!response.data) {
         console.error('No data in response:', response)
         return []
       }
-  
+
       const images = response.data
       const imagesToDelete = new Set(this.imageQueue.keys())
-  
-      const filteredImages = images.filter(image => !this.deleteQueue.has(image._id))
-  
+
+      const filteredImages = images.filter(
+        image => !this.deleteQueue.has(image._id)
+      )
+
       return filteredImages
     } catch (error) {
       console.error('Error fetching patient images:', error)
@@ -261,14 +280,11 @@ class PatientService {
   async removeImageService (projectId, patientId, imageId) {
     this.deleteQueue.add(imageId)
     return this.addToQueue(() =>
-      axios.delete(
-        `/api/images/${projectId}/${patientId}/${imageId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
+      axios.delete(`/api/images/${projectId}/${patientId}/${imageId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
-      )
+      })
     )
   }
 
