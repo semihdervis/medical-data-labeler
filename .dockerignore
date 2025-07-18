@@ -2,9 +2,8 @@
 node_modules
 npm-debug.log*
 
-# Production builds
-frontend/dist
-frontend/build
+# Don't ignore the built frontend
+# frontend/dist - KEEP THIS for deployment
 
 # Environment files (will be set via CapRover)
 .env
