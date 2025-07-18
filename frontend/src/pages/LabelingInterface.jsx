@@ -38,8 +38,11 @@ const LabelingInterface = () => {
   const [isFetching, setIsFetching] = useState(false)
 
   // API configuration
-  const isServer = import.meta.env.VITE_SERVER === "true";
-  const API_BASE_URL = isServer ? import.meta.env.VITE_API_BASE_URL_REMOTE : import.meta.env.VITE_API_BASE_URL_LOCAL;
+  const API_BASE_URL = import.meta.env.PROD ? '' : (
+    import.meta.env.VITE_SERVER === "true" 
+      ? import.meta.env.VITE_API_BASE_URL_REMOTE 
+      : import.meta.env.VITE_API_BASE_URL_LOCAL
+  );
 
 const getAuthHeaders = () => ({
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }

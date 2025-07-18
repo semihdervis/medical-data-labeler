@@ -36,6 +36,15 @@ app.use('/api/users', userRoutes)
 app.use('/api/auth', authRoutes)
 app.use('/api/labels', labelRoutes) // Use label routes
 
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  })
+})
+
 // Authorization middleware for static files
 const authorize = (req, res, next) => {
   const filePath = req.path
@@ -59,6 +68,20 @@ const authorize = (req, res, next) => {
 
 // Serve static files with authentication and authorization
 app.use('/projects', authenticate, authorize, express.static('projects'))
+
+// Serve frontend static files in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, 'public')))
+  
+  // Handle React Router - send all non-API requests to index.html
+  app.get('*', (req, res) => {
+    // Skip API routes
+    if (req.path.startsWith('/api/') || req.path.startsWith('/projects/')) {
+      return res.status(404).json({ message: 'API endpoint not found' })
+    }
+    res.sendFile(path.join(__dirname, 'public', 'index.html'))
+  })
+}
 
 const initializeFolder = async folderPath => {
   try {
