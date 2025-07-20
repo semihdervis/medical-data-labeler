@@ -1,8 +1,6 @@
-# Medical Data Labeler - Production Dockerfile
-# Expects frontend to be pre-built locally
+# Backend-only Dockerfile
 FROM node:18-alpine
 
-# Set working directory
 WORKDIR /app
 
 # Set production environment
@@ -14,9 +12,6 @@ RUN npm ci --only=production --silent
 
 # Copy backend source code
 COPY server/ ./
-
-# Copy pre-built frontend (built locally with 'npm run build')
-COPY frontend/dist ./public
 
 # Create necessary directories
 RUN mkdir -p uploads projects data

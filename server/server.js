@@ -17,6 +17,23 @@ dotenv.config()
 
 const app = express()
 
+// Debug middleware to log ALL requests
+app.use((req, res, next) => {
+  console.log('🌐 Request:', req.method, req.originalUrl)
+  console.log('- Headers:', Object.keys(req.headers))
+  console.log('- User-Agent:', req.headers['user-agent'])
+  
+  // Special logging for /projects/ requests
+  if (req.originalUrl.startsWith('/projects/')) {
+    console.log('🖼️ IMAGE REQUEST DETECTED!')
+    console.log('- Full URL:', req.originalUrl)
+    console.log('- Method:', req.method)
+    console.log('- IP:', req.headers['x-real-ip'] || req.ip)
+  }
+  
+  next()
+})
+
 // Middleware
 app.use(cors())
 app.use(express.json())
@@ -41,8 +58,37 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ 
     status: 'OK', 
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
+    jwtSecretConfigured: !!process.env.JWT_SECRET
   })
+})
+
+// Test endpoint to serve images directly via API
+app.get('/api/test-image/:projectId/:patientId/:imageId', authenticate, async (req, res) => {
+  try {
+    const { projectId, patientId, imageId } = req.params
+    console.log('🖼️ Test image request:', { projectId, patientId, imageId })
+    
+    // Check if user has access to this project
+    const userProjects = req.userProjects?.map(String) || []
+    if (req.userRole !== 'admin' && !userProjects.includes(String(projectId))) {
+      return res.status(403).json({ message: 'Access denied to project' })
+    }
+    
+    const imagePath = path.join(__dirname, 'projects', projectId, patientId, imageId)
+    console.log('- Looking for image at:', imagePath)
+    
+    if (fs.existsSync(imagePath)) {
+      console.log('✅ Image found, serving...')
+      res.sendFile(imagePath)
+    } else {
+      console.log('❌ Image not found')
+      res.status(404).json({ message: 'Image not found' })
+    }
+  } catch (error) {
+    console.error('Error serving test image:', error)
+    res.status(500).json({ message: 'Internal server error' })
+  }
 })
 
 // Authorization middleware for static files
@@ -51,23 +97,40 @@ const authorize = (req, res, next) => {
   const projectId = path.basename(path.dirname(path.dirname(filePath)))
   const projects = req.query.projects?.split(',') || [] // Get projects from query
 
-  console.log('req.query.projects', projects)
-  console.log('Projects:', projects, 'Project ID:', projectId)
+  console.log('🔍 Authorization Debug:')
+  console.log('- Full URL:', req.originalUrl)
+  console.log('- File path:', filePath)
+  console.log('- Extracted project ID:', projectId)
+  console.log('- User projects from query:', projects)
+  console.log('- User role:', req.userRole)
+  console.log('- User ID:', req.userId)
 
   if (
     req.userRole === 'admin' ||
     (Array.isArray(projects) &&
       projects.map(String).includes(String(projectId)))
   ) {
-    console.log('Authorized')
+    console.log('✅ Authorized')
     next()
   } else {
+    console.log('❌ Access denied - Project ID not in user projects')
     res.status(403).json({ message: 'Access denied' })
   }
 }
 
 // Serve static files with authentication and authorization
-app.use('/projects', authenticate, authorize, express.static('projects'))
+app.use('/projects', (req, res, next) => {
+  console.log('📁 Projects middleware - Request:', req.method, req.originalUrl)
+  console.log('- Path:', req.path)
+  console.log('- Query:', req.query)
+  
+  // Debug file path
+  const filePath = path.join(__dirname, 'projects', req.path)
+  console.log('- Looking for file at:', filePath)
+  console.log('- File exists:', fs.existsSync(filePath))
+  
+  next()
+}, authenticate, authorize, express.static('projects'))
 
 // Serve frontend static files in production
 if (process.env.NODE_ENV === 'production') {
@@ -123,6 +186,13 @@ app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 const REMOTE_URI = process.env.MONGODB_URI
+
+// Log environment configuration
+console.log('🚀 Starting server with configuration:')
+console.log('- PORT:', PORT)
+console.log('- NODE_ENV:', process.env.NODE_ENV || 'development')
+console.log('- JWT_SECRET configured:', !!process.env.JWT_SECRET)
+console.log('- MONGODB_URI configured:', !!REMOTE_URI)
 
 const isRemote = true
 

@@ -238,18 +238,18 @@ const getAuthHeaders = () => ({
   const fetchImageWithAuth = async imagePath => {
     setIsFetching(true)
     try {
-      const response = await axios.get(
-        `${API_BASE_URL}/${imagePath}?projects=${projects.join(',')}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          },
-          responseType: 'blob'
-        }
-      )
+      const fullUrl = `${API_BASE_URL}/${imagePath}?projects=${projects.join(',')}`
+      console.log('🖼️ Fetching image:', { imagePath, fullUrl, API_BASE_URL })
+      
+      const response = await axios.get(fullUrl, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        },
+        responseType: 'blob'
+      })
       return URL.createObjectURL(response.data)
     } catch (error) {
-      console.error('Error fetching image:', error)
+      console.error('Error fetching image:', { imagePath, error })
       return null
     } finally {
       setIsFetching(false)

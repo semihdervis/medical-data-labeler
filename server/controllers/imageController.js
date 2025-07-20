@@ -190,7 +190,14 @@ exports.deleteImageById = async imageId => {
 exports.getImagesByProjectAndPatient = async (req, res) => {
   try {
     const { projectId, patientId } = req.params
+    console.log('📷 Getting images for project:', projectId, 'patient:', patientId)
+    
     const images = await Image.find({ projectId, patientId })
+    console.log('- Found images:', images.length)
+    images.forEach((img, index) => {
+      console.log(`  ${index + 1}. ${img.name} -> ${img.filepath}`)
+    })
+    
     res.json(images)
   } catch (error) {
     console.error('Error fetching images:', error)
